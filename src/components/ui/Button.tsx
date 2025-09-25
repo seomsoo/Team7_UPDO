@@ -26,8 +26,7 @@ export const Button = ({
     <button
       type="button"
       className={['storybook-button', `storybook-button--${size}`, mode].join(' ')}
-      {...props}
-    >
+      {...props}>
       {label}
       <style jsx>{`
         button {
