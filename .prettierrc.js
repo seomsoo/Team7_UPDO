@@ -10,9 +10,9 @@ module.exports = {
   // JSX의 닫는 태그를 같은 줄에 배치
   bracketSameLine: true,
   // OS별 줄바꿈 방식 자동 감지 (git에서 충돌 방지용)
-  endOfLine: "auto",
+  endOfLine: 'auto',
   // 객체, 배열 마지막 원소 뒤에도 항상 콤마 추가
-  trailingComma: "all",
+  trailingComma: 'all',
   // 화살표 함수 인자가 하나일 때 괄호 생략 (x => x + 1)
-  arrowParens: "avoid",
+  arrowParens: 'avoid',
 };
