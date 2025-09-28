@@ -1,0 +1,44 @@
+name: PR Quality Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+
+jobs:
+  quality-checks:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        run: npm i -g pnpm
+
+      - name: Install deps
+        run: pnpm install --no-frozen-lockfile
+
+      - name: ESLint
+        run: pnpm lint
+
+      - name: Type Check
+        run: pnpm tsc --noEmit
+
+      - name: Tests
+        run: pnpm test
+
+      - name: Build Storybook
+        run: pnpm build-storybook
+
+      - name: Build App
+        run: pnpm build
