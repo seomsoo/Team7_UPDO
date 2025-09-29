@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import Avatar from '../Avatar';
+import Avatar from './Avatar';
 
 const meta = {
   title: 'samples/Avatar',
