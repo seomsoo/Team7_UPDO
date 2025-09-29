@@ -64,6 +64,37 @@ writer: 김채원
 
 - **render 심화 구조** : arguments를 받는 render 사용한 맞춤형 UI
 
+  ```tsx
+  import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+  import TextField from '../TextField'; // 실제 컴포넌트 경로에 맞게 수정
+  const meta = {
+    title: 'samples/TextField',
+    component: TextField,
+    parameters: { layout: 'centered' }, // centered: 가운데 정렬, fullscreen: 캔버스 꽉 채우기(페이지 단위 컴포넌트용), padded: 기본값, 약간의 padding
+    argTypes: {
+      placeholder: { control: 'text' },
+      type: {
+        control: { type: 'radio' },
+        options: ['text', 'password', 'email'],
+      },
+      disabled: { control: 'boolean' },
+    },
+  } satisfies Meta<typeof TextField>;
+
+  export default meta;
+
+  type Story = StoryObj<typeof meta>;
+
+  export const Example: Story = {
+    render: args => <TextField {...args} />,
+    args: {
+      placeholder: 'Type here...',
+      type: 'text',
+      disabled: false,
+    },
+  };
+  ```
+
 ### 1-2. CSF3 기반 기본 스토리 예시
 
 ```tsx
