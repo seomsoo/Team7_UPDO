@@ -4,9 +4,8 @@ const config: StorybookConfig = {
   stories: [
     '../src/**/*.mdx',
     '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
-    '../.storybook/stories-samples/**/*.stories.@(js|jsx|ts|tsx|mdx)',
+    '../.storybook/**/**/*.stories.@(js|jsx|ts|tsx)',
   ],
-
   addons: [
     '@chromatic-com/storybook',
     '@storybook/addon-docs',
@@ -20,4 +19,5 @@ const config: StorybookConfig = {
   },
   staticDirs: ['../public'],
 };
+
 export default config;

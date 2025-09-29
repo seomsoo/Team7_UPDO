@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import TextField from '../TextField'; // 실제 컴포넌트 경로에 맞게 수정
+import TextField from './TextField';
 
 const meta = {
   title: 'samples/TextField',
