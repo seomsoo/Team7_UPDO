@@ -9,7 +9,7 @@ const SvgHeart = ({ size = 24, ...props }: IconProps) => (
     width={size}
     height={size}
     xmlns="http://www.w3.org/2000/svg"
-    fill="none"
+    fill="none" // full,
     viewBox="0 0 24 24"
     role="img">
     <path
