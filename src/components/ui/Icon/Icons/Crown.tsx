@@ -1,7 +1,6 @@
 // props : name, size, fill
 //  ㄴ name: crown
-//  ㄴ size: 숫자
-//  ㄴ fill
+//  ㄴ size: 32
 
 import * as React from 'react';
 import type { SVGProps } from 'react';

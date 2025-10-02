@@ -1,3 +1,7 @@
+// props : name, size
+//  ㄴ name: arrow
+//  ㄴ size: 16
+
 import * as React from 'react';
 import type { SVGProps } from 'react';
 export type IconProps = SVGProps<SVGSVGElement> & {
@@ -10,7 +14,7 @@ const SvgArrow = ({ size = 24, ...props }: IconProps) => (
     height={size}
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
-    viewBox="0 0 20 20"
+    viewBox="0 0 16 16"
     role="img">
     <path
       stroke="#757575"

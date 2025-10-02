@@ -1,3 +1,7 @@
+// props : name, size
+//  ㄴ name: plus
+//  ㄴ size: 32
+
 import * as React from 'react';
 import type { SVGProps } from 'react';
 export type IconProps = SVGProps<SVGSVGElement> & {
@@ -12,7 +16,7 @@ const SvgPlus = ({ size = 24, ...props }: IconProps) => (
     fill="none"
     viewBox="0 0 32 32"
     role="img">
-    <path stroke="currentColor" strokeLinecap="round" strokeWidth={2} d="M8 16h16M16 24V8" />
+    <path stroke="#fff" strokeLinecap="round" strokeWidth={2} d="M8 16h16M16 24V8" />
   </svg>
 );
 export default SvgPlus;

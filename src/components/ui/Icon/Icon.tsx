@@ -48,16 +48,26 @@ const REGISTRY = {
   visibility_on: VisibilityOn,
 };
 
-export type IconName = keyof typeof REGISTRY;
-export type IconProps = SVGProps<SVGSVGElement> & {
-  name: IconName;
+export type BaseIconProps = Omit<SVGProps<SVGSVGElement>, 'fill'> & {
   size?: number;
+  direction?: 'down' | 'up';
+  fill?: 'full' | 'lined';
 };
 
-const Icon = ({ name, size = 24, ...props }: IconProps) => {
-  const Component = REGISTRY[name];
+export type IconName = keyof typeof REGISTRY;
+export type IconProps = BaseIconProps & { name: IconName };
+
+const Icon = ({ name, size = 24, direction, fill, ...props }: IconProps) => {
+  const Component = REGISTRY[name] as unknown as React.ComponentType<BaseIconProps>;
   if (!Component) return null;
-  return <Component size={size} {...props} />;
+  return (
+    <Component
+      size={size}
+      direction={direction}
+      {...(fill === 'full' || fill === 'lined' ? { fill } : {})}
+      {...props}
+    />
+  );
 };
 
 export default Icon;

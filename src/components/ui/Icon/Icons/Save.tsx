@@ -1,16 +1,20 @@
+// props : name, size
+//  ㄴ name: save
+//  ㄴ size: 48
+
 import * as React from 'react';
 import type { SVGProps } from 'react';
 export type IconProps = SVGProps<SVGSVGElement> & {
   size?: number | string;
 };
-const SvgSave = ({ size = 24, ...props }: IconProps) => (
+const SvgSave = ({ size = 48, ...props }: IconProps) => (
   <svg
     {...props}
     width={size}
     height={size}
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
-    viewBox="0 0 60 60"
+    viewBox="0 0 48 48"
     role="img">
     <circle cx={24} cy={24} r={23.5} fill="currentColor" stroke="#DDD" />
     <path
