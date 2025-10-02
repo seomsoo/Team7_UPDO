@@ -1,0 +1,30 @@
+name: Mirror to Fork
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    if: github.repository == 'Team7-UPDO/Team7_UPDO'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Push to forked repo
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.FORKED_REPO_TOKEN }}
+        with:
+          source-directory: .
+          destination-github-username: seomsoo
+          destination-repository-name: Team7_UPDO
+          user-name: 'seomsoo'
+          user-email: ${{ secrets.EMAIL }}
+          target-branch: main
+          commit-message: '${{ github.event.head_commit.message }}'

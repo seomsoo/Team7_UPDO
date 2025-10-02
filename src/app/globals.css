@@ -1,26 +1,642 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
+/* ================================
+   TOKENS (@theme)
+   ================================ */
+@theme {
+  /* Fonts */
+  --font-sans:
+    var(--font-pretendard), system-ui, -apple-system, Segoe UI, Roboto, 'Noto Sans KR',
+    'Apple SD Gothic Neo', 'Malgun Gothic', 'Helvetica Neue', Arial, 'Segoe UI Emoji',
+    'Segoe UI Symbol', sans-serif;
+
+  /* Weights */
+  --w-light: 300;
+  --w-normal: 400;
+  --w-medium: 500;
+  --w-semibold: 600;
+  --w-bold: 700;
+
+  /* Type Scale (참고용) */
+  --text-xs: 12px / 16px var(--font-sans);
+  --text-sm: 14px / 20px var(--font-sans);
+  --text-base: 16px / 24px var(--font-sans);
+  --text-lg: 18px / 28px var(--font-sans);
+  --text-xl: 20px / 28px var(--font-sans);
+  --text-2xl: 24px / 32px var(--font-sans);
+  --text-3xl: 32px / 36px var(--font-sans);
+  --text-4xl: 40px / 40px var(--font-sans);
+  --text-5xl: 56px / 64px var(--font-sans);
+
+  /* Breakpoints */
+  --breakpoint-sm: 375px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1920px;
+
+  /* Colors */
+  /* Gray */
+  --color-gray-50: #eeeeee;
+  --color-gray-100: #dddddd;
+  --color-gray-200: #cccccc;
+  --color-gray-300: #bbbbbb;
+  --color-gray-400: #a4a4a4;
+  --color-gray-500: #737373;
+  --color-gray-600: #4a4a4a;
+  --color-gray-700: #333333;
+  --color-gray-800: #191919;
+  --color-gray-900: #0a0a0a;
+
+  /* Purple (Main) */
+  --color-purple-50: #e0d3ff;
+  --color-purple-100: #d1bcff;
+  --color-purple-150: #c8afff;
+  --color-purple-200: #c0a2ff;
+  --color-purple-250: #b994ff;
+  --color-purple-300: #b18bff;
+  --color-purple-350: #a97aff;
+  --color-purple-400: #a26bff;
+  --color-purple-450: #9a5eff;
+  --color-purple-500: #9553ff;
+  --color-purple-550: #8d44f9;
+  --color-purple-600: #8633f3;
+  --color-purple-650: #7f1aed;
+  --color-purple-700: #7800e7;
+
+  /* Accents */
+  --color-mint-100: #dbfff1;
+  --color-mint-500: #a1fdd8;
+  --color-mint-600: #6ee7b7;
+
+  --color-pink-100: #f2e7ed;
+  --color-pink-500: #f3a7cf;
+  --color-pink-600: #f472b6;
+
+  --color-yellow-100: #faf6e7;
+  --color-yellow-500: #f8e088;
+  --color-yellow-600: #f3d259;
+
+  --color-blue-100: #def1ff;
+  --color-blue-500: #c2e5ff;
+  --color-blue-600: #8cceff;
+
+  /* Status */
+  --color-red-500: #ff2727;
+
+  /* Semantic Aliases */
+  --color-body: var(--color-gray-700);
+  --color-subtle: var(--color-gray-500);
+  --color-secondary: var(--color-gray-400);
+
+  --color-disabled-1: var(--color-gray-50); /* 입력불가 BG */
+  --color-disabled-2: var(--color-gray-400); /* 텍스트 */
+  --color-disabled-3: var(--color-gray-500); /* 컨트롤 */
+
+  --color-primary: var(--color-purple-500);
+  --color-primary-hover: var(--color-purple-600);
+  --color-primary-active: var(--color-purple-700);
+  --color-danger: var(--color-red-500);
+
+  /* Surfaces */
+  --canvas: #f6f7f9;
+  --surface: #ffffff;
+
+  /* Gradients */
+  --grad-100-from: #f1ebff;
+  --grad-100-to: #d1bcff;
+
+  --grad-500-from: #b994ff;
+  --grad-500-to: #a1fdd8;
+
+  --grad-600a-from: #b994ff;
+  --grad-600a-to: #f3a7cf;
+
+  --grad-600b-from: #b994ff;
+  --grad-600b-to: #f8e088;
+
+  --grad-600c-from: #b994ff;
+  --grad-600c-to: #c2e5ff;
+
+  /* Radii (6~40) */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-3xl: 40px;
+  --radius-full: 9999px;
+
+  /* Shadow (1) */
+  --shadow-xl: 0 0 50px 0 rgb(0 0 0 / 0.08);
+}
+
+/* ===== Legacy aliases: 기존 --gray, --purple 등 유지 (삭제 금지) ===== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Gray */
+  --gray-50: var(--color-gray-50);
+  --gray-100: var(--color-gray-100);
+  --gray-200: var(--color-gray-200);
+  --gray-300: var(--color-gray-300);
+  --gray-400: var(--color-gray-400);
+  --gray-500: var(--color-gray-500);
+  --gray-600: var(--color-gray-600);
+  --gray-700: var(--color-gray-700);
+  --gray-800: var(--color-gray-800);
+  --gray-900: var(--color-gray-900);
+
+  /* Purple */
+  --purple-50: var(--color-purple-50);
+  --purple-100: var(--color-purple-100);
+  --purple-150: var(--color-purple-150);
+  --purple-200: var(--color-purple-200);
+  --purple-250: var(--color-purple-250);
+  --purple-300: var(--color-purple-300);
+  --purple-350: var(--color-purple-350);
+  --purple-400: var(--color-purple-400);
+  --purple-450: var(--color-purple-450);
+  --purple-500: var(--color-purple-500);
+  --purple-550: var(--color-purple-550);
+  --purple-600: var(--color-purple-600);
+  --purple-650: var(--color-purple-650);
+  --purple-700: var(--color-purple-700);
+
+  /* Accents */
+  --mint-100: var(--color-mint-100);
+  --mint-500: var(--color-mint-500);
+  --mint-600: var(--color-mint-600);
+  --pink-100: var(--color-pink-100);
+  --pink-500: var(--color-pink-500);
+  --pink-600: var(--color-pink-600);
+  --yellow-100: var(--color-yellow-100);
+  --yellow-500: var(--color-yellow-500);
+  --yellow-600: var(--color-yellow-600);
+  --blue-100: var(--color-blue-100);
+  --blue-500: var(--color-blue-500);
+  --blue-600: var(--color-blue-600);
+
+  /* Status */
+  --red-500: var(--color-red-500);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+/* ================================
+   BASE
+   ================================ */
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    background: var(--canvas);
+    color: var(--color-gray-900);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: var(--w-normal);
+    background: var(--canvas);
+    word-break: keep-all;
+    -webkit-text-size-adjust: 100%;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ================================
+   LAYOUT / SURFACES (패딩 프리셋)
+   ================================ */
+@utility layout-container {
+  margin-inline: auto;
+  width: 100%;
+  padding-inline: 16px;
+}
+@media (min-width: 768px) {
+  .layout-container {
+    padding-inline: 24px;
+  }
+}
+@media (min-width: 1920px) {
+  .layout-container {
+    padding-inline: 0;
+  }
+}
+
+@utility layout-content {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  background: var(--canvas);
+}
+
+/* Surface presets  */
+@utility surface-card {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  padding: 16px;
+  border: 1px solid var(--color-gray-200);
+}
+@media (min-width: 768px) {
+  .surface-card {
+    padding: 24px;
+  }
+}
+@media (min-width: 1920px) {
+  .surface-card {
+    padding: 28px;
+  }
+}
+
+@utility surface-section {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  border: 1px solid var(--color-gray-200);
+}
+@media (min-width: 768px) {
+  .surface-section {
+    padding: 20px;
+  }
+}
+
+@utility surface-modal {
+  background: var(--surface);
+  border-radius: var(--radius-3xl);
+  padding: 24px;
+  box-shadow: var(--shadow-xl);
+}
+
+/* Caption 칩 모서리 유틸 */
+.chip-square {
+  border-radius: 0px;
+}
+.chip-rounded {
+  border-radius: var(--radius-xs); /* 6px */
+}
+.chip-full {
+  border-radius: var(--radius-full); /* 9999px */
+}
+
+/* ================================
+   TYPOGRAPHY (@layer components)
+   ================================ */
+@layer components {
+  /* Scale */
+  .typo-xs {
+    font-size: 12px;
+    line-height: 16px;
+    font-family: var(--font-sans);
+  }
+  .typo-sm {
+    font-size: 14px;
+    line-height: 20px;
+    font-family: var(--font-sans);
+  }
+  .typo-base {
+    font-size: 16px;
+    line-height: 24px;
+    font-family: var(--font-sans);
+  }
+  .typo-lg {
+    font-size: 18px;
+    line-height: 28px;
+    font-family: var(--font-sans);
+  }
+  .typo-xl {
+    font-size: 20px;
+    line-height: 28px;
+    font-family: var(--font-sans);
+  }
+  .typo-2xl {
+    font-size: 24px;
+    line-height: 32px;
+    font-family: var(--font-sans);
+  }
+  .typo-3xl {
+    font-size: 32px;
+    line-height: 36px;
+    font-family: var(--font-sans);
+  }
+  .typo-4xl {
+    font-size: 40px;
+    line-height: 40px;
+    font-family: var(--font-sans);
+  }
+  .typo-5xl {
+    font-size: 56px;
+    line-height: 64px;
+    font-family: var(--font-sans);
+  }
+
+  /* Headings (h1~h5) */
+  .h1 {
+    font-size: 56px;
+    line-height: 64px;
+    font-family: var(--font-sans);
+    font-weight: var(--w-normal);
+  }
+  .h1Semibold {
+    font-size: 56px;
+    line-height: 64px;
+    font-family: var(--font-sans);
+    font-weight: var(--w-semibold);
+  }
+  .h1Bold {
+    font-size: 56px;
+    line-height: 64px;
+    font-family: var(--font-sans);
+    font-weight: var(--w-bold);
+  }
+
+  .h2 {
+    font-size: 40px;
+    line-height: 44px;
+    font-family: var(--font-sans);
+    font-weight: var(--w-normal);
+  }
+  .h2Semibold {
+    font-size: 40px;
+    line-height: 44px;
+    font-family: var(--font-sans);
+    font-weight: var(--w-semibold);
+  }
+  .h2Bold {
+    font-size: 40px;
+    line-height: 44px;
+    font-family: var(--font-sans);
+    font-weight: var(--w-bold);
+  }
+
+  .h3 {
+    font-size: 32px;
+    line-height: 36px;
+    font-family: var(--font-sans);
+    font-weight: var(--w-normal);
+  }
+  .h3Semibold {
+    font-size: 32px;
+    line-height: 36px;
+    font-family: var(--font-sans);
+    font-weight: var(--w-semibold);
+  }
+  .h3Bold {
+    font-size: 32px;
+    line-height: 36px;
+    font-family: var(--font-sans);
+    font-weight: var(--w-bold);
+  }
+
+  .h4 {
+    font-size: 24px;
+    line-height: 32px;
+    font-family: var(--font-sans);
+    font-weight: var(--w-normal);
+  }
+  .h4Semibold {
+    font-size: 24px;
+    line-height: 32px;
+    font-family: var(--font-sans);
+    font-weight: var(--w-semibold);
+  }
+  .h4Bold {
+    font-size: 24px;
+    line-height: 32px;
+    font-family: var(--font-sans);
+    font-weight: var(--w-bold);
+  }
+
+  .h5 {
+    font-size: 20px;
+    line-height: 28px;
+    font-family: var(--font-sans);
+    font-weight: var(--w-normal);
+  }
+  .h5Semibold {
+    font-size: 20px;
+    line-height: 28px;
+    font-family: var(--font-sans);
+    font-weight: var(--w-semibold);
+  }
+  .h5Bold {
+    font-size: 20px;
+    line-height: 28px;
+    font-family: var(--font-sans);
+    font-weight: var(--w-bold);
+  }
+
+  /* Titles */
+  .page-title {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: var(--w-semibold);
+    font-family: var(--font-sans);
+  }
+  .section-title {
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: var(--w-semibold);
+    font-family: var(--font-sans);
+  }
+  .card-title {
+    font-size: 18px;
+    line-height: 28px;
+    font-weight: var(--w-semibold);
+    font-family: var(--font-sans);
+  }
+  .modal-title {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: var(--w-semibold);
+    font-family: var(--font-sans);
+  }
+
+  /* Body */
+  .typo-body-sm {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: var(--w-medium);
+    font-family: var(--font-sans);
+  }
+  .typo-body {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: var(--w-medium);
+    font-family: var(--font-sans);
+  }
+  .typo-body-bold {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: var(--w-semibold);
+    font-family: var(--font-sans);
+  }
+  .typo-body-lg {
+    font-size: 18px;
+    line-height: 28px;
+    font-weight: var(--w-normal);
+    font-family: var(--font-sans);
+  }
+
+  /* Meta / Label */
+  .label {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: var(--w-semibold);
+    font-family: var(--font-sans);
+  }
+  .label-sm {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: var(--w-semibold);
+    font-family: var(--font-sans);
+  }
+  .eyebrow {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: var(--w-semibold);
+    font-family: var(--font-sans);
+  }
+  .caption {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: var(--w-normal);
+    font-family: var(--font-sans);
+  }
+  .caption-bold {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: var(--w-semibold);
+    font-family: var(--font-sans);
+  }
+
+  /* Special */
+  .tag {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: var(--w-medium);
+    font-family: var(--font-sans);
+  }
+  .badge {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: var(--w-bold);
+    font-family: var(--font-sans);
+  }
+
+  /* 리뷰 점수(40/36) */
+  .metric-40 {
+    font-size: 40px;
+    line-height: 36px;
+    font-weight: var(--w-bold);
+    font-family: var(--font-sans);
+  }
+
+  /* 호환 네이밍 */
+  .typo-display {
+    font-size: 32px;
+    line-height: 36px;
+    font-weight: var(--w-bold);
+    font-family: var(--font-sans);
+  }
+  .typo-title {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: var(--w-semibold);
+    font-family: var(--font-sans);
+  }
+  .typo-subtitle {
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: var(--w-medium);
+    font-family: var(--font-sans);
+  }
+  .typo-subtitle-bold {
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: var(--w-semibold);
+    font-family: var(--font-sans);
+  }
+  .typo-eyebrow {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: var(--w-semibold);
+    font-family: var(--font-sans);
+  }
+  .typo-caption {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: var(--w-normal);
+    font-family: var(--font-sans);
+  }
+  .typo-caption-bold {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: var(--w-medium);
+    font-family: var(--font-sans);
+  }
+  .typo-tag {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: var(--w-medium);
+    font-family: var(--font-sans);
+  }
+  .typo-badge {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: var(--w-semibold);
+    font-family: var(--font-sans);
+  }
+}
+
+/* ================================
+   SHAPES / EFFECTS (utilities)
+   ================================ */
+.rounded-xs {
+  border-radius: var(--radius-xs);
+}
+.rounded-sm {
+  border-radius: var(--radius-sm);
+}
+.rounded-md {
+  border-radius: var(--radius-md);
+}
+.rounded-lg {
+  border-radius: var(--radius-lg);
+}
+.rounded-xl {
+  border-radius: var(--radius-xl);
+}
+.rounded-2xl {
+  border-radius: var(--radius-2xl);
+}
+.rounded-3xl {
+  border-radius: var(--radius-3xl);
+}
+.rounded-full {
+  border-radius: var(--radius-full);
+}
+
+.shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
+
+/* Background helpers */
+@utility bg-canvas {
+  background-color: var(--canvas);
+}
+@utility bg-surface {
+  background-color: var(--surface);
+}
+
+/* Gradients */
+@utility bg-grad-100 {
+  background-image: linear-gradient(90deg, var(--grad-100-from), var(--grad-100-to));
+}
+@utility bg-grad-500 {
+  background-image: linear-gradient(90deg, var(--grad-500-from), var(--grad-500-to));
+}
+@utility bg-grad-600a {
+  background-image: linear-gradient(90deg, var(--grad-600a-from), var(--grad-600a-to));
+}
+@utility bg-grad-600b {
+  background-image: linear-gradient(90deg, var(--grad-600b-from), var(--grad-600b-to));
+}
+@utility bg-grad-600c {
+  background-image: linear-gradient(90deg, var(--grad-600c-from), var(--grad-600c-to));
 }
