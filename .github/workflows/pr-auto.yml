@@ -1,0 +1,53 @@
+name: PR Auto
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - dev
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  auto-reviewers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign Reviewers (Exclude PR Creator)
+        uses: kentaro-m/auto-assign-action@v2.0.0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/auto_assign.yml
+
+  add-assign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign PR creator
+        uses: actions-ecosystem/action-add-assignees@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          assignees: ${{ github.actor }}
+
+  auto-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Apply Labels Based on PR Title
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: |
+            ${{ contains(github.event.pull_request.title, 'Feature') && '✨ Feature' || '' }}
+            ${{ contains(github.event.pull_request.title, 'Fix') && '🐛 BugFix' || '' }}
+            ${{ contains(github.event.pull_request.title, 'Docs') && '📄 Docs' || '' }}
+            ${{ contains(github.event.pull_request.title, 'Test') && '✅ Test' || '' }}
+            ${{ contains(github.event.pull_request.title, 'UI') && '🎨 UI' || '' }}
+            ${{ contains(github.event.pull_request.title, 'Refactor') && '🔨 Refactor' || '' }}
+            ${{ contains(github.event.pull_request.title, 'Deploy') && '🚀 Deploy' || '' }}
+            ${{ contains(github.event.pull_request.title, 'Setting') && '⚙️ Setting' || '' }}
+            ${{ contains(github.event.pull_request.title, 'API') && '📬 API' || '' }}
+            ${{ contains(github.event.pull_request.title, 'Accessibility') && '🥰 Accessibility' || '' }}
+            ${{ contains(github.event.pull_request.title, 'CrossBrowsing') && '💻 CrossBrowsing' || '' }}
+            ${{ contains(github.event.pull_request.title, 'Question') && '❓ Question' || '' }}

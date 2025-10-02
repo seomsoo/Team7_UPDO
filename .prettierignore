@@ -21,3 +21,6 @@ coverage
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+
+# md 파일
+*.md

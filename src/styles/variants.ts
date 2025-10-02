@@ -1,0 +1,268 @@
+import { cva, type VariantProps } from 'class-variance-authority';
+
+/* ── Topic palette (text/bg/border) ───────────────────────── */
+export const topicText = cva('', {
+  variants: {
+    topic: {
+      growth: 'text-[var(--color-mint-600)]',
+      learn: 'text-[var(--color-yellow-600)]',
+      challenge: 'text-[var(--color-pink-600)]',
+      connect: 'text-[var(--color-blue-600)]',
+      default: 'text-[var(--color-purple-500)]',
+    },
+  },
+});
+
+export const topicBgSoft = cva('', {
+  variants: {
+    topic: {
+      growth: 'bg-[var(--color-mint-100)]',
+      learn: 'bg-[var(--color-yellow-100)]',
+      challenge: 'bg-[var(--color-pink-100)]',
+      connect: 'bg-[var(--color-blue-100)]',
+      default: 'bg-[var(--color-purple-100)]',
+    },
+  },
+});
+
+export const topicBgSolid = cva('', {
+  variants: {
+    topic: {
+      growth: 'bg-[var(--color-mint-500)]',
+      learn: 'bg-[var(--color-yellow-500)]',
+      challenge: 'bg-[var(--color-pink-500)]',
+      connect: 'bg-[var(--color-blue-500)]',
+      default: 'bg-[var(--color-purple-500)]',
+    },
+  },
+});
+
+export const topicBorder = cva('border', {
+  variants: {
+    topic: {
+      growth: 'border-[color:var(--color-mint-600)]',
+      learn: 'border-[color:var(--color-yellow-600)]',
+      challenge: 'border-[color:var(--color-pink-600)]',
+      connect: 'border-[color:var(--color-blue-600)]',
+      default: 'border-[color:var(--color-purple-500)]',
+    },
+  },
+});
+
+/* ── Typography (단일 소스) ──────────────────────────────── */
+export const typo = cva('text-[color:var(--color-body)]', {
+  variants: {
+    variant: {
+      /* Headings */
+      h1: 'h1',
+      h1Semibold: 'h1Semibold',
+      h1Bold: 'h1Bold',
+      h2: 'h2',
+      h2Semibold: 'h2Semibold',
+      h2Bold: 'h2Bold',
+      h3: 'h3',
+      h3Semibold: 'h3Semibold',
+      h3Bold: 'h3Bold',
+      h4: 'h4',
+      h4Semibold: 'h4Semibold',
+      h4Bold: 'h4Bold',
+      h5: 'h5',
+      h5Semibold: 'h5Semibold',
+      h5Bold: 'h5Bold',
+
+      /* Titles */
+      pageTitle: 'page-title',
+      sectionTitle: 'section-title',
+      cardTitle: 'card-title',
+      modalTitle: 'modal-title',
+
+      /* Card/Main Title (28/32) */
+      cardTitleLarge: 'card-title-large',
+      cardTitleLargeBold: 'card-title-large-bold',
+
+      /* Body / Meta */
+      body: 'typo-body',
+      bodyBold: 'typo-body-bold',
+      bodyLg: 'typo-body-lg',
+      bodySm: 'typo-body-sm',
+      caption: 'caption',
+      captionBold: 'caption-bold',
+      eyebrow: 'eyebrow',
+      tag: 'tag',
+      badge: 'badge',
+
+      /* Forms */
+      formSectionLabel: 'page-title' /* 24/32 600 */,
+      fieldLabel: 'label' /* 14/20 600 */,
+
+      /* Special */
+      cta: 'cta-label',
+      metric40: 'metric-40',
+    },
+    color: {
+      default: '',
+      body: 'text-[var(--color-body)]',
+      subtle: 'text-[var(--color-subtle)]',
+      secondary: 'text-[var(--color-secondary)]',
+      primary: 'text-[var(--color-primary)]',
+      danger: 'text-[var(--color-red-500)]',
+    },
+    align: { left: 'text-left', center: 'text-center', right: 'text-right' },
+    weight: { inherit: '', medium: 'font-medium', semibold: 'font-semibold', bold: 'font-bold' },
+  },
+  defaultVariants: { variant: 'body', color: 'body', align: 'left', weight: 'inherit' },
+});
+export type TypoProps = VariantProps<typeof typo>;
+
+/* ── Button ─────────────────────────────────────────────── */
+export const button = cva(
+  'inline-flex items-center justify-center transition-colors focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed',
+  {
+    variants: {
+      variant: {
+        primary:
+          'bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] active:bg-[var(--color-primary-active)]',
+        outline:
+          'bg-white border border-[color:var(--color-primary)] text-[var(--color-primary)] hover:bg-[color:var(--color-purple-100)]/40',
+        ghost: 'bg-[var(--color-gray-100)] text-[var(--color-body)]',
+        topic: '',
+      },
+      size: { sm: 'h-9 px-4', md: 'h-11 px-5', lg: 'h-12 px-7' },
+      topic: { default: '', growth: '', learn: '', challenge: '', connect: '' },
+      typo: { tag: 'typo-tag', cta: 'cta-label' },
+      radius: { md: 'rounded-md', lg: 'rounded-lg', xl: 'rounded-xl' },
+    },
+    compoundVariants: [
+      {
+        variant: 'topic',
+        topic: 'growth',
+        class:
+          'bg-transparent text-[var(--color-mint-600)] border border-[color:var(--color-mint-600)] hover:bg-[var(--color-mint-600)] hover:text-white',
+      },
+      {
+        variant: 'topic',
+        topic: 'learn',
+        class:
+          'bg-transparent text-[var(--color-yellow-600)] border border-[color:var(--color-yellow-600)] hover:bg-[var(--color-yellow-600)] hover:text-white',
+      },
+      {
+        variant: 'topic',
+        topic: 'challenge',
+        class:
+          'bg-transparent text-[var(--color-pink-600)] border border-[color:var(--color-pink-600)] hover:bg-[var(--color-pink-600)] hover:text-white',
+      },
+      {
+        variant: 'topic',
+        topic: 'connect',
+        class:
+          'bg-transparent text-[var(--color-blue-600)] border border-[color:var(--color-blue-600)] hover:bg-[var(--color-blue-600)] hover:text-white',
+      },
+      {
+        variant: 'topic',
+        topic: 'default',
+        class:
+          'bg-transparent text-[var(--color-purple-500)] border border-[color:var(--color-purple-500)] hover:bg-[var(--color-purple-500)] hover:text-white',
+      },
+    ],
+    defaultVariants: { variant: 'primary', size: 'md', typo: 'tag', radius: 'xl' },
+  },
+);
+export type ButtonProps = VariantProps<typeof button>;
+
+/* ── Chip ──────────────────────────────────────────────── */
+/** ─────────────────────────────────────────────
+ * Chip
+ * - size: xs / sm / md / lg / xl
+ * - shape: pill / rounded(24px) / square
+ * - tone: soft / solid / outline / topicSoft / topicSolid
+ * - icon: none / leading / trailing (간격 & 패딩 조정)
+ * - density: normal / compact (가로 패딩 축소)
+ * - topic: growth / learn / challenge / connect / default
+ * - typo: tag(14/20) | caption(12/16) | captionBold(12/16·600) | badge(12/16·700)
+ *   → 필요 시 weight는 상위에서 제어(semibold 등)
+ * ──────────────────────────────────────────── */
+// variants.ts - chip에 compoundVariants 추가
+export const chip = cva('inline-flex items-center select-none transition-colors gap-1.5', {
+  variants: {
+    size: {
+      xs: 'h-4 px-1',
+      sm: 'h-5 px-2.5',
+      md: 'h-6 px-3',
+      lg: 'h-7 px-3.5',
+      xl: 'h-9 px-4',
+    },
+    density: { normal: 'gap-1.5', compact: 'gap-1 px-[0.375rem]' },
+    shape: {
+      pill: 'chip-full',
+      rounded: 'chip-rounded',
+      square: 'chip-square',
+    },
+    tone: {
+      soft: 'bg-[var(--color-gray-100)] text-[var(--color-gray-600)]',
+      solid: 'bg-[var(--color-gray-600)] text-white',
+      outline: 'bg-white border border-[var(--color-gray-300)] text-[var(--color-gray-600)]',
+      topicSoft: '', // compoundVariants에서 처리
+      topicSolid: '',
+    },
+    topic: { default: '', growth: '', learn: '', challenge: '', connect: '' },
+    icon: { none: '', leading: '', trailing: '' },
+    typo: { tag: 'tag', caption: 'caption', captionBold: 'caption-bold', badge: 'badge' },
+    textColor: {
+      auto: '',
+      body: 'text-[var(--color-body)]',
+      subtle: 'text-[var(--color-subtle)]',
+      inverse: 'text-white',
+      custom: '',
+    },
+  },
+
+  // topicSoft/topicSolid 전용 색 매핑
+  compoundVariants: [
+    // topicSoft
+    {
+      tone: 'topicSoft',
+      topic: 'growth',
+      class: 'bg-[var(--color-mint-100)] text-[var(--color-mint-600)]',
+    },
+    {
+      tone: 'topicSoft',
+      topic: 'learn',
+      class: 'bg-[var(--color-yellow-100)] text-[var(--color-yellow-600)]',
+    },
+    {
+      tone: 'topicSoft',
+      topic: 'challenge',
+      class: 'bg-[var(--color-pink-100)] text-[var(--color-pink-600)]',
+    },
+    {
+      tone: 'topicSoft',
+      topic: 'connect',
+      class: 'bg-[var(--color-blue-100)] text-[var(--color-blue-600)]',
+    },
+    {
+      tone: 'topicSoft',
+      topic: 'default',
+      class: 'bg-[var(--color-purple-100)] text-[var(--color-purple-500)]',
+    },
+
+    // topicSolid
+    { tone: 'topicSolid', topic: 'growth', class: 'bg-[var(--color-mint-600)] text-white' },
+    { tone: 'topicSolid', topic: 'learn', class: 'bg-[var(--color-yellow-600)] text-white' },
+    { tone: 'topicSolid', topic: 'challenge', class: 'bg-[var(--color-pink-600)] text-white' },
+    { tone: 'topicSolid', topic: 'connect', class: 'bg-[var(--color-blue-600)] text-white' },
+    { tone: 'topicSolid', topic: 'default', class: 'bg-[var(--color-purple-500)] text-white' },
+  ],
+
+  defaultVariants: {
+    size: 'sm',
+    density: 'normal',
+    shape: 'pill',
+    tone: 'topicSoft',
+    topic: 'default',
+    icon: 'none',
+    typo: 'tag',
+    textColor: 'auto',
+  },
+});
+
+export type ChipProps = VariantProps<typeof chip>;
