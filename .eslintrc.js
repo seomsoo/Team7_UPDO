@@ -21,5 +21,7 @@ module.exports = {
     // import 정렬
     'simple-import-sort/imports': 'warn',
     'simple-import-sort/exports': 'warn',
+    // storybook/react 직접 import 허용
+    'storybook/no-renderer-packages': 'off',
   },
 };
