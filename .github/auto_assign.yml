@@ -1,0 +1,11 @@
+addReviewers: true
+addAssignees: true
+
+reviewers:
+  - seomsoo
+  - codnjs3575
+  - Kim-seonki
+  - hohhh
+
+numberOfReviewers: 2
+skipAuthors: true
