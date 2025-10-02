@@ -14,21 +14,27 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+// cursor로 코드 확인하기
+
+// 16 20 24 32 40 45 48 64
+
 const icons = [
   { name: 'alarm' },
-  { name: 'arrow_dropdown' },
   { name: 'arrow', size: 16 },
+  { name: 'arrow_dropdown', direction: 'up' },
+  { name: 'arrow_dropdown', direction: 'down' },
   { name: 'calendar', size: 20 },
   { name: 'calendar' },
   { name: 'check', size: 20 },
   { name: 'check' },
   { name: 'crown', size: 32 },
   { name: 'delete' },
-  { name: 'edit_btn', size: 40 },
   { name: 'edit', size: 20 },
   { name: 'edit' },
+  { name: 'edit_btn', size: 40 },
   { name: 'filter', size: 20 },
-  { name: 'heart' },
+  { name: 'heart', fill: 'full' },
+  { name: 'heart', fill: 'lined' },
   { name: 'logout', size: 20 },
   { name: 'logout' },
   { name: 'person', size: 16 },
@@ -73,6 +79,8 @@ export const Board: Story = {
             <th style={cellStyle}>Icon</th>
             <th style={cellStyle}>Name</th>
             <th style={cellStyle}>Size</th>
+            <th style={cellStyle}>Direction</th>
+            <th style={cellStyle}>fill</th>
           </tr>
         </thead>
         <tbody>
@@ -83,12 +91,15 @@ export const Board: Story = {
                   {...args}
                   name={icon.name as IconName}
                   size={icon.size ?? 24}
-                  className="h-10 w-3 justify-around"
+                  direction={icon.direction as 'down' | 'up' | undefined}
+                  fill={icon.fill as 'full' | 'lined'}
                   preserveAspectRatio="xMidYMid meet"
                 />
               </td>
               <td style={cellStyle}>{icon.name}</td>
               <td style={cellStyle}>{icon.size ?? 24}</td>
+              <td style={cellStyle}>{icon.direction as 'down' | 'up'}</td>
+              <td style={cellStyle}>{icon.fill as 'full' | 'lined'}</td>
             </tr>
           ))}
           {icons_category.map(icon => (

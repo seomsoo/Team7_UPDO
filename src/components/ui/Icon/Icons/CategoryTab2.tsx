@@ -1,3 +1,7 @@
+// props : name, size
+//  ㄴ name: category_tab2
+//  ㄴ size: 32, 45, 64
+
 import * as React from 'react';
 import type { SVGProps } from 'react';
 export type IconProps = SVGProps<SVGSVGElement> & {

@@ -1,3 +1,7 @@
+// props : name, size
+//  ㄴ name: person
+//  ㄴ size: 16
+
 import * as React from 'react';
 import type { SVGProps } from 'react';
 export type IconProps = SVGProps<SVGSVGElement> & {

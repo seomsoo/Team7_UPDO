@@ -1,3 +1,7 @@
+// props : name, size
+//  ㄴ name: save_outline
+//  ㄴ size: 40, 48, 60
+
 import * as React from 'react';
 import type { SVGProps } from 'react';
 export type IconProps = SVGProps<SVGSVGElement> & {

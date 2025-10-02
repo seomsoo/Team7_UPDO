@@ -1,3 +1,7 @@
+// props : name, size
+//  ㄴ name: edit_btn
+//  ㄴ size: 40
+
 import * as React from 'react';
 import type { SVGProps } from 'react';
 export type IconProps = SVGProps<SVGSVGElement> & {
@@ -12,7 +16,7 @@ const SvgEditBtn = ({ size = 24, ...props }: IconProps) => (
     fill="none"
     viewBox="0 0 40 40"
     role="img">
-    <rect width={39} height={39} x={0.5} y={0.5} fill="currentColor" rx={19.5} />
+    <rect width={39} height={39} x={0.5} y={0.5} fill="#fff" rx={19.5} />
     <rect width={39} height={39} x={0.5} y={0.5} stroke="#DDD" rx={19.5} />
     <path
       fill="#737373"
