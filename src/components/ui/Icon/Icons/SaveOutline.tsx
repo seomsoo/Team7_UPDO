@@ -10,7 +10,7 @@ const SvgSaveOutline = ({ size = 24, ...props }: IconProps) => (
     height={size}
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
-    viewBox="0 0 40 40"
+    viewBox="0 0 60 60"
     role="img">
     <circle cx={30} cy={30} r={29.5} fill="#FAFAF8" stroke="#A26BFF" />
     <path
