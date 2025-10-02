@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import Icon from '../Icon/Icon';
 import { IconName } from '../Icon/Icon';
 
@@ -14,32 +14,28 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// cursor로 코드 확인하기
-
-// 16 17 18 32 40 45 48 64
-
 const icons = [
   { name: 'alarm' },
   { name: 'arrow_dropdown' },
   { name: 'arrow', size: 16 },
-  { name: 'calendar', size: 18 },
+  { name: 'calendar', size: 20 },
   { name: 'calendar' },
-  { name: 'check', size: 18 },
+  { name: 'check', size: 20 },
   { name: 'check' },
   { name: 'crown', size: 32 },
   { name: 'delete' },
   { name: 'edit_btn', size: 40 },
-  { name: 'edit', size: 18 },
+  { name: 'edit', size: 20 },
   { name: 'edit' },
-  { name: 'filter', size: 18 },
+  { name: 'filter', size: 20 },
   { name: 'heart' },
-  { name: 'logout', size: 18 },
+  { name: 'logout', size: 20 },
   { name: 'logout' },
   { name: 'person', size: 16 },
   { name: 'plus', size: 32 },
-  { name: 'visibility_off', size: 18 },
+  { name: 'visibility_off', size: 20 },
   { name: 'visibility_off' },
-  { name: 'visibility_on', size: 18 },
+  { name: 'visibility_on', size: 20 },
   { name: 'visibility_on' },
 ];
 const icons_category = [
@@ -68,7 +64,7 @@ const cellIconStyle: CSSProperties = {
 };
 
 export const Board: Story = {
-  args: { name: 'alarm', size: 24 },
+  args: { name: 'alarm' },
   render: args => {
     return (
       <table style={{ borderCollapse: 'collapse', textAlign: 'center' }}>
@@ -86,12 +82,13 @@ export const Board: Story = {
                 <Icon
                   {...args}
                   name={icon.name as IconName}
-                  size={icon.size}
+                  size={icon.size ?? 24}
+                  className="h-10 w-3 justify-around"
                   preserveAspectRatio="xMidYMid meet"
                 />
               </td>
               <td style={cellStyle}>{icon.name}</td>
-              <td style={cellStyle}>{icon.size}</td>
+              <td style={cellStyle}>{icon.size ?? 24}</td>
             </tr>
           ))}
           {icons_category.map(icon => (
@@ -100,12 +97,12 @@ export const Board: Story = {
                 <Icon
                   {...args}
                   name={icon.name as IconName}
-                  size={icon.size}
+                  size={icon.size ?? 24}
                   preserveAspectRatio="xMidYMid meet"
                 />
               </td>
               <td style={cellStyle}>{icon.name}</td>
-              <td style={cellStyle}>{icon.size}</td>
+              <td style={cellStyle}>{icon.size ?? 24}</td>
             </tr>
           ))}
         </tbody>
