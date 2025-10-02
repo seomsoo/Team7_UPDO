@@ -10,7 +10,7 @@ const SvgArrow = ({ size = 24, ...props }: IconProps) => (
     height={size}
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
-    viewBox="0 0 17 17"
+    viewBox="0 0 20 20"
     role="img">
     <path
       stroke="#757575"
