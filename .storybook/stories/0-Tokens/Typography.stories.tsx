@@ -106,13 +106,12 @@ export const All: Story = {
       {/* SPECIAL */}
       <Section title="Special" desc="태그/배지/지표">
         <div className="bg-surface space-y-2 rounded-lg border border-[color:var(--color-gray-200)] p-5">
-          <div className="tag text-[color:var(--color-body)]">tag — 14/20 · 500</div>
+          <div className="tag text-[var(--color-body)]">tag — 14/20 · 500</div>
 
           {/* badge 라인 표기 (숫자 샘플 X) */}
-          <div className="badge-xs text-[color:var(--color-body)]">badge-xs — 10/11 · 600</div>
-          <div className="badge-lg text-[color:var(--color-body)]">badge-lg — 12/16 · 700</div>
-
-          <div className="metric-40 text-[color:var(--color-body)]">metric-40 — 40/36 · 700</div>
+          <div className="badge-xs text-[var(--color-body)]">badge-xs — 10/11 · 600</div>
+          <div className="badge-lg text-[var(--color-body)]">badge-lg — 12/16 · 700</div>
+          <div className="metric-40 text-[var(--color-body)]">metric-40 — 40/36 · 700</div>
         </div>
       </Section>
     </main>
