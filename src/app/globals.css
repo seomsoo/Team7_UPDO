@@ -511,6 +511,7 @@
     line-height: 20px;
     font-weight: var(--w-medium);
     font-family: var(--font-sans);
+    letter-spacing: -0.03em;
   }
   .badge-lg {
     font-size: 12px;
@@ -575,18 +576,6 @@
     font-size: 12px;
     line-height: 16px;
     font-weight: var(--w-medium);
-    font-family: var(--font-sans);
-  }
-  .typo-tag {
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: var(--w-medium);
-    font-family: var(--font-sans);
-  }
-  .typo-badge {
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: var(--w-semibold);
     font-family: var(--font-sans);
   }
 }
