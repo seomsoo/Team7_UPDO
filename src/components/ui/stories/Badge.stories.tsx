@@ -7,7 +7,7 @@ export default {
   parameters: { layout: 'padded' },
   argTypes: {
     value: { control: { type: 'number', min: 0 } },
-    max: { control: { type: 'number', min: 1 } },
+    max: { table: { disable: true } },
     size: { control: { type: 'radio' }, options: ['sm', 'lg'] },
     ariaLive: { control: false, table: { disable: true } },
     as: { control: false, table: { disable: true } },
