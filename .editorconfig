@@ -1,0 +1,10 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+
+# JSONL/CSV/TSV 같은 라인 단위 데이터는 개행 규칙 적용 제외
+[*.{jsonl,csv,tsv}]
+insert_final_newline = false

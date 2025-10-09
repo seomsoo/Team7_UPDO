@@ -3,17 +3,22 @@
 dist
 out
 build
+storybook-static
 
 # 의존성
 node_modules
+.pnpm-store
 
 # 환경 변수 파일
 .env
 *.env
 
+# 캐시 파일
+.swc
+.turbo
+
 # 테스트 결과
 coverage
 
 # 설정 파일
-prettier.config.js
-.prettierrc.js
+prettier.config.mjs
