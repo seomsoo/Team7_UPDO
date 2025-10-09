@@ -40,17 +40,17 @@ export const topicBgSolid = cva('', {
 export const topicBorder = cva('border', {
   variants: {
     topic: {
-      growth: 'border-[color:var(--color-mint-600)]',
-      learn: 'border-[color:var(--color-yellow-600)]',
-      challenge: 'border-[color:var(--color-pink-600)]',
-      connect: 'border-[color:var(--color-blue-600)]',
-      default: 'border-[color:var(--color-purple-500)]',
+      growth: 'border-[var(--color-mint-600)]',
+      learn: 'border-[var(--color-yellow-600)]',
+      challenge: 'border-[var(--color-pink-600)]',
+      connect: 'border-[var(--color-blue-600)]',
+      default: 'border-[var(--color-purple-500)]',
     },
   },
 });
 
 /* ── Typography (단일 소스) ──────────────────────────────── */
-export const typo = cva('text-[color:var(--color-body)]', {
+export const typo = cva('text-[var(--color-body)]', {
   variants: {
     variant: {
       /* Headings */
@@ -123,7 +123,7 @@ export const button = cva(
         primary:
           'bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] active:bg-[var(--color-primary-active)]',
         outline:
-          'bg-white border border-[color:var(--color-primary)] text-[var(--color-primary)] hover:bg-[color:var(--color-purple-100)]/40',
+          'bg-white border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-purple-100)]/40',
         ghost: 'bg-[var(--color-gray-100)] text-[var(--color-body)]',
         topic: '',
       },
@@ -137,31 +137,31 @@ export const button = cva(
         variant: 'topic',
         topic: 'growth',
         class:
-          'bg-transparent text-[var(--color-mint-600)] border border-[color:var(--color-mint-600)] hover:bg-[var(--color-mint-600)] hover:text-white',
+          'bg-transparent text-[var(--color-mint-600)] border border-[var(--color-mint-600)] hover:bg-[var(--color-mint-600)] hover:text-white',
       },
       {
         variant: 'topic',
         topic: 'learn',
         class:
-          'bg-transparent text-[var(--color-yellow-600)] border border-[color:var(--color-yellow-600)] hover:bg-[var(--color-yellow-600)] hover:text-white',
+          'bg-transparent text-[var(--color-yellow-600)] border border-[var(--color-yellow-600)] hover:bg-[var(--color-yellow-600)] hover:text-white',
       },
       {
         variant: 'topic',
         topic: 'challenge',
         class:
-          'bg-transparent text-[var(--color-pink-600)] border border-[color:var(--color-pink-600)] hover:bg-[var(--color-pink-600)] hover:text-white',
+          'bg-transparent text-[var(--color-pink-600)] border border-[var(--color-pink-600)] hover:bg-[var(--color-pink-600)] hover:text-white',
       },
       {
         variant: 'topic',
         topic: 'connect',
         class:
-          'bg-transparent text-[var(--color-blue-600)] border border-[color:var(--color-blue-600)] hover:bg-[var(--color-blue-600)] hover:text-white',
+          'bg-transparent text-[var(--color-blue-600)] border border-[var(--color-blue-600)] hover:bg-[var(--color-blue-600)] hover:text-white',
       },
       {
         variant: 'topic',
         topic: 'default',
         class:
-          'bg-transparent text-[var(--color-purple-500)] border border-[color:var(--color-purple-500)] hover:bg-[var(--color-purple-500)] hover:text-white',
+          'bg-transparent text-[var(--color-purple-500)] border border-[var(--color-purple-500)] hover:bg-[var(--color-purple-500)] hover:text-white',
       },
     ],
     defaultVariants: { variant: 'primary', size: 'md', typo: 'tag', radius: 'xl' },
