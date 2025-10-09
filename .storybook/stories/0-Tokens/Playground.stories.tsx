@@ -1,13 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { chip, ChipProps } from '../../../src/styles/variants';
-
-/** ─────────────────────────────────────────────────────────
- * Playground: Typography + Surfaces + Chip
- * - 텍스트: variant / textColor / 배경(surface·canvas·transparent or gradient)
- * - Surface: radius / shadow / padding / width
- * - Chip: size / density / shape / tone / topic / icon / typo / textColor(custom 지원)
- * ───────────────────────────────────────────────────────── */
+import Badge from '../../../src/components/ui/Badge';
+import type { BadgeProps } from '../../../src/components/ui/Badge';
 
 type Variant =
   | 'h1'
@@ -77,12 +71,10 @@ const textVariants: Variant[] = [
 ];
 
 const colorVars = [
-  // Semantic
   '--color-body',
   '--color-subtle',
   '--color-secondary',
   '--color-danger',
-  // Brand
   '--color-purple-50',
   '--color-purple-100',
   '--color-purple-150',
@@ -97,7 +89,6 @@ const colorVars = [
   '--color-purple-600',
   '--color-purple-650',
   '--color-purple-700',
-  // Accents
   '--color-mint-100',
   '--color-mint-500',
   '--color-mint-600',
@@ -110,7 +101,6 @@ const colorVars = [
   '--color-blue-100',
   '--color-blue-500',
   '--color-blue-600',
-  // Gray
   '--color-gray-50',
   '--color-gray-100',
   '--color-gray-200',
@@ -152,18 +142,9 @@ type PlaygroundProps = {
   padding: (typeof paddings)[number];
   width: (typeof widths)[number];
 
-  // Chip controls
-  showChip: boolean;
-  chipText: string;
-  chipSize: NonNullable<ChipProps['size']>;
-  chipDensity: NonNullable<ChipProps['density']>;
-  chipShape: NonNullable<ChipProps['shape']>;
-  chipTone: NonNullable<ChipProps['tone']>;
-  chipTopic: NonNullable<ChipProps['topic']>;
-  chipIcon: NonNullable<ChipProps['icon']>;
-  chipTypo: NonNullable<ChipProps['typo']>;
-  chipTextColor: NonNullable<ChipProps['textColor']> | 'custom';
-  chipCustomTextClass?: string; // 예: 'text-[var(--color-blue-600)]'
+  showBadge: boolean;
+  badgeValue: number;
+  badgeSize: NonNullable<BadgeProps['size']>;
 };
 
 const Preview: React.FC<PlaygroundProps> = props => {
@@ -177,17 +158,10 @@ const Preview: React.FC<PlaygroundProps> = props => {
     shadow,
     padding,
     width,
-    showChip,
-    chipText,
-    chipSize,
-    chipDensity,
-    chipShape,
-    chipTone,
-    chipTopic,
-    chipIcon,
-    chipTypo,
-    chipTextColor,
-    chipCustomTextClass,
+
+    showBadge,
+    badgeValue,
+    badgeSize,
   } = props;
 
   const radiusClass =
@@ -195,7 +169,7 @@ const Preview: React.FC<PlaygroundProps> = props => {
   const shadowClass = shadow === 'xl' ? 'shadow-xl' : '';
   const widthClass =
     width === 'sm'
-      ? 'max-w-[560px]'
+      ? 'max-w[560px]'
       : width === 'md'
         ? 'max-w-[840px]'
         : width === 'lg'
@@ -210,34 +184,15 @@ const Preview: React.FC<PlaygroundProps> = props => {
         ? 'bg-surface'
         : bgKind === 'canvas'
           ? 'bg-canvas'
-          : ''; // transparent일 때 빈 문자열
+          : '';
 
   const borderStyle: React.CSSProperties =
     bgKind === 'transparent'
       ? { border: '1px dashed var(--color-gray-300)' }
       : { border: '1px solid var(--color-gray-200)' };
 
-  // Chip class 조합 (textColor 'custom'이면 추후에 덧붙임)
-  const chipBase = chip({
-    size: chipSize,
-    density: chipDensity,
-    shape: chipShape,
-    tone: chipTone,
-    topic: chipTopic,
-    icon: chipIcon,
-    typo: chipTypo,
-    textColor: chipTextColor as ChipProps['textColor'],
-  });
-  const chipClass =
-    chipTextColor === 'custom' && chipCustomTextClass
-      ? `${chipBase} ${chipCustomTextClass}`
-      : chipBase;
-
-  const Leading = chipIcon === 'leading' ? <span aria-hidden>✓</span> : null;
-  const Trailing = chipIcon === 'trailing' ? <span aria-hidden>✓</span> : null;
-
   return (
-    <div className="p-6 bg-canvas">
+    <div className="bg-canvas p-6">
       <div
         className={cls('mx-auto', widthClass, bgClass, radiusClass, shadowClass)}
         style={{ padding: `${paddingPx}px`, ...borderStyle }}>
@@ -246,16 +201,10 @@ const Preview: React.FC<PlaygroundProps> = props => {
             {sampleText}
           </div>
 
-          {showChip && (
-            <span className={chipClass} aria-label="chip">
-              {Leading}
-              <span>{chipText}</span>
-              {Trailing}
-            </span>
-          )}
+          {showBadge && <Badge size={badgeSize} value={badgeValue} />}
         </div>
 
-        <div className="mt-3 caption text-[color:var(--color-subtle)]">
+        <div className="caption mt-3 text-[color:var(--color-subtle)]">
           variant: <code>{variant}</code> · textColor: <code>{textColor}</code> · bg:{' '}
           <code>{gradient !== 'none' ? gradient : bgKind}</code> · radius: <code>{radius}</code> ·
           shadow: <code>{shadow}</code> · padding: <code>{paddingPx}px</code>
@@ -279,18 +228,9 @@ const meta = {
     padding: '24' as const,
     width: 'md' as const,
 
-    // Chip 기본값
-    showChip: true,
-    chipText: '오늘 21시 마감',
-    chipSize: 'sm' as NonNullable<ChipProps['size']>,
-    chipDensity: 'normal' as NonNullable<ChipProps['density']>,
-    chipShape: 'pill' as NonNullable<ChipProps['shape']>,
-    chipTone: 'topicSoft' as NonNullable<ChipProps['tone']>,
-    chipTopic: 'default' as NonNullable<ChipProps['topic']>,
-    chipIcon: 'leading' as NonNullable<ChipProps['icon']>,
-    chipTypo: 'tag' as NonNullable<ChipProps['typo']>,
-    chipTextColor: 'auto' as NonNullable<ChipProps['textColor']> | 'custom',
-    chipCustomTextClass: '',
+    showBadge: true,
+    badgeValue: 7, // 100 이상으로 올리면 "99+"
+    badgeSize: 'sm' as NonNullable<BadgeProps['size']>,
   },
   argTypes: {
     sampleText: { control: 'text' },
@@ -303,28 +243,10 @@ const meta = {
     padding: { control: { type: 'select' }, options: paddings },
     width: { control: 'radio', options: widths },
 
-    // Chip controls
-    showChip: { control: 'boolean' },
-    chipText: { control: 'text' },
-    chipSize: { control: 'radio', options: ['xs', 'sm', 'md', 'lg', 'xl'] },
-    chipDensity: { control: 'radio', options: ['normal', 'compact'] },
-    chipShape: { control: 'radio', options: ['pill', 'rounded', 'square'] },
-    chipTone: {
-      control: 'select',
-      options: ['soft', 'solid', 'outline', 'topicSoft', 'topicSolid'],
-    },
-    chipTopic: {
-      control: 'select',
-      options: ['default', 'growth', 'learn', 'challenge', 'connect'],
-    },
-    chipIcon: { control: 'radio', options: ['none', 'leading', 'trailing'] },
-    chipTypo: { control: 'radio', options: ['tag', 'caption', 'captionBold', 'badge'] },
-    chipTextColor: { control: 'select', options: ['auto', 'body', 'subtle', 'inverse', 'custom'] },
-    chipCustomTextClass: {
-      control: 'text',
-      if: { arg: 'chipTextColor', eq: 'custom' },
-      description: '예) text-[var(--color-blue-600)]',
-    },
+    // Badge controls
+    showBadge: { control: 'boolean' },
+    badgeValue: { control: { type: 'number', min: 0 } },
+    badgeSize: { control: 'radio', options: ['sm', 'lg'] },
   },
   render: args => <Preview {...(args as PlaygroundProps)} />,
 } satisfies Meta;

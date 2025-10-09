@@ -512,10 +512,17 @@
     font-weight: var(--w-medium);
     font-family: var(--font-sans);
   }
-  .badge {
+  .badge-lg {
     font-size: 12px;
     line-height: 16px;
     font-weight: var(--w-bold);
+    font-family: var(--font-sans);
+  }
+
+  .badge-xs {
+    font-size: 10px;
+    line-height: 11px;
+    font-weight: var(--w-semibold);
     font-family: var(--font-sans);
   }
 

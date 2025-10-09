@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { button, topicBgSoft, topicBgSolid, topicText, typo } from '../../../src/styles/variants';
+import Badge from '../../../src/components/ui/Badge';
+import { button, topicBgSoft, topicText, typo } from '../../../src/styles/variants';
 import type { VariantProps } from 'class-variance-authority';
 
 const meta: Meta = {
@@ -15,7 +16,7 @@ type Story = StoryObj;
 type Topic = NonNullable<VariantProps<typeof topicText>['topic']>;
 
 const Spec: React.FC<{ items: string[] }> = ({ items }) => (
-  <div className="mt-2 caption text-[color:var(--color-subtle)]">{items.join(' · ')}</div>
+  <div className="caption mt-2 text-[color:var(--color-subtle)]">{items.join(' · ')}</div>
 );
 
 export const Examples: Story = {
@@ -40,21 +41,21 @@ export const Examples: Story = {
       </section>
 
       {/* CARD SAMPLE */}
-      <section className="grid md:grid-cols-2 gap-6">
+      <section className="grid gap-6 md:grid-cols-2">
         {(['growth', 'connect'] as Topic[]).map(topic => (
           <article
             key={topic}
-            className="bg-surface rounded-xl p-6 space-y-3 shadow-xl border border-[color:var(--color-gray-200)]">
+            className="bg-surface space-y-3 rounded-xl border border-[color:var(--color-gray-200)] p-6 shadow-xl">
             <header className="flex items-center gap-2">
               <span className="tag chip-rounded px-2.5 py-1">
                 <span className={topicText({ topic })}>
                   # {topic === 'growth' ? '성장' : '연결'}
                 </span>
               </span>
-              <span className="caption chip-full px-2.5 py-1 border border-[color:var(--color-gray-300)] text-[color:var(--color-gray-600)] bg-white">
+              <span className="caption chip-full border border-[color:var(--color-gray-300)] bg-white px-2.5 py-1 text-[color:var(--color-gray-600)]">
                 1월 7일
               </span>
-              <span className="caption chip-full px-2.5 py-1 border border-[color:var(--color-gray-300)] text-[color:var(--color-gray-600)] bg-white">
+              <span className="caption chip-full border border-[color:var(--color-gray-300)] bg-white px-2.5 py-1 text-[color:var(--color-gray-600)]">
                 17:30
               </span>
               <span
@@ -101,9 +102,24 @@ export const Examples: Story = {
         ))}
       </section>
 
+      {/* 숫자 배지 */}
+      <section className="space-y-2">
+        <h3 className="section-title">Badge</h3>
+        <div className="flex items-center gap-6">
+          <Badge size="sm" value={1} />
+          <Badge size="sm" value={27} />
+          <Badge size="sm" value={120} /> {/* 99+ 확인 */}
+          <Badge size="lg" value={1} />
+          <Badge size="lg" value={27} />
+          <Badge size="lg" value={120} /> {/* 99+ 확인 */}
+          {/* <Badge size="sm" value={0} />  // 0이면 렌더되지 않음 */}
+        </div>
+        <Spec items={['0이면 비노출', '기본 max=99 → 100 이상은 99+']} />
+      </section>
+
       {/* METRICS */}
       <section className="space-y-1">
-        <div className="rounded-xl p-6 bg-[color:var(--color-purple-100)]/35">
+        <div className="rounded-xl bg-[color:var(--color-purple-100)]/35 p-6">
           <div className={typo({ variant: 'metric40' })}>4.0</div>
           <p className={typo({ variant: 'caption', color: 'subtle' })}>
             리뷰 점수 숫자 전용 — metric-40(40/36 · 700)
@@ -113,18 +129,18 @@ export const Examples: Story = {
       </section>
 
       {/* FORM LABELS */}
-      <section className="grid md:grid-cols-2 gap-6">
+      <section className="grid gap-6 md:grid-cols-2">
         {/* 필터/라디오 영역 */}
         <div className="space-y-2">
           <div className={typo({ variant: 'fieldLabel' })}>선택 서비스</div>
           <div className="flex gap-2">
-            <span className="tag chip-full px-3 py-1 text-[color:var(--color-purple-500)] bg-[color:var(--color-purple-100)]/50">
-              이용 예정
+            <span className="tag chip-full px-3 py-1">
+              <span className={topicText({ topic: 'default' })}>이용 예정</span>
             </span>
-            <span className="tag chip-full px-3 py-1 border border-[color:var(--color-gray-300)] text-[color:var(--color-gray-600)] bg-white">
+            <span className="tag chip-full border border-[color:var(--color-gray-300)] bg-white px-3 py-1 text-[color:var(--color-gray-600)]">
               개설대기
             </span>
-            <span className="tag chip-rounded px-2.5 py-1 bg-[color:var(--color-gray-100)] text-[color:var(--color-gray-600)]">
+            <span className="caption chip-rounded bg-[color:var(--color-gray-100)] px-2.5 py-1 text-[color:var(--color-gray-700)]">
               이용 완료
             </span>
           </div>
@@ -144,7 +160,7 @@ export const Examples: Story = {
           </label>
           <input
             id="meet-dt"
-            className="w-full h-11 px-4 rounded-lg bg-white text-[var(--color-gray-700)] border border-[color:var(--color-gray-300)]"
+            className="h-11 w-full rounded-lg border border-[color:var(--color-gray-300)] bg-white px-4 text-[var(--color-gray-700)]"
             defaultValue="2024-11-14 12:00 PM"
             aria-describedby="meet-dt-help"
           />
@@ -161,161 +177,6 @@ export const Examples: Story = {
         </div>
       </section>
 
-      {/* ONBOARDING / HERO */}
-      <section className="space-y-2">
-        <h2 className={typo({ variant: 'h1Semibold' })}>온보딩 히어로 문구</h2>
-        <p className="typo-body-lg text-[color:var(--color-subtle)] max-w-3xl">
-          서비스의 핵심 가치를 한 문장으로 전달합니다. 부제/설명은 18/28 가독성 본문을 사용합니다.
-        </p>
-        <Spec items={['hero: typo/h1Semibold', 'sub: typo/typo-body-lg + subtle']} />
-      </section>
-
-      {/* PAGE HEADER PATTERN */}
-      <section className="space-y-1">
-        <h2 className={typo({ variant: 'h3Semibold' })}>페이지 타이틀 패턴</h2>
-        <p className="caption text-[color:var(--color-subtle)]">
-          모든 페이지 상단 타이틀은 h3Semibold(32/36)로 통일
-        </p>
-        <Spec items={['page title: typo/h3Semibold', 'meta: caption/subtle']} />
-      </section>
-
-      {/* CARD: List with Meta */}
-      <section className="grid md:grid-cols-2 gap-6">
-        {[
-          { topic: 'growth', title: '코딩 알고리즘 스터디' },
-          { topic: 'connect', title: '개발자 네트워킹 모임 밤' },
-        ].map((c, i) => (
-          <article
-            key={i}
-            className="rounded-xl shadow-xl border border-[color:var(--color-gray-200)] p-6 flex items-start gap-6 bg-surface">
-            <div className="w-[160px] h-[120px] rounded-lg bg-[color:var(--color-gray-100)]" />
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span
-                  className={`tag chip-rounded px-2.5 py-1 ${topicText({
-                    topic: c.topic as Topic,
-                  })}`}>
-                  #{c.topic === 'growth' ? '성장' : '연결'}
-                </span>
-                <span className="caption chip-full px-3 py-1 border border-[color:var(--color-gray-300)] text-[color:var(--color-gray-600)] bg-white">
-                  1월 7일
-                </span>
-                <span className="caption chip-full px-3 py-1 border border-[color:var(--color-gray-300)] text-[color:var(--color-gray-600)] bg-white">
-                  17:30
-                </span>
-                <span
-                  className={`caption chip-rounded px-2.5 py-1 text-white ${topicBgSolid({
-                    topic: c.topic as Topic,
-                  })}`}>
-                  오늘 21시 마감
-                </span>
-              </div>
-
-              <h3 className={typo({ variant: 'cardTitle' }) + ' mt-3'}>{c.title}</h3>
-
-              <p className="typo-body mt-2 text-[color:var(--color-body)]">
-                모임에 대한 간단한 소개 문장이 들어갑니다. 위치/시간 등은 아래 캡션으로 보조
-                표기합니다.
-              </p>
-
-              <div className="mt-3 flex items-center gap-2">
-                <span className="caption text-[color:var(--color-subtle)]">서울 · 강남구</span>
-                <span className="caption text-[color:var(--color-subtle)]">4/20</span>
-              </div>
-
-              <div className="mt-5 flex items-center justify-end gap-2">
-                <button
-                  className={
-                    button({ variant: 'outline', size: 'md', typo: 'tag', radius: 'md' }) +
-                    ' font-bold'
-                  }>
-                  공유하기
-                </button>
-                <button
-                  className={
-                    button({ variant: 'primary', size: 'md', typo: 'cta', radius: 'md' }) +
-                    ' font-bold'
-                  }>
-                  참여하기
-                </button>
-              </div>
-
-              <Spec
-                items={[
-                  'topic tag: tag + topicText',
-                  'meta: caption + chip-full',
-                  'status: caption + topicBgSolid',
-                  'title: card-title',
-                  'buttons: outline/primary · size:md · radius:md · bold',
-                ]}
-              />
-            </div>
-          </article>
-        ))}
-      </section>
-
-      {/* META CHIPS (Rounded vs Full) */}
-      <section className="space-y-2">
-        <h3 className="section-title">메타 칩 모서리 패턴</h3>
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="caption chip-rounded px-2.5 py-1 border border-[color:var(--color-gray-300)] text-[color:var(--color-gray-600)] bg-white">
-            오늘 21시 마감 (rounded)
-          </span>
-          <span className="caption chip-full px-3 py-1 border border-[color:var(--color-gray-300)] text-[color:var(--color-gray-600)] bg-white">
-            오늘 21시 마감 (full)
-          </span>
-        </div>
-        <Spec items={['chips: caption + chip-rounded/full', 'border: gray-300', 'bg: white']} />
-      </section>
-
-      {/* FORM / ERROR / HELP 데모 */}
-      <section className="grid md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <label className="label" htmlFor="email">
-            이메일
-          </label>
-          <input
-            id="email"
-            className="w-full h-11 px-4 rounded-sm bg-white text-[color:var(--color-gray-700)] border border-[color:var(--color-gray-300)]"
-            placeholder="you@example.com"
-            aria-describedby="email-help"
-          />
-          <p id="email-help" className="caption text-[color:var(--color-subtle)]">
-            로그인에 사용할 이메일
-          </p>
-          <Spec
-            items={[
-              'label: .label(14/20·600)',
-              'helper: caption/subtle',
-              'field: rounded-sm + gray-300',
-              'a11y: aria-describedby',
-            ]}
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="label" htmlFor="pw">
-            비밀번호
-          </label>
-          <input
-            id="pw"
-            className="w-full h-11 px-4 rounded-sm bg-white text-[color:var(--color-gray-700)] border border-[color:var(--color-red-500)]"
-            placeholder="••••••••"
-            aria-invalid={true}
-            aria-describedby="pw-err"
-          />
-          <p id="pw-err" className="caption text-[color:var(--color-red-500)]">
-            8자 이상 입력하세요
-          </p>
-          <Spec
-            items={[
-              'error: border red-500',
-              'error text: caption/red-500',
-              'a11y: aria-invalid + aria-describedby',
-            ]}
-          />
-        </div>
-      </section>
-
       {/* DENSE LIST */}
       <section className="space-y-2">
         <h3 className="section-title">밀집 리스트(본문+캡션)</h3>
@@ -323,7 +184,7 @@ export const Examples: Story = {
           {[1, 2, 3].map(i => (
             <li
               key={i}
-              className="bg-surface rounded-lg p-4 border border-[color:var(--color-gray-200)]">
+              className="bg-surface rounded-lg border border-[color:var(--color-gray-200)] p-4">
               <div className="typo-body">리스트 아이템 {i}</div>
               <div className="caption text-[color:var(--color-subtle)]">메타 정보 · 2025.09.26</div>
             </li>
@@ -335,7 +196,7 @@ export const Examples: Story = {
       {/* FOOTER NOTE */}
       <section className="space-y-1">
         <h4 className="h5Semibold">용례 요약</h4>
-        <ul className="caption text-[color:var(--color-subtle)] list-disc pl-4 space-y-1">
+        <ul className="caption list-disc space-y-1 pl-4 text-[color:var(--color-subtle)]">
           <li>페이지 타이틀: h3Semibold(32/36) 통일</li>
           <li>카드 제목: card-title(18/28)</li>
           <li>날짜/장소/상태: caption(12/16) + chip-rounded/full</li>

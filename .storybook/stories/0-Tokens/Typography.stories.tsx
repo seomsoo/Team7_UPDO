@@ -29,7 +29,7 @@ export const All: Story = {
       <Section
         title="Type Scale"
         desc="디자인 기준 px/line-height. 참고용 스케일 — 실제 사용은 아래 시맨틱 클래스 사용">
-        <div className="rounded-lg border border-[color:var(--color-gray-200)] p-5 space-y-2 bg-surface">
+        <div className="bg-surface space-y-2 rounded-lg border border-[color:var(--color-gray-200)] p-5">
           <div className="typo-5xl">typo-5xl — 56/64</div>
           <div className="typo-4xl">typo-4xl — 40/40</div>
           <div className="typo-3xl">typo-3xl — 32/36</div>
@@ -44,8 +44,8 @@ export const All: Story = {
 
       {/* HEADINGS */}
       <Section title="Headings (h1~h5)" desc="페이지 타이틀은 h3Semibold(32/36) 권장">
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="rounded-lg border border-[color:var(--color-gray-200)] p-5 space-y-2 bg-surface">
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="bg-surface space-y-2 rounded-lg border border-[color:var(--color-gray-200)] p-5">
             <div className={typo({ variant: 'h1' })}>h1 (56/64 · 400)</div>
             <div className={typo({ variant: 'h1Semibold' })}>h1Semibold (56/64 · 600)</div>
             <div className={typo({ variant: 'h1Bold' })}>h1Bold (56/64 · 700)</div>
@@ -54,7 +54,7 @@ export const All: Story = {
             <div className={typo({ variant: 'h2Semibold' })}>h2Semibold (40/44 · 600)</div>
             <div className={typo({ variant: 'h2Bold' })}>h2Bold (40/44 · 700)</div>
           </div>
-          <div className="rounded-lg border border-[color:var(--color-gray-200)] p-5 space-y-2 bg-surface">
+          <div className="bg-surface space-y-2 rounded-lg border border-[color:var(--color-gray-200)] p-5">
             <div className={typo({ variant: 'h3' })}>h3 (32/36 · 400)</div>
             <div className={typo({ variant: 'h3Semibold' })}>h3Semibold (32/36 · 600)</div>
             <div className={typo({ variant: 'h3Bold' })}>h3Bold (32/36 · 700)</div>
@@ -72,12 +72,12 @@ export const All: Story = {
 
       {/* TITLES */}
       <Section title="Titles (중간 계층)" desc="페이지/섹션/카드/모달">
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="rounded-lg border border-[color:var(--color-gray-200)] p-5 space-y-2 bg-surface">
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="bg-surface space-y-2 rounded-lg border border-[color:var(--color-gray-200)] p-5">
             <div className="page-title">page-title — 24/32 · 600</div>
             <div className="modal-title">modal-title — 24/32 · 600</div>
           </div>
-          <div className="rounded-lg border border-[color:var(--color-gray-200)] p-5 space-y-2 bg-surface">
+          <div className="bg-surface space-y-2 rounded-lg border border-[color:var(--color-gray-200)] p-5">
             <div className="section-title">section-title — 20/28 · 600</div>
             <div className="card-title">card-title — 18/28 · 600</div>
           </div>
@@ -86,14 +86,14 @@ export const All: Story = {
 
       {/* BODY / META */}
       <Section title="Body / Meta" desc="본문/보조문/라벨/캡션">
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="rounded-lg border border-[color:var(--color-gray-200)] p-5 space-y-2 bg-surface">
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="bg-surface space-y-2 rounded-lg border border-[color:var(--color-gray-200)] p-5">
             <p className="typo-body">typo-body — 16/24 · 500</p>
             <p className="typo-body-bold">typo-body-bold — 16/24 · 600</p>
             <p className="typo-body-lg">typo-body-lg — 18/28 · 400</p>
             <p className="typo-body-sm">typo-body-sm — 14/20 · 500</p>
           </div>
-          <div className="rounded-lg border border-[color:var(--color-gray-200)] p-5 space-y-2 bg-surface">
+          <div className="bg-surface space-y-2 rounded-lg border border-[color:var(--color-gray-200)] p-5">
             <div className="eyebrow">eyebrow — 14/20 · 600</div>
             <div className="label">label — 14/20 · 600</div>
             <div className="label-sm">label-sm — 12/16 · 600</div>
@@ -105,10 +105,14 @@ export const All: Story = {
 
       {/* SPECIAL */}
       <Section title="Special" desc="태그/배지/지표">
-        <div className="rounded-lg border border-[color:var(--color-gray-200)] p-5 space-y-2 bg-surface">
-          <div className="tag">tag — 14/20 · 500</div>
-          <div className="badge">badge — 12/16 · 700</div>
-          <div className="metric-40">metric-40 — 40/36 · 700</div>
+        <div className="bg-surface space-y-2 rounded-lg border border-[color:var(--color-gray-200)] p-5">
+          <div className="tag text-[color:var(--color-body)]">tag — 14/20 · 500</div>
+
+          {/* badge 라인 표기 (숫자 샘플 X) */}
+          <div className="badge-xs text-[color:var(--color-body)]">badge-xs — 10/11 · 600</div>
+          <div className="badge-lg text-[color:var(--color-body)]">badge-lg — 12/16 · 700</div>
+
+          <div className="metric-40 text-[color:var(--color-body)]">metric-40 — 40/36 · 700</div>
         </div>
       </Section>
     </main>
