@@ -636,3 +636,47 @@
 @utility bg-grad-600c {
   background-image: linear-gradient(90deg, var(--grad-600c-from), var(--grad-600c-to));
 }
+
+/* === Form Controls: Custom Checkbox === */
+.checkbox {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-gray-300);
+  background: #fff;
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+}
+
+.checkbox:active {
+  transform: scale(0.98);
+}
+
+.checkbox:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(134 51 243 / 0.25);
+}
+
+.checkbox:checked {
+  background-color: #fff;
+  border-color: var(--color-purple-600);
+}
+
+.checkbox:checked::after {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 6px;
+  border: solid var(--color-purple-600);
+  border-width: 0 0 2px 2px;
+  transform: translateY(-1px) rotate(-45deg);
+}
+
+.checkbox:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
