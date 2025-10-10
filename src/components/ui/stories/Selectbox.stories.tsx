@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
-import Selectbox from '../SelectBox';
+import Selectbox from '../Selectbox';
 
 const meta: Meta<typeof Selectbox> = {
   title: 'components/ui/Selectbox',
