@@ -91,9 +91,9 @@
   --color-disabled-2: var(--color-gray-400); /* 텍스트 */
   --color-disabled-3: var(--color-gray-500); /* 컨트롤 */
 
-  --color-primary: var(--color-purple-500);
-  --color-primary-hover: var(--color-purple-600);
-  --color-primary-active: var(--color-purple-700);
+  --color-primary: var(--color-purple-250);
+  --color-primary-hover: var(--color-purple-450);
+  --color-primary-active: var(--color-purple-600);
   --color-danger: var(--color-red-500);
 
   /* Surfaces */
