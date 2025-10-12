@@ -1,0 +1,56 @@
+'use client';
+import * as React from 'react';
+import { cn } from '@/utils/cn';
+
+export type DropdownItem = {
+  label: string;
+  value: string;
+};
+
+export interface DropdownProps {
+  items: DropdownItem[];
+  onChange?: (value: string) => void;
+  size?: 'large' | 'medium' | 'small';
+  emptyText?: string;
+  id?: string;
+  ariaLabel?: string;
+  className?: string;
+}
+
+const PanelBase = 'z-50 overflow-hidden rounded-md border border-gray-200 bg-white shadow-xl p-1';
+
+export default function Dropdown({
+  items,
+  onChange,
+  size = 'large',
+  emptyText = '항목이 없습니다',
+  id,
+  ariaLabel,
+  className,
+}: DropdownProps) {
+  const widthClass = size === 'large' ? 'w-[520px]' : size === 'small' ? 'w-[110px]' : 'w-[142px]';
+
+  return (
+    <div
+      role="listbox"
+      id={id}
+      aria-label={ariaLabel}
+      className={cn(PanelBase, widthClass, className)}>
+      {items.length === 0 ? (
+        <div className="px-3 py-3 text-base text-gray-500">{emptyText}</div>
+      ) : (
+        items.map(item => (
+          <button
+            key={item.value}
+            type="button"
+            role="option"
+            aria-selected={false}
+            className="relative flex h-11 w-full cursor-pointer items-center rounded-sm px-3 py-[6px] text-base outline-none select-none hover:bg-purple-50"
+            onClick={() => onChange?.(item.value)}>
+            <span className="block truncate">{item.label}</span>
+          </button>
+        ))
+      )}
+    </div>
+  );
+}
