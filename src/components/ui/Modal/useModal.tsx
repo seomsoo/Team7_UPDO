@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 
-/** 스크롤 락 */
 export function useBodyScrollLock(lock: boolean) {
   useEffect(() => {
     if (!lock) return;
@@ -14,7 +13,6 @@ export function useBodyScrollLock(lock: boolean) {
   }, [lock]);
 }
 
-/** ESC 키로 닫기 */
 export function useEscape(open: boolean, onClose: () => void) {
   useEffect(() => {
     if (!open) return;
@@ -26,7 +24,6 @@ export function useEscape(open: boolean, onClose: () => void) {
   }, [open, onClose]);
 }
 
-/** 포커스 트랩 */
 export function useFocusTrap(
   open: boolean,
   containerRef: React.RefObject<HTMLDivElement>,
