@@ -152,7 +152,6 @@ const Tab: React.FC<TabProps> = ({
                   name={item.icon}
                   size={isActive ? 28 : 24}
                   className={cn(
-                    'transition-colors duration-200 md:h-8 md:w-8',
                     // 아이콘 사이즈
                     'h-[32px] w-[32px] md:h-[45px] md:w-[45px]',
                     isActive
