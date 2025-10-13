@@ -43,9 +43,7 @@ function Header({ title, onClose, className, titleClassName }: HeaderProps) {
       )}>
       <div>
         {title && (
-          <h2
-            id="modal-title"
-            className={cn('text-lg font-semibold text-gray-900', titleClassName)}>
+          <h2 id="modal-title" className={cn('card-title text-gray-900', titleClassName)}>
             {title}
           </h2>
         )}

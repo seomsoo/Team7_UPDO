@@ -1,0 +1,58 @@
+'use client';
+
+import { Input } from './Input';
+import Dropdown from './Dropdown';
+
+import { useState } from 'react';
+import Icon from './Icon';
+
+import type { Option } from '@/constants/tags';
+
+export interface SelectInputProps {
+  items: ReadonlyArray<Option>;
+  value: Option['value'] | null;
+  onChange: (next: Option['value']) => void;
+  placeholder?: string;
+}
+
+export default function SelectInput({ items, value, onChange, placeholder }: SelectInputProps) {
+  const [open, setOpen] = useState(false);
+  const toggleOpen = () => setOpen(prev => !prev);
+
+  const selectedLabel = items.find(item => item.value === value)?.label ?? '';
+
+  return (
+    <div className="relative w-full">
+      <div onClick={toggleOpen} className="cursor-pointer">
+        <Input
+          placeholder={placeholder}
+          value={selectedLabel}
+          readOnly
+          tabIndex={-1}
+          inputClassName="pointer-events-none caret-transparent selection:bg-transparent"
+          rightSlot={
+            <button
+              type="button"
+              aria-label={open ? '옵션 닫기' : '옵션 열기'}
+              className="cursor-pointer">
+              <Icon name="arrow_dropdown" />
+            </button>
+          }
+        />
+      </div>
+
+      {open && (
+        <div className="absolute top-full left-0 w-full">
+          <Dropdown
+            items={items}
+            onChange={next => {
+              onChange(next);
+              setOpen(false);
+            }}
+            onOpenChange={setOpen}
+          />
+        </div>
+      )}
+    </div>
+  );
+}

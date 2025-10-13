@@ -21,7 +21,7 @@ export const INPUT_VARIANT = {
 };
 
 const inputVariants = cva(
-  'flex w-full rounded-md px-4 py-2.5 outline-none transition text-gray-700 bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed',
+  'flex items-center w-full rounded-md px-4 py-2.5 outline-none transition text-gray-700 bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed',
   {
     variants: {
       variant: INPUT_VARIANT,
@@ -98,12 +98,19 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               {showPassword ? <Icon name="visibility_on" /> : <Icon name="visibility_off" />}
             </button>
           )}
-          {rightSlot && <div className="shrink-0">{rightSlot}</div>}
+          {rightSlot && (
+            <div className="flex shrink-0 items-center justify-center">{rightSlot}</div>
+          )}
         </div>
-
-        <p id={errorId} className="typo-sm pt-1 pl-4 text-red-500" role="alert" aria-live="polite">
-          {isError && errorMessage ? errorMessage : null}
-        </p>
+        {isError && (
+          <p
+            id={errorId}
+            className="typo-sm pt-1 pl-4 text-red-500"
+            role="alert"
+            aria-live="polite">
+            {errorMessage ? errorMessage : null}
+          </p>
+        )}
       </>
     );
   },
