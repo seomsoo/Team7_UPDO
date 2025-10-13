@@ -9,8 +9,7 @@ import Icon from './Icon';
 
 const tabItem = cva(
   [
-    'relative flex flex-col md:flex-row items-center justify-center',
-    'gap-2 px-8 py-2',
+    'relative flex items-center justify-center',
     'transition-colors duration-200 cursor-pointer select-none',
     'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-purple-500)] focus-visible:ring-offset-2',
   ],
@@ -120,8 +119,9 @@ const Tab: React.FC<TabProps> = ({
         ref={containerRef}
         role="tablist"
         className={twMerge(
-          'relative flex flex-wrap items-center justify-start border-b border-[var(--color-gray-200)]',
-          'gap-2 overflow-hidden px-2 md:gap-4 md:px-4 lg:gap-6 lg:px-6',
+          'relative flex items-center justify-start border-b border-[var(--color-gray-200)]',
+          'scrollbar-hide gap-2 overflow-x-auto px-2 whitespace-nowrap',
+          'md:gap-4 md:px-4 lg:gap-6 lg:px-6',
           fullWidth && 'w-full',
         )}>
         {items.map((item, i) => {
@@ -141,10 +141,11 @@ const Tab: React.FC<TabProps> = ({
               // 라벨(텍스트) 컬러 설정
               className={twMerge(
                 tabItem({ active: isActive, disabled: !!item.disabled }),
-                'flex flex-row items-center justify-center gap-2 px-6 py-2',
+                'flex flex-1 items-center justify-center gap-1 py-2 md:flex-none md:flex-row',
+                'md:flex md:flex-row md:items-center md:justify-center md:gap-2 md:px-6 md:py-2',
                 isActive
-                  ? 'text-[var(--color-gray-800)]'
-                  : 'text-[var(--color-gray-500)] hover:text-[var(--color-gray-700)]',
+                  ? 'typo-body-bold md:typo-subtitle-bold text-[var(--color-gray-800)]'
+                  : 'typo-body md:typo-subtitle text-[var(--color-gray-500)] hover:text-[var(--color-gray-700)]',
               )}>
               {/* 아이콘 설정 */}
               {item.icon && (
@@ -161,13 +162,7 @@ const Tab: React.FC<TabProps> = ({
                 />
               )}
               {/* 라벨 설정 */}
-              <span
-                className={cn(
-                  'text-center transition-all duration-150',
-                  'typo-body md:typo-subtitle',
-                )}>
-                {item.label}
-              </span>
+              <span className={cn('text-center transition-all duration-150')}>{item.label}</span>
             </button>
           );
         })}
@@ -194,7 +189,10 @@ const Tab: React.FC<TabProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className={twMerge('mt-6', contentClassName)}>
+            className={twMerge(
+              'typo-body md:typo-subtitle mt-4 px-3 leading-[20px] md:mt-6 md:px-6 md:leading-[28px]',
+              contentClassName,
+            )}>
             {activeItem.content}
           </motion.div>
         </AnimatePresence>
