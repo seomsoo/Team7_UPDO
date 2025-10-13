@@ -3,10 +3,10 @@
 import { GatheringType, GatheringLocation } from '@/types/common';
 
 export interface IGathering {
-  teamId: string; // API 요청용
+  teamId: string;
   id: number;
-  type: GatheringType; // 달램핏/워케이션
-  name: string; // 모임 이름
+  type: GatheringType;
+  name: string;
   dateTime: string;
   registrationEnd?: string;
   location: GatheringLocation;
