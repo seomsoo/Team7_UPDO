@@ -35,3 +35,26 @@ export interface LeaveGatheringParams {
   teamId: string;
   id: number;
 }
+
+// GET /{teamId}/gatherings (list)
+export interface GetGatheringsParams {
+  id?: string;
+  type?: import('@/types/common').GatheringType;
+  location?: import('@/types/common').GatheringLocation;
+  date?: string;
+  createdBy?: number;
+  sortBy?: 'dateTime' | 'registrationEnd' | 'participantCount';
+  sortOrder?: 'asc' | 'desc';
+  limit?: number;
+  offset?: number;
+}
+
+// GET /{teamId}/gatherings/joined
+export interface GetJoinedGatheringsParams {
+  completed?: boolean;
+  reviewed?: boolean;
+  limit?: number;
+  offset?: number;
+  sortBy?: 'dateTime' | 'registrationEnd' | 'joinedAt';
+  sortOrder?: 'asc' | 'desc';
+}
