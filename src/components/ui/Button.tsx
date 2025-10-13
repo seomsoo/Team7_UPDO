@@ -3,7 +3,7 @@ import { cn } from '@/utils/cn';
 import * as React from 'react';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center transition-colors focus:outline-none disabled:cursor-not-allowed',
+  'inline-flex items-center justify-center shrink-0 transition-colors focus:outline-none disabled:cursor-not-allowed',
   {
     variants: {
       variant: {
@@ -40,6 +40,7 @@ const buttonVariants = cva(
         large: 'w-[232px] h-[60px] h5Semibold rounded-xl',
         xlarge: 'w-[474px] h-[60px] h5Semibold rounded-xl',
         calendar: 'w-[122px] h-[40px] eyebrow rounded-md',
+        calendar_small: 'w-[100px] h-[44px] typo-body-bold rounded-md',
         secondary: 'w-[232px] h-[60px] typo-subtitle rounded-xl',
       },
     },
@@ -57,7 +58,7 @@ export interface ButtonProps
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, ...props }, ref) => {
     return (
-      <button ref={ref} className={cn(buttonVariants({ variant, size, className }))} {...props} />
+      <button ref={ref} className={cn(buttonVariants({ variant, size }), className)} {...props} />
     );
   },
 );

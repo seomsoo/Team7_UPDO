@@ -1,6 +1,8 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { Input } from '../Input';
 import Icon from '../Icon';
+
+import { Input } from '../Input';
+import SelectInput from '../SelectInput';
 
 const meta: Meta<typeof Input> = {
   title: 'components/ui/Input',
@@ -56,5 +58,29 @@ export const Playground: Story = {
         </div>
       </div>
     );
+  },
+};
+
+type SelectInputStory = StoryObj<typeof SelectInput>;
+
+export const SelectInputBoard: SelectInputStory = {
+  render: args => (
+    <div className="flex w-[474px] flex-col gap-4">
+      <SelectInput {...args} />
+    </div>
+  ),
+  argTypes: {
+    items: {
+      control: { type: 'object' },
+      description: '드롭다운에 표시할 항목 배열 (label, value)',
+    },
+  },
+  args: {
+    items: [
+      { label: '성장', value: 'growth' },
+      { label: '배움', value: 'learn' },
+      { label: '도전', value: 'challenge' },
+      { label: '연결', value: 'connect' },
+    ],
   },
 };

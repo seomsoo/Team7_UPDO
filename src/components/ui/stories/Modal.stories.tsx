@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Modal, ConfirmModal } from '../Modal';
+import CreateGroupModal from '@/components/feature/group/CreateGroupModal';
 
 const meta: Meta<typeof Modal> = {
   title: 'components/ui/Modal',
@@ -94,4 +95,24 @@ export const ConfirmModalPlayground: ConfirmModalStory = {
     size: 'large',
     content: '로그아웃 하시겠습니까?',
   },
+};
+
+type CreateGroupModalStory = StoryObj<typeof CreateGroupModal>;
+
+export const CreateGroupModalPlayground: CreateGroupModalStory = {
+  render: args => {
+    const [open, setOpen] = useState(false);
+
+    return (
+      <div>
+        <button className="rounded-md border px-3 py-2 text-sm" onClick={() => setOpen(true)}>
+          모달 열기
+        </button>
+
+        <CreateGroupModal open={true} onOpenChange={setOpen} />
+      </div>
+    );
+  },
+  argTypes: {},
+  args: {},
 };

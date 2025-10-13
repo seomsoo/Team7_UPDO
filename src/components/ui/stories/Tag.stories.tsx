@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { Keyword } from '../Keyword';
+import { Tag } from '../Tag';
 
-const meta: Meta<typeof Keyword> = {
-  title: 'components/ui/Keyword',
-  component: Keyword,
+const meta: Meta<typeof Tag> = {
+  title: 'components/ui/Tag',
+  component: Tag,
   parameters: { layout: 'padded' },
   argTypes: {
     topic: {
@@ -26,7 +26,7 @@ const meta: Meta<typeof Keyword> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Keyword>;
+type Story = StoryObj<typeof Tag>;
 
 export const Playground: Story = {};
 
@@ -36,11 +36,11 @@ export const Gallery: Story = {
   },
   render: () => (
     <div className="flex flex-wrap gap-4">
-      <Keyword topic="default" label="기본" />
-      <Keyword topic="growth" label="성장" />
-      <Keyword topic="learn" label="학습" />
-      <Keyword topic="challenge" label="도전" />
-      <Keyword topic="connect" label="연결" />
+      <Tag topic="default" label="기본" />
+      <Tag topic="growth" label="성장" />
+      <Tag topic="learn" label="학습" />
+      <Tag topic="challenge" label="도전" />
+      <Tag topic="connect" label="연결" />
     </div>
   ),
 };
