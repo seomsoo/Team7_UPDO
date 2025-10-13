@@ -15,7 +15,7 @@ const SvgHeart = ({ size = 24, fill, ...props }: IconProps) => (
     width={size}
     height={size}
     xmlns="http://www.w3.org/2000/svg"
-    fill={fill === 'full' ? '#B994FF' : '#fff'} // full,
+    fill={fill === 'full' ? 'var(--color-purple-300)' : 'var(--color-gray-50)'}
     viewBox="0 0 24 24"
     role="img">
     <path

@@ -1,28 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-interface HeartIconProps {
-  size?: number;
-  fill: 'full' | 'lined';
-  className?: string;
-}
-
-const HeartIcon: React.FC<HeartIconProps> = ({ size = 24, fill, className }) => (
-  <svg
-    className={className}
-    width={size}
-    height={size}
-    xmlns="http://www.w3.org/2000/svg"
-    fill={fill === 'full' ? 'var(--color-purple-300)' : 'var(--color-gray-50)'}
-    viewBox="0 0 24 24"
-    role="img"
-    aria-label="heart icon">
-    <path
-      fill="current"
-      d="M22.1 9.1C22 5.7 19.3 3 15.9 3c-1.1 0-2.8.8-3.5 2.1-.1.3-.5.3-.6 0-.8-1.2-2.4-2-3.6-2-3.3 0-6.1 2.7-6.2 6v.2c0 1.7.7 3.3 1.9 4.5v.1c.1.1 4.9 4.3 7.1 6.2.6.5 1.5.5 2.1 0 2.2-1.9 6.9-6.1 7.1-6.2v-.1c1.2-1.1 1.9-2.7 1.9-4.5z"
-    />
-  </svg>
-);
+import Heart from '@/components/ui/Icon/Icons/Heart';
 
 interface AnimatedHeartProps {
   isFilled: boolean;
@@ -61,9 +39,9 @@ const AnimatedHeart: React.FC<AnimatedHeartProps> = React.memo(
         aria-checked={isFilled}
         aria-disabled={disabled}>
         <div className="relative" style={{ width: HEART_SIZE, height: HEART_SIZE }}>
-          {/* Lined 하트 (항상 표시) */}
+          {/* Lined 하트 (기본 상태) */}
           <div className="absolute inset-0">
-            <HeartIcon size={HEART_SIZE} fill="lined" />
+            <Heart size={HEART_SIZE} fill="lined" />
           </div>
 
           {/* Full 하트 (애니메이션) */}
@@ -83,7 +61,7 @@ const AnimatedHeart: React.FC<AnimatedHeartProps> = React.memo(
                   damping: 25,
                   mass: 0.5,
                 }}>
-                <HeartIcon size={HEART_SIZE} fill="full" />
+                <Heart size={HEART_SIZE} fill="full" />
               </motion.div>
             )}
           </AnimatePresence>
