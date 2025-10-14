@@ -8,7 +8,6 @@
 //
 // 파일을 생성한 뒤에 VSCode에서 TypeScript 서버를 재시작(TS: Restart TS Server) 하세요.
 
-// src/services/Service.ts
 import HttpClient from './HttpClient';
 import PolymorphicHttpClient from './PolymorphicHttpClient';
 
