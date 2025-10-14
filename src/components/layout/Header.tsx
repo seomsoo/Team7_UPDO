@@ -41,10 +41,7 @@ export default function Header({ user, favoriteCount = 0, className }: HeaderPro
 
   return (
     <header
-      className={cn(
-        'sticky top-0 z-50 w-full border-b border-[var(--color-gray-200)] bg-[var(--surface)] px-4 md:px-6 lg:px-5',
-        className,
-      )}>
+      className={cn('layout-container sticky top-0 z-50 m-auto w-full px-4 md:px-6', className)}>
       <div className="flex items-center justify-between py-2 md:py-4">
         {/* Left Group: Logo + Navigation */}
         <div className="flex items-center md:gap-8 lg:gap-10">
