@@ -195,6 +195,7 @@
   margin-inline: auto;
   width: 100%;
   padding-inline: 16px;
+  max-width: 1280px;
 }
 @media (min-width: 768px) {
   .layout-container {
@@ -205,13 +206,6 @@
   .layout-container {
     padding-inline: 0;
   }
-}
-
-@utility layout-content {
-  width: 100%;
-  max-width: 1280px;
-  margin-inline: auto;
-  background: var(--canvas);
 }
 
 /* Surface presets  */

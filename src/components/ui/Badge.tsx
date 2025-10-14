@@ -7,11 +7,12 @@ const badgeStyles = cva(
   {
     variants: {
       size: {
-        sm: 'h-4 min-w-[1rem] px-[7px] badge-xs',
-        lg: 'h-6 min-w-[1.5rem] px-[10px] badge-lg',
+        responsive:
+          'h-[12px] min-w-[12px] px-[2px] text-[10px] ' + // 기본: 모바일
+          'md:h-[16px] md:min-w-[16px] md:px-[7px] md:text-[12px]', // 태블릿/PC
       },
     },
-    defaultVariants: { size: 'sm' },
+    defaultVariants: { size: 'responsive' },
   },
 );
 
@@ -32,7 +33,7 @@ export default function Badge({
   max = 99,
   formatter,
   ariaLive = 'polite',
-  size = 'sm',
+  size = 'responsive',
   className,
   ...rest
 }: BadgeProps) {

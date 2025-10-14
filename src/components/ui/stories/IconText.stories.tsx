@@ -13,7 +13,7 @@ const meta: Meta<typeof IconText> = {
       control: { type: 'radio' },
       options: ['none', 'fill', 'outline', 'topicSoft', 'topicSolid'],
     },
-    size: { control: { type: 'radio' }, options: ['sm', 'md', 'lg'] },
+    size: { control: { type: 'radio' }, options: ['sm', 'md', 'lg', 'responsive'] },
     radius: { control: { type: 'radio' }, options: ['pill', 'rounded', 'square'] },
     density: { control: { type: 'radio' }, options: ['tight', 'normal', 'loose'] },
     typo: { control: { type: 'radio' }, options: ['tag', 'caption', 'captionBold'] },
@@ -124,11 +124,11 @@ export const Gallery: Story = {
         <div className="flex items-center gap-8">
           <IconText className="text-purple-500">
             찜한 모임
-            <Badge value={1} size="sm" className="ml-[6px]" />
+            <Badge value={1} size="responsive" className="ml-[6px]" />
           </IconText>
           <IconText className="text-gray-400">
             찜한 모임
-            <Badge value={1} size="sm" className="ml-[6px]" />
+            <Badge value={1} size="responsive" className="ml-[6px]" />
           </IconText>
         </div>
       </div>
