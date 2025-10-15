@@ -1,11 +1,11 @@
 // src/types/reviews/scores.ts
 
-import { ReviewType } from '@/types/common';
+import { Type } from '@/utils/mapping';
 
 export interface IReviewScore {
   teamId: string;
   gatheringId: number;
-  type: ReviewType;
+  type: Type;
   averageScore: number;
   oneStar: number;
   twoStars: number;

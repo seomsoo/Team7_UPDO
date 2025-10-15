@@ -1,13 +1,13 @@
-import { GatheringType, GatheringLocation } from '@/types/common';
+import { Type, Location } from '@/utils/mapping';
 
 export interface IGathering {
   teamId: string;
   id: number;
-  type: GatheringType;
+  type: Type;
   name: string;
   dateTime: string;
   registrationEnd?: string;
-  location: GatheringLocation;
+  location: Location;
   participantCount: number;
   capacity: number;
   image?: string;

@@ -1,9 +1,9 @@
-import { GatheringType, GatheringLocation } from '@/types/common';
+import { Type, Location } from '@/utils/mapping';
 
 // API 요청할 때 사용하는 Type
 export interface CreateGatheringRequest {
-  location: GatheringLocation;
-  type: GatheringType;
+  location: Location;
+  type: Type;
   name: string;
   dateTime: string;
   capacity: number;

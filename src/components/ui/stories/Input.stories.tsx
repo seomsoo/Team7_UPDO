@@ -78,10 +78,10 @@ export const SelectInputBoard: SelectInputStory = {
   },
   args: {
     items: [
-      { label: '성장', value: 'growth' },
-      { label: '배움', value: 'learn' },
-      { label: '도전', value: 'challenge' },
-      { label: '연결', value: 'connect' },
+      { label: '성장', value: 'growth', location: '건대입구' },
+      { label: '배움', value: 'learn', location: '을지로3가' },
+      { label: '도전', value: 'challenge', location: '신림' },
+      { label: '연결', value: 'connect', location: '홍대입구' },
     ],
   },
 };
