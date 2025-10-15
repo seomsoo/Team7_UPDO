@@ -39,7 +39,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko" className={Pretendard.variable}>
-      <ScrollVisibility />
+<html lang="ko" className={Pretendard.variable}>
+  <body className="font-sans">
+    <ScrollVisibility />
+    {children}
+  </body>
+</html>
       <body className="font-sans">{children}</body>
     </html>
   );
