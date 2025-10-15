@@ -1,5 +1,3 @@
-// src/schemas/authsSchema.ts
-
 import { z } from 'zod';
 
 // 공통 정규식

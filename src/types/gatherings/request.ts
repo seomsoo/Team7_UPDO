@@ -1,7 +1,6 @@
 import { GatheringType, GatheringLocation } from '@/types/common';
 
 // API 요청할 때 사용하는 Type
-
 export interface CreateGatheringRequest {
   location: GatheringLocation;
   type: GatheringType;

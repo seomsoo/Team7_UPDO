@@ -1,10 +1,10 @@
 import { tags, locations, TAG_OPTIONS } from '@/constants/tags';
 import { tabs, types, TAB_OPTIONS } from '@/constants/tabs';
 
-type Tag = (typeof tags)[number];
-type Location = (typeof locations)[number];
-type Tab = (typeof tabs)[number];
-type Type = (typeof types)[number];
+export type Tag = (typeof tags)[number];
+export type Location = (typeof locations)[number];
+export type Tab = (typeof tabs)[number];
+export type Type = (typeof types)[number];
 
 // 1. Tag <-> Location
 export function TagtoLocation(tag: Tag): Location {

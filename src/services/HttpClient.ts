@@ -6,7 +6,7 @@ export default class HttpClient {
   protected readonly baseUrl: string;
 
   protected constructor(baseUrl: string) {
-    this.baseUrl = HttpClient.DEFAULT_BASE_URL || baseUrl;
+    this.baseUrl = baseUrl || HttpClient.DEFAULT_BASE_URL!;
   }
 
   // baseUrl을 적합한 url로 변경하여 설정.

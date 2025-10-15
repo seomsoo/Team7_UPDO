@@ -10,7 +10,11 @@ export default class PolymorphicHttpClient extends HttpClient {
 
   public static getInstance(baseUrl?: string) {
     if (!PolymorphicHttpClient.pInstance) {
-      PolymorphicHttpClient.pInstance = new PolymorphicHttpClient(baseUrl ?? ENV.API_BASE_URL!);
+      const finalBaseUrl = baseUrl ?? ENV.API_BASE_URL;
+      if (!finalBaseUrl) {
+        throw new Error('API_BASE_URL is not configured');
+      }
+      PolymorphicHttpClient.pInstance = new PolymorphicHttpClient(finalBaseUrl);
     }
     return PolymorphicHttpClient.pInstance;
   }

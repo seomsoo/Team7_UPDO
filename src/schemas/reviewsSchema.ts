@@ -1,5 +1,3 @@
-// src/schemas/reviewsSchema.ts
-
 import { z } from 'zod';
 
 // 리뷰 작성 폼

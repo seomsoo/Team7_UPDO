@@ -1,5 +1,3 @@
-// src/types/gatherings/models.ts
-
 import { GatheringType, GatheringLocation } from '@/types/common';
 
 export interface IGathering {
