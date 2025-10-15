@@ -18,7 +18,10 @@ export default function ScrollVisibility() {
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (timer.current) window.clearTimeout(timer.current);
+    };
   }, []);
 
   return null;
