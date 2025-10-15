@@ -1,5 +1,4 @@
-// src/services/PolymorphicHttpClient.ts
-
+import { ENV } from '@/constants/env';
 import HttpClient from './HttpClient';
 
 export default class PolymorphicHttpClient extends HttpClient {
@@ -9,11 +8,9 @@ export default class PolymorphicHttpClient extends HttpClient {
     super(baseUrl);
   }
 
-  public static getInstance(
-    baseUrl: string = 'https://fe-adv-project-together-dallaem.vercel.app',
-  ) {
+  public static getInstance(baseUrl?: string) {
     if (!PolymorphicHttpClient.pInstance) {
-      PolymorphicHttpClient.pInstance = new PolymorphicHttpClient(baseUrl);
+      PolymorphicHttpClient.pInstance = new PolymorphicHttpClient(baseUrl ?? ENV.API_BASE_URL!);
     }
     return PolymorphicHttpClient.pInstance;
   }
@@ -22,6 +19,7 @@ export default class PolymorphicHttpClient extends HttpClient {
     if (typeof window === 'undefined') {
       options.credentials = 'include';
     }
-    return super.request<T>(path, options);
+    const res = await fetch(`${this.baseUrl}/${ENV.TEAM_ID}${path}`, options);
+    return res.json() as Promise<T>;
   }
 }

@@ -1,5 +1,3 @@
-// src/services/gatherings/GatheringService.ts
-
 import PolymorphicHttpClient from '../PolymorphicHttpClient';
 import {
   GetGatheringsParams,
@@ -26,11 +24,11 @@ export class GatheringService {
     );
   }
 
-  getGatherings(teamId: string, params?: GetGatheringsParams) {
-    return this.http.get<GetGatheringsResponse>(`/${teamId}/gatherings${this.toQuery(params)}`);
+  getGatherings(params?: GetGatheringsParams) {
+    return this.http.get<GetGatheringsResponse>(`/gatherings${this.toQuery(params)}`);
   }
 
-  createGathering(teamId: string, data: CreateGatheringRequest) {
+  createGathering(data: CreateGatheringRequest) {
     const formData = new FormData();
     formData.append('location', data.location);
     formData.append('type', data.type);
@@ -39,35 +37,33 @@ export class GatheringService {
     formData.append('capacity', String(data.capacity));
     if (data.image) formData.append('image', data.image);
     if (data.registrationEnd) formData.append('registrationEnd', data.registrationEnd);
-    return this.http.post<CreateGatheringResponse>(`/${teamId}/gatherings`, formData);
+    return this.http.post<CreateGatheringResponse>(`/gatherings`, formData);
   }
 
-  getJoinedGatherings(teamId: string, params?: GetJoinedGatheringsParams) {
-    return this.http.get<GetJoinedGatheringsResponse>(
-      `/${teamId}/gatherings/joined${this.toQuery(params)}`,
-    );
+  getJoinedGatherings(params?: GetJoinedGatheringsParams) {
+    return this.http.get<GetJoinedGatheringsResponse>(`/gatherings/joined${this.toQuery(params)}`);
   }
 
-  getGatheringDetail(teamId: string, id: number) {
-    return this.http.get<GetGatheringDetailResponse>(`/${teamId}/gatherings/${id}`);
+  getGatheringDetail(id: number) {
+    return this.http.get<GetGatheringDetailResponse>(`/gatherings/${id}`);
   }
 
-  getParticipants(teamId: string, id: number, params?: GetParticipantsParams) {
+  getParticipants(id: number, params?: GetParticipantsParams) {
     return this.http.get<GetParticipantsResponse>(
-      `/${teamId}/gatherings/${id}/participants${this.toQuery(params)}`,
+      `/gatherings/${id}/participants${this.toQuery(params)}`,
     );
   }
 
-  cancelGathering(teamId: string, id: number) {
-    return this.http.put<CancelGatheringResponse>(`/${teamId}/gatherings/${id}/cancel`);
+  cancelGathering(id: number) {
+    return this.http.put<CancelGatheringResponse>(`/gatherings/${id}/cancel`);
   }
 
-  joinGathering(teamId: string, id: number) {
-    return this.http.post<JoinGatheringResponse>(`/${teamId}/gatherings/${id}/join`);
+  joinGathering(id: number) {
+    return this.http.post<JoinGatheringResponse>(`/gatherings/${id}/join`);
   }
 
-  leaveGathering(teamId: string, id: number) {
-    return this.http.delete<LeaveGatheringResponse>(`/${teamId}/gatherings/${id}/leave`);
+  leaveGathering(id: number) {
+    return this.http.delete<LeaveGatheringResponse>(`/gatherings/${id}/leave`);
   }
 }
 

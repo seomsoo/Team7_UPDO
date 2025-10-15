@@ -1,5 +1,3 @@
-// src/services/reviews/AnonReviewService.ts
-
 import Service from '../Service';
 import { GetReviewsResponse, GetReviewScoresResponse } from '@/types/reviews';
 

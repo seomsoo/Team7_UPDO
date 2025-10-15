@@ -1,5 +1,3 @@
-// src/services/reviews/ReviewService.ts
-
 import PolymorphicHttpClient from '../PolymorphicHttpClient';
 import {
   CreateReviewRequest,
@@ -20,18 +18,16 @@ export class ReviewService {
     );
   }
 
-  createReview(teamId: string, data: CreateReviewRequest) {
-    return this.http.post<CreateReviewResponse>(`/${teamId}/reviews`, data);
+  createReview(data: CreateReviewRequest) {
+    return this.http.post<CreateReviewResponse>(`/reviews`, data);
   }
 
-  getReviews(teamId: string, params?: GetReviewsParams) {
-    return this.http.get<GetReviewsResponse>(`/${teamId}/reviews${this.toQuery(params)}`);
+  getReviews(params?: GetReviewsParams) {
+    return this.http.get<GetReviewsResponse>(`/reviews${this.toQuery(params)}`);
   }
 
-  getReviewScores(teamId: string, params?: GetReviewScoresParams) {
-    return this.http.get<GetReviewScoresResponse>(
-      `/${teamId}/reviews/scores${this.toQuery(params)}`,
-    );
+  getReviewScores(params?: GetReviewScoresParams) {
+    return this.http.get<GetReviewScoresResponse>(`/reviews/scores${this.toQuery(params)}`);
   }
 }
 
