@@ -103,15 +103,7 @@ export const CreateGroupModalPlayground: CreateGroupModalStory = {
   render: args => {
     const [open, setOpen] = useState(false);
 
-    return (
-      <div>
-        <button className="rounded-md border px-3 py-2 text-sm" onClick={() => setOpen(true)}>
-          모달 열기
-        </button>
-
-        <CreateGroupModal open={true} onOpenChange={setOpen} />
-      </div>
-    );
+    return <CreateGroupModal open={true} onOpenChange={setOpen} />;
   },
   argTypes: {},
   args: {},

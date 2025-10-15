@@ -3,6 +3,7 @@ import Icon from '../Icon';
 
 import { Input } from '../Input';
 import SelectInput from '../SelectInput';
+import DatetimeInput from '../DatetimeInput';
 
 const meta: Meta<typeof Input> = {
   title: 'components/ui/Input',
@@ -82,5 +83,24 @@ export const SelectInputBoard: SelectInputStory = {
       { label: '도전', value: 'challenge' },
       { label: '연결', value: 'connect' },
     ],
+  },
+};
+
+type CalendarStory = StoryObj<typeof DatetimeInput>;
+
+export const DatetimeInputBoard: CalendarStory = {
+  render: args => (
+    <div className="flex w-[217px] flex-col gap-4">
+      <DatetimeInput {...args} />
+    </div>
+  ),
+  argTypes: {
+    value: {
+      control: { type: 'date' },
+      description: '선택된 날짜 (Date 객체)',
+    },
+  },
+  args: {
+    value: undefined,
   },
 };

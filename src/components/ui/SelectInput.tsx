@@ -23,12 +23,22 @@ export default function SelectInput({ items, value, onChange, placeholder }: Sel
 
   return (
     <div className="relative w-full">
-      <div onClick={toggleOpen} className="cursor-pointer">
+      <div
+        role="combobox"
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        onClick={toggleOpen}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleOpen();
+          }
+        }}
+        className="cursor-pointer">
         <Input
           placeholder={placeholder}
           value={selectedLabel}
           readOnly
-          tabIndex={-1}
           inputClassName="pointer-events-none caret-transparent selection:bg-transparent"
           rightSlot={
             <button
@@ -42,7 +52,7 @@ export default function SelectInput({ items, value, onChange, placeholder }: Sel
       </div>
 
       {open && (
-        <div className="absolute top-full left-0 w-full">
+        <div className="absolute top-full left-0 z-[1000] w-full">
           <Dropdown
             items={items}
             onChange={next => {
