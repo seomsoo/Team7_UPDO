@@ -13,11 +13,6 @@ html.scroll-hidden {
   color: transparent;
 }
 
-/* html에서 스크롤바 색상을 위해 color를 쓰니 body에서 별도로 지정 */
-body {
-  color: black;
-}
-
 html::-webkit-scrollbar {
   width: 12px;
   height: 12px;
