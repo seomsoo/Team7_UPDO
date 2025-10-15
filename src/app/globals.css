@@ -1,5 +1,40 @@
 @import 'tailwindcss';
 
+html {
+  scrollbar-gutter: stable;
+  overflow-y: auto;
+
+  /* 스크롤바의 box-shadow 색상값을 지정 */
+  color: rgba(0, 0, 0, 0.25);
+  transition: all 0.4s ease; /* 부드러운 애니메이션 */
+}
+
+html.scroll-hidden {
+  color: transparent;
+}
+
+/* html에서 스크롤바 색상을 위해 color를 쓰니 body에서 별도로 지정 */
+body {
+  color: black;
+}
+
+html::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+html::-webkit-scrollbar-thumb {
+  outline: none;
+  border-radius: 10px;
+  border: 3px solid transparent;
+  /* box-shadow 색상은 지정 안했을 경우 기본적으로 color 값을 따라감 */
+  box-shadow: inset 6px 6px 0;
+}
+
+html::-webkit-scrollbar-track {
+  box-shadow: none;
+  background-color: transparent;
+}
 /* ================================
    TOKENS (@theme)
    ================================ */
