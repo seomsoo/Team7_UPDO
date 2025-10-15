@@ -35,10 +35,10 @@ export default class PolymorphicHttpClient extends HttpClient {
     }
 
     // ✅ Authorization 자동 주입
-    const headers = {
-      ...(options.headers || {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
+    const headers = new Headers(options.headers ?? {});
+    if (token && !headers.has('Authorization')) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
 
     return super.request<T>(path, { ...options, headers });
   }

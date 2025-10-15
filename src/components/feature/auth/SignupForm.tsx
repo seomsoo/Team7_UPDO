@@ -61,7 +61,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
       },
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         base.onChange(e);
-        debouncedValidate(name); // 입력 멈춤 400ms 후 디바운스 검증
+        debouncedValidate(name); // 입력 멈춤 1000ms 후 디바운스 검증
       },
     };
   };
@@ -202,7 +202,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
         variant="primary"
         disabled={isSubmitting}
         className="mt-4 h-[48px] w-full text-base font-semibold"
-        aria-label="회원가입 제출">
+        aria-label="회원가입">
         {/* // 제출 중이면 스피너, 아니면 텍스트 */}
         {isSubmitting ? <LoadingSpinner size="xs" color="white" /> : '회원가입'}
       </Button>

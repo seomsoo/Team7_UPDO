@@ -19,7 +19,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod'; // ✅ Zod 직접 import
@@ -81,6 +81,8 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   // ---------------------------------------------------------------------------
   // 제출 핸들러: 로그인 요청 → JWT 저장 → 성공 콜백 실행
   // ---------------------------------------------------------------------------
+  const [globalError, setGlobalError] = useState<string | null>(null);
+
   const onSubmit = handleSubmit(async data => {
     try {
       const teamId = '1'; // 실서비스에서는 Context 또는 환경변수에서 주입
@@ -95,14 +97,22 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
     } catch (err: unknown) {
       if (typeof err === 'object' && err !== null) {
         const e = err as { parameter?: keyof LoginFormType; message?: string };
-        const targetField = e.parameter ?? 'email';
-        setError(targetField, {
+
+        // 서버 오류(전역)
+        if (!e.parameter) {
+          setError('password', {
+            type: 'server',
+            message: e.message ?? '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+          });
+          return;
+        }
+
+        // 필드 오류
+        setError(e.parameter, {
           type: 'server',
           message: e.message ?? '로그인에 실패했습니다.',
         });
       }
-
-      console.error('[LoginForm] 로그인 실패:', err);
     }
   });
 
@@ -160,9 +170,15 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
         variant="primary"
         disabled={isSubmitting}
         className="mt-4 h-[48px] w-full text-base font-semibold"
-        aria-label="로그인 제출">
+        aria-label="로그인">
         {isSubmitting ? <LoadingSpinner size="xs" color="white" /> : '로그인'}
       </Button>
+
+      {globalError && (
+        <p role="alert" className="typo-sm mt-3 text-center text-red-500">
+          {globalError}
+        </p>
+      )}
     </form>
   );
 }

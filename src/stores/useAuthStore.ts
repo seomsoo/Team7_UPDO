@@ -27,7 +27,8 @@ const readFromStorage = () => {
   }
   const token = localStorage.getItem('access_token');
   const expiryStr = localStorage.getItem('token_expiry');
-  const tokenExpiry = expiryStr ? Number(expiryStr) : null;
+  const parsed = expiryStr ? Number(expiryStr) : null;
+  const tokenExpiry = parsed && !isNaN(parsed) ? parsed : null;
   return { token, tokenExpiry };
 };
 
