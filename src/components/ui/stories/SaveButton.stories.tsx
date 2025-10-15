@@ -17,15 +17,19 @@ type Story = StoryObj<typeof meta>;
 export const AllSizes: Story = {
   render: () => (
     <div className="flex items-center gap-8">
-      {[40, 48, 60].map(size => {
-        const [saved, setSaved] = useState(false);
-        return (
-          <div key={size} className="flex flex-col items-center gap-2">
-            <SaveButton isSaved={saved} onToggle={() => setSaved(!saved)} size={size} />
-            <p className="text-sm text-[var(--color-gray-500)]">{size}px</p>
-          </div>
-        );
-      })}
+      {[40, 48, 60].map(size => (
+        <SaveButtonExample key={size} size={size} />
+      ))}
     </div>
   ),
 };
+
+function SaveButtonExample({ size }: { size: number }) {
+  const [saved, setSaved] = useState(false);
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <SaveButton isSaved={saved} onToggle={() => setSaved(!saved)} size={size} />
+      <p className="text-sm text-[var(--color-gray-500)]">{size}px</p>
+    </div>
+  );
+}
