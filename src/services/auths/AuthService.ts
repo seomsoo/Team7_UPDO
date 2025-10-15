@@ -1,5 +1,3 @@
-// src/services/auths/AuthService.ts
-
 import {
   SignupRequest,
   SignupResponse,
@@ -15,27 +13,27 @@ import PolymorphicHttpClient from '../PolymorphicHttpClient';
 export class AuthService {
   private http = PolymorphicHttpClient.getInstance();
 
-  signup(teamId: string, data: SignupRequest) {
-    return this.http.post<SignupResponse>(`/${teamId}/auths/signup`, data);
+  signup(data: SignupRequest) {
+    return this.http.post<SignupResponse>(`/auths/signup`, data);
   }
 
-  signin(teamId: string, data: SigninRequest) {
-    return this.http.post<SigninResponse>(`/${teamId}/auths/signin`, data);
+  signin(data: SigninRequest) {
+    return this.http.post<SigninResponse>(`/auths/signin`, data);
   }
 
-  signout(teamId: string) {
-    return this.http.post<SignoutResponse>(`/${teamId}/auths/signout`);
+  signout() {
+    return this.http.post<SignoutResponse>(`/auths/signout`);
   }
 
-  getUser(teamId: string) {
-    return this.http.get<GetUserResponse>(`/${teamId}/auths/user`);
+  getUser() {
+    return this.http.get<GetUserResponse>(`/auths/user`);
   }
 
-  updateUser(teamId: string, data: UpdateUserRequest) {
+  updateUser(data: UpdateUserRequest) {
     const formData = new FormData();
     if (data.companyName) formData.append('companyName', data.companyName);
     if (data.image) formData.append('image', data.image);
-    return this.http.put<UpdateUserResponse>(`/${teamId}/auths/user`, formData);
+    return this.http.put<UpdateUserResponse>(`/auths/user`, formData);
   }
 }
 

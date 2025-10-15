@@ -1,5 +1,3 @@
-// src/services/utils.ts
-
 export function buildQuery(params?: Record<string, string | number | boolean>): string {
   if (!params) return '';
   const entries: [string, string][] = Object.entries(params)
