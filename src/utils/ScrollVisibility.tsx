@@ -21,6 +21,7 @@ export default function ScrollVisibility() {
     return () => {
       window.removeEventListener('scroll', onScroll);
       if (timer.current) window.clearTimeout(timer.current);
+      html.classList.remove('scroll-hidden');
     };
   }, []);
 
