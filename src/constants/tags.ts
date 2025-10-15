@@ -8,7 +8,7 @@ export const TAG_OPTIONS: Readonly<Option[]> = [
   { label: '연결', value: 'connect' },
 ] as const;
 
-export const KEYWORD_LABEL_BY_VALUE: Readonly<Record<string, string>> = Object.fromEntries(
+export const TAG_LABEL_BY_VALUE: Readonly<Record<string, string>> = Object.fromEntries(
   TAG_OPTIONS.map(o => [o.value, o.label]),
 );
 // 사용 예: TAG_LABEL_BY_VALUE['growth'] === '성장'

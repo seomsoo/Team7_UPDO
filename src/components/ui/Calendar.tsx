@@ -1,25 +1,17 @@
 import React from 'react';
 import { DayPicker, type NavProps } from 'react-day-picker';
-import { cva, cx } from 'class-variance-authority';
-
-const calendarVariants = cva('flex items-stretch rounded-xl bg-white', {
-  variants: {
-    variant: {
-      date: 'p-6', // 24px all around
-      datetime: 'px-3 py-3', // 12px all around
-    },
-  },
-});
+import { Button } from './Button';
 
 export interface CalendarProps {
   value?: Date; // 선택된 날짜 or 날짜/시간
-  onChange: (date: Date | undefined) => void; // value 변경 핸들러
-  footer?: React.ReactNode; // 하단 푸터 컴포넌트
+  onConfirm: (date?: Date) => void; // "확인" 버튼 클릭 시 최종 값 전달
+  onNext?: (date?: Date) => void; // "다음" 클릭 시 날짜만 전달
+  onCancel: () => void; // "취소" 버튼 클릭 핸들러
+  // onChange?: (date: Date | undefined) => void; // (선택) 즉시 변경 핸들러 (staged UI에서는 사용 안 함)
   startMonth?: Date; // 달력이 시작되는 월 (기본값: 2025-01-01)
-  disabled?: boolean; // 전체 달력 비활성화 여부
   className?: string; // 추가 CSS 클래스
-  variant?: 'date' | 'datetime'; // 달력만, 또는 날짜+시간 선택
-  timeStep?: number; // 분 단위 스텝 (기본 5)
+  variant?: 'date' | 'datetime'; // 달력 모드, 또는 날짜+시간 선택모드
+  blockPast?: boolean; // 오늘 이전 날짜/월 선택 불가 (선택/네비게이션 모두 제한)
 }
 
 function mergeDateTime(date: Date | undefined, h: number, m: number) {
@@ -80,17 +72,46 @@ function CustomNav({ onPreviousClick, onNextClick, previousMonth, nextMonth }: N
 
 export const Calendar = ({
   value,
-  onChange,
-  footer,
+  onCancel,
+  onConfirm,
+  onNext,
   startMonth = new Date('2025-01-01'),
-  disabled = false,
   variant = 'date',
-  timeStep = 5,
+  blockPast = false,
 }: CalendarProps) => {
-  const initialH = value ? value.getHours() : 12;
-  const initialM = value ? value.getMinutes() - (value.getMinutes() % timeStep) : 0;
+  const [step, setStep] = React.useState<'date' | 'time'>('date');
+  const [tempDate, setTempDate] = React.useState<Date | undefined>(value);
+  const timeStep = 5;
+
+  const now = new Date();
+  let roundedHour = now.getHours();
+  let roundedMinute = Math.ceil(now.getMinutes() / timeStep) * timeStep;
+  if (roundedMinute === 60) {
+    roundedMinute = 0;
+    roundedHour = (roundedHour + 1) % 24;
+  }
+  const initialH = value ? value.getHours() : roundedHour;
+  const initialM = value ? value.getMinutes() : roundedMinute;
+
   const [hour, setHour] = React.useState<number>(initialH);
   const [minute, setMinute] = React.useState<number>(initialM);
+
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const currentMonthStart = new Date(todayStart.getFullYear(), todayStart.getMonth(), 1);
+  const effectiveStartMonth = blockPast
+    ? startMonth > currentMonthStart
+      ? startMonth
+      : currentMonthStart
+    : startMonth;
+
+  React.useEffect(() => {
+    const base = tempDate ?? value;
+    if (!base) return;
+    setHour(base.getHours());
+    setMinute(base.getMinutes() - (base.getMinutes() % timeStep));
+  }, [tempDate, value, timeStep]);
+
   const isPM = hour >= 12;
 
   const hours = React.useMemo(() => {
@@ -103,128 +124,177 @@ export const Calendar = ({
   }, [timeStep]);
 
   const handleSelect = (d?: Date) => {
-    if (!d) return onChange(undefined);
-    const H = (hour % 12) + (isPM ? 12 : 0);
-    onChange(mergeDateTime(d, H, minute));
+    setTempDate(d);
   };
 
+  const FooterBar = ({
+    cancelLabel,
+    primaryLabel,
+    onPrimary,
+    onCancel,
+    disabledPrimary,
+  }: {
+    primaryLabel: string;
+    cancelLabel?: string;
+    onPrimary: () => void;
+    onCancel?: () => void;
+    disabledPrimary: boolean;
+  }) => (
+    <div className="flex w-full items-center justify-center gap-[6px] px-0">
+      <Button variant={'calendarOutline'} size="calendar" onClick={onCancel}>
+        {cancelLabel || '취소'}
+      </Button>
+      <Button
+        variant={'calendarSolid'}
+        size="calendar"
+        disabled={disabledPrimary}
+        onClick={onPrimary}>
+        {primaryLabel}
+      </Button>
+    </div>
+  );
+
   return (
-    <div className={calendarVariants({ variant })}>
-      <DayPicker
-        mode="single"
-        showOutsideDays
-        selected={value}
-        onSelect={handleSelect}
-        disabled={disabled}
-        startMonth={startMonth}
-        formatters={{
-          formatWeekdayName: day => day?.toLocaleDateString('en-US', { weekday: 'short' }),
-        }}
-        components={{ Nav: CustomNav }}
-        classNames={{
-          root: cx(
-            'text-gray-800 flex flex-col box-border w-[320px]',
-            variant === 'date' ? 'px-2.5' : 'px-2.5 py-1',
-          ),
-          nav: 'w-full',
-          month_caption: 'hidden',
-          caption_label: 'hidden',
-          month_grid: 'flex w-full flex-col',
-          weekdays: 'flex w-full mb-2',
-          weekday: 'flex-1 text-center label p-1',
-          week: 'flex w-full h-8',
-          day: 'flex-1 flex justify-center items-center',
-          day_button:
-            'w-full h-full p-0 typo-body-sm rounded-md transition-colors hover:bg-purple-500 hover:text-white aria-selected:hover:bg-purple-500 flex items-center justify-center ',
-          today: 'text-purple-500',
-          disabled: 'text-gray-300 opacity-50 cursor-not-allowed',
-          button_previous:
-            'h-10 w-10 inline-flex items-center justify-center rounded-md text-purple-500 transition-colors',
-          button_next:
-            'h-10 w-10 inline-flex items-center justify-center rounded-md text-purple-500 transition-colors',
-          chevron: 'fill-current w-4 h-4',
-          footer: 'pt-1 mt-3',
-        }}
-        modifiersClassNames={{
-          selected: 'bg-purple-500 text-white rounded-md',
-          outside: 'text-gray-400',
-        }}
-        footer={footer}
-      />
+    <div className="rounded-md border-[1px] border-gray-200 bg-white">
+      {step === 'date' && (
+        <DayPicker
+          mode="single"
+          showOutsideDays
+          selected={tempDate ?? value}
+          onSelect={handleSelect}
+          disabled={blockPast ? { before: todayStart } : undefined}
+          startMonth={effectiveStartMonth}
+          formatters={{
+            formatWeekdayName: day => day?.toLocaleDateString('en-US', { weekday: 'short' }),
+          }}
+          components={{ Nav: CustomNav }}
+          classNames={{
+            root: 'text-gray-800 flex flex-col box-border px-6 py-3',
+            nav: 'w-full',
+            month_caption: 'hidden',
+            caption_label: 'hidden',
+            month_grid: 'flex w-full flex-col',
+            weekdays: 'flex w-full mb-2',
+            weekday: 'flex-1 text-center label p-1',
+            week: 'flex w-full h-8',
+            day: 'flex-1 flex justify-center items-center',
+            day_button:
+              'w-full h-full p-0 typo-body-sm rounded-md transition-colors hover:bg-purple-500 hover:text-white aria-selected:hover:bg-purple-500 flex items-center justify-center ',
+            today: 'text-purple-500',
+            disabled: 'text-gray-300 opacity-50 cursor-not-allowed',
+            button_previous:
+              'h-10 w-10 inline-flex items-center justify-center rounded-md text-purple-500 transition-colors',
+            button_next:
+              'h-10 w-10 inline-flex items-center justify-center rounded-md text-purple-500 transition-colors',
+            chevron: 'fill-current w-4 h-4',
+            footer: 'pt-1 mt-3',
+          }}
+          modifiersClassNames={{
+            selected: 'bg-purple-500 text-white rounded-md',
+            outside: 'text-gray-400',
+          }}
+          footer={
+            variant === 'date' ? (
+              <FooterBar
+                primaryLabel="확인"
+                onPrimary={() => onConfirm(tempDate ?? value)}
+                onCancel={onCancel}
+                disabledPrimary={!tempDate}
+              />
+            ) : (
+              <FooterBar
+                primaryLabel="다음"
+                onPrimary={() => {
+                  if (tempDate) onNext?.(tempDate);
+                  setStep('time');
+                }}
+                onCancel={onCancel}
+                disabledPrimary={!tempDate}
+              />
+            )
+          }
+        />
+      )}
 
-      {variant === 'datetime' && (
-        <div className="flex items-start gap-[10px] px-[10px] py-3 text-gray-800">
-          {/* divider */}
-          <div className="w-px self-stretch bg-gray-200" />
-
-          {/* Hours */}
-          <div className="w-16">
-            <div className="h-64 overflow-auto pr-1">
-              {hours.map(h => (
-                <button
-                  key={h}
-                  type="button"
-                  className={
-                    'block w-full rounded-md py-2 text-center ' +
-                    ((hour % 12 || 12) === h ? 'bg-purple-500 text-white' : 'hover:bg-gray-100')
-                  }
-                  onClick={() => {
-                    const base = isPM ? 12 : 0;
-                    setHour(((h % 12) + base) % 24);
-                    if (value) onChange(mergeDateTime(value, ((h % 12) + base) % 24, minute));
-                  }}>
-                  {h.toString().padStart(2, '0')}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Minutes */}
-          <div className="w-16">
-            <div className="h-64 overflow-auto pr-1">
-              {minutes.map(m => (
-                <button
-                  key={m}
-                  type="button"
-                  className={
-                    'block w-full rounded-md py-2 text-center ' +
-                    (minute === m ? 'bg-purple-500 text-white' : 'hover:bg-gray-100')
-                  }
-                  onClick={() => {
-                    setMinute(m);
-                    if (value) {
-                      const H = (hour % 12) + (isPM ? 12 : 0);
-                      onChange(mergeDateTime(value, H, m));
+      {step === 'time' && (
+        <div className="flex flex-col px-6 py-5">
+          <div className="flex items-center justify-center gap-[10px] pb-3 text-gray-800">
+            {/* Hours */}
+            <div className="w-16">
+              <div className="h-64 overflow-auto pr-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {hours.map(h => (
+                  <button
+                    key={h}
+                    type="button"
+                    className={
+                      'block w-full rounded-md py-2 text-center ' +
+                      ((hour % 12 || 12) === h ? 'bg-purple-500 text-white' : 'hover:bg-gray-100')
                     }
-                  }}>
-                  {m.toString().padStart(2, '0')}
-                </button>
-              ))}
+                    onClick={() => {
+                      const base = isPM ? 12 : 0;
+                      setHour(((h % 12) + base) % 24);
+                    }}>
+                    {h.toString().padStart(2, '0')}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* AM/PM */}
-          <div className="w-16">
-            <div className="h-64 overflow-auto pr-1">
-              {['AM', 'PM'].map(label => (
-                <button
-                  key={label}
-                  type="button"
-                  className={
-                    'block w-full rounded-md py-2 text-center ' +
-                    ((label === 'PM') === isPM ? 'bg-purple-500 text-white' : 'hover:bg-gray-100')
-                  }
-                  onClick={() => {
-                    const wantPM = label === 'PM';
-                    const base = (hour % 12) + (wantPM ? 12 : 0);
-                    setHour(base);
-                    if (value) onChange(mergeDateTime(value, base, minute));
-                  }}>
-                  {label}
-                </button>
-              ))}
+            {/* Minutes */}
+            <div className="w-16">
+              <div className="h-64 overflow-auto pr-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {minutes.map(m => (
+                  <button
+                    key={m}
+                    type="button"
+                    className={
+                      'block w-full rounded-md py-2 text-center ' +
+                      (minute === m ? 'bg-purple-500 text-white' : 'hover:bg-gray-100')
+                    }
+                    onClick={() => {
+                      setMinute(m);
+                    }}>
+                    {m.toString().padStart(2, '0')}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* AM/PM */}
+            <div className="w-16">
+              <div className="h-64 overflow-auto pr-1">
+                {['AM', 'PM'].map(label => (
+                  <button
+                    key={label}
+                    type="button"
+                    className={
+                      'block w-full rounded-md py-2 text-center ' +
+                      ((label === 'PM') === isPM ? 'bg-purple-500 text-white' : 'hover:bg-gray-100')
+                    }
+                    onClick={() => {
+                      const wantPM = label === 'PM';
+                      const base = (hour % 12) + (wantPM ? 12 : 0);
+                      setHour(base);
+                    }}>
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
+          <FooterBar
+            cancelLabel="이전"
+            primaryLabel="확인"
+            onPrimary={() => {
+              const baseDate = tempDate ?? value;
+              const H = (hour % 12) + (isPM ? 12 : 0);
+              onConfirm(baseDate ? mergeDateTime(baseDate, H, minute) : undefined);
+            }}
+            onCancel={() => {
+              setStep('date');
+            }}
+            disabledPrimary={!tempDate}
+          />
         </div>
       )}
     </div>
