@@ -18,9 +18,10 @@ interface AuthState {
   isAuthenticated: boolean;
   setToken: (token: string | null, expiryMs?: number) => void;
   logout: () => void;
+  checkTokenValidity: () => boolean;
 }
 
-// 브라우저 환경에서만 localStorage 접근 (SSR 안전)
+// 브라우저 환경에서만 localStorage 접근
 const readFromStorage = () => {
   if (typeof window === 'undefined') {
     return { token: null as string | null, tokenExpiry: null as number | null };
@@ -32,7 +33,8 @@ const readFromStorage = () => {
   return { token, tokenExpiry };
 };
 
-export const useAuthStore = create<AuthState>(set => {
+// ✅ 순환참조 없이 get() 사용
+export const useAuthStore = create<AuthState>((set, get) => {
   const { token, tokenExpiry } = readFromStorage();
 
   return {
@@ -43,23 +45,32 @@ export const useAuthStore = create<AuthState>(set => {
     setToken: (newToken, expiryMs) => {
       if (typeof window !== 'undefined') {
         if (newToken) {
-          // 토큰 기록
-          localStorage.setItem('access_token', newToken);
-          // 만료시각 기록(현재시각 + 주어진 ms). 기본: 1시간
           const expiry =
             typeof expiryMs === 'number' ? Date.now() + expiryMs : Date.now() + 60 * 60 * 1000;
+          localStorage.setItem('access_token', newToken);
           localStorage.setItem('token_expiry', String(expiry));
           set({ token: newToken, tokenExpiry: expiry, isAuthenticated: true });
         } else {
-          // 토큰 제거
           localStorage.removeItem('access_token');
           localStorage.removeItem('token_expiry');
           set({ token: null, tokenExpiry: null, isAuthenticated: false });
         }
       } else {
-        // SSR 안전 처리
         set({ token: newToken, tokenExpiry: null, isAuthenticated: !!newToken });
       }
+    },
+
+    checkTokenValidity: () => {
+      const state = get(); // ✅ 안전하게 상태 접근
+      if (state.token && state.tokenExpiry && Date.now() >= state.tokenExpiry) {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('token_expiry');
+        }
+        set({ token: null, tokenExpiry: null, isAuthenticated: false });
+        return false;
+      }
+      return !!state.token && !!state.isAuthenticated;
     },
 
     logout: () => {

@@ -89,7 +89,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
       const response = await authService.signin(teamId, data);
 
       // ✅ JWT 토큰 저장 (만료시간은 1시간)
-      const expiresAt = Date.now() + 60 * 60 * 1000;
+      // const expiresAt = Date.now() + 60 * 60 * 1000;
       useAuthStore.getState().setToken(response.token, 60 * 60 * 1000);
 
       // ✅ 성공 시 외부 콜백 실행
@@ -100,10 +100,8 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
 
         // 서버 오류(전역)
         if (!e.parameter) {
-          setError('password', {
-            type: 'server',
-            message: e.message ?? '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-          });
+          // ✅ 전역 서버 오류: 전역 에러 상태로 표시 (테스트에서 기대하는 role="alert")
+          setGlobalError(e.message ?? '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
           return;
         }
 

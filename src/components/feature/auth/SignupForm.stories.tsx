@@ -20,12 +20,3 @@ export default meta;
 type Story = StoryObj<typeof SignupForm>;
 
 export const Default: Story = { args: {} };
-// export const Loading: Story = { render: () => <SignupForm /> };
-// export const WithError: Story = {
-//   render: () => (
-//     <SignupForm
-//       // 가짜 에러 상태를 흉내내려면, form mock을 직접 주입
-//       onSignupSuccess={() => console.log('회원가입 성공')}
-//     />
-//   ),
-// };

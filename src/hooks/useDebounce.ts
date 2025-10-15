@@ -24,6 +24,12 @@ export default function useDebounce<T extends (...args: Parameters<T>) => void>(
   delay = 1000,
 ): (...args: Parameters<T>) => void {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const callbackRef = useRef(callback);
+
+  // 최신 콜백 유지
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
 
   // 컴포넌트 언마운트 시 타이머 해제
   useEffect(() => {
@@ -41,7 +47,7 @@ export default function useDebounce<T extends (...args: Parameters<T>) => void>(
     }
 
     timeoutRef.current = setTimeout(() => {
-      callback(...args);
+      callbackRef.current(...args);
     }, delay);
   };
 

@@ -9,14 +9,19 @@
 
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { on } from 'events';
 
 export function useTokenExpiryEffect(onExpired?: () => void) {
   const tokenExpiry = useAuthStore(s => s.tokenExpiry);
   const isAuthenticated = useAuthStore(s => s.isAuthenticated);
   const logout = useAuthStore(s => s.logout);
   const timerRef = useRef<number | null>(null);
+
+  const stableOnExpired = useCallback(() => {
+    onExpired?.();
+  }, [onExpired]);
 
   useEffect(() => {
     // 기존 타이머 제거
@@ -33,7 +38,7 @@ export function useTokenExpiryEffect(onExpired?: () => void) {
     // 이미 만료됨 → 즉시 로그아웃
     if (now >= tokenExpiry) {
       logout();
-      onExpired?.();
+      stableOnExpired?.();
       return;
     }
 
@@ -51,17 +56,18 @@ export function useTokenExpiryEffect(onExpired?: () => void) {
         timerRef.current = null;
       }
     };
-  }, [tokenExpiry, isAuthenticated, logout, onExpired]);
+  }, [tokenExpiry, isAuthenticated, logout, stableOnExpired]);
 
   // 다른 탭(localStorage) 동기화
   useEffect(() => {
     const onStorage = (ev: StorageEvent) => {
-      if (ev.key === 'access_token' || ev.key === 'token_expiry') {
-        // 변경 발생 시 상태는 store의 selector로 이미 반영됨(초기화 시 읽음)
-        // 필요 시 강제 동기화 로직을 여기에 추가 가능
+      if (ev.key === 'access_token' && !ev.newValue) {
+        // 다른 탭에서 토큰이 삭제됨 → 현재 탭도 로그아웃
+        logout();
+        onExpired?.();
       }
     };
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
-  }, []);
+  }, [logout, onExpired]);
 }
