@@ -1,6 +1,4 @@
-// src/types/reviews/models.ts
-
-import { ReviewType, ReviewLocation } from '@/types/common';
+import { Type, Location } from '@/utils/mapping';
 
 // Review 공통 모델
 export interface IReview {
@@ -18,10 +16,10 @@ export interface IReviewWithRelations extends IReview {
   Gathering: {
     teamId: string;
     id: number;
-    type: ReviewType;
+    type: Type;
     name: string;
     dateTime: string;
-    location: ReviewLocation;
+    location: Location;
     image?: string;
   };
   User: {

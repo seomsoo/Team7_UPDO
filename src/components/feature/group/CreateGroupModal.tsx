@@ -12,14 +12,14 @@ import DatetimeInput from '@/components/ui/DatetimeInput';
 import { TAG_OPTIONS, Option } from '@/constants/tags';
 import { TAB_OPTIONS, TabOption } from '@/constants/tabs';
 
-import type { GatheringType, GatheringLocation } from '@/types/common/constants';
+import { Type, Location } from '@/utils/mapping';
 
 type CreateGroupForm = {
   name: string;
   tab: TabOption['value']; // 스킬업 챌린지 네트워킹
-  type: GatheringType | null; // 없으면 tab에서 mapping
+  type: Type | null; // 없으면 tab에서 mapping
   tag: Option['value'] | null; // default growth Learn challenge connect
-  location?: GatheringLocation | null; // 없으면 tag에서 mapping
+  location?: Location | null; // 없으면 tag에서 mapping
   date?: string | null;
   registrationEnd?: string | null;
   capacity?: number | null;

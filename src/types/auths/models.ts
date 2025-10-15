@@ -1,5 +1,3 @@
-// src/types/auths/models.ts
-
 export interface IUser {
   teamId: string;
   id: number;

@@ -16,9 +16,9 @@ const meta: Meta<typeof Dropdown> = {
 };
 
 const items = [
-  { label: '태그 전체', value: 'all' },
-  { label: '배움', value: 'learn' },
-  { label: '도전', value: 'challenge' },
+  { label: '태그 전체', value: 'all', location: '' },
+  { label: '배움', value: 'learn', location: '을지로3가' },
+  { label: '도전', value: 'challenge', location: '신림' },
 ];
 
 export default meta;

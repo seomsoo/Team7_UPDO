@@ -1,5 +1,3 @@
-// src/types/auths/index.ts
-
 export * from './models';
 export * from './signup';
 export * from './signin';
