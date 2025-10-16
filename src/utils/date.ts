@@ -37,17 +37,16 @@ export const formatDeadline = (isoString: string) => {
     return '마감';
   }
 
-  const diffInDays = date.diff(now, 'day', true);
-  const isTomorrow = date.date() === now.add(1, 'day').date();
-
-  if (diffInDays < 1 && isTomorrow) {
-    return `내일 ${date.format('HH시')} 마감`;
-  }
-
   if (date.isToday()) {
     return `오늘 ${date.format('HH시')} 마감`;
   }
-
+  
+  const tomorrow = now.add(1, 'day').startOf('day');
+  const dateStart = date.startOf('day');
+  
+  if (dateStart.isSame(tomorrow, 'day')) {
+    return `내일 ${date.format('HH시')} 마감`;
+  }
   return `${date.diff(now, 'day')}일 후 마감`;
 };
 
