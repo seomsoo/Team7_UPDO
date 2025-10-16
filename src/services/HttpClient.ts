@@ -1,18 +1,18 @@
-// src/services/HttpClient.ts
+import { ENV } from '@/constants/env';
+
 export default class HttpClient {
   private static instance: HttpClient;
-  private baseUrl: string;
+  private static DEFAULT_BASE_URL = ENV.API_BASE_URL;
+  protected readonly baseUrl: string;
 
   protected constructor(baseUrl: string) {
-    this.baseUrl = baseUrl;
+    this.baseUrl = baseUrl || HttpClient.DEFAULT_BASE_URL!;
   }
 
   // baseUrl을 적합한 url로 변경하여 설정.
-  public static getInstance(
-    baseUrl: string = 'https://fe-adv-project-together-dallaem.vercel.app',
-  ) {
+  public static getInstance(baseUrl?: string) {
     if (!HttpClient.instance) {
-      HttpClient.instance = new HttpClient(baseUrl);
+      HttpClient.instance = new HttpClient(baseUrl || HttpClient.DEFAULT_BASE_URL!);
     }
     return HttpClient.instance;
   }
@@ -28,7 +28,7 @@ export default class HttpClient {
             ...(options.headers || {}),
           };
 
-    const res = await fetch(`${this.baseUrl}${path}`, {
+    const res = await fetch(`${this.baseUrl}/${ENV.TEAM_ID}${path}`, {
       ...options,
       headers,
     });

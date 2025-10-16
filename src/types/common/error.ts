@@ -1,5 +1,3 @@
-// src/types/common/error.ts
-
 // Swagger 기반 에러 코드 집합
 export type ApiErrorCode =
   | 'VALIDATION_ERROR'

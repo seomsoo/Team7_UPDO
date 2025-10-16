@@ -1,5 +1,3 @@
-// src/types/auths/user.ts
-
 import { IUser } from './models';
 
 export type GetUserResponse = IUser;

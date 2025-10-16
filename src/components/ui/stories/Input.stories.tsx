@@ -3,6 +3,7 @@ import Icon from '../Icon';
 
 import { Input } from '../Input';
 import SelectInput from '../SelectInput';
+import DatetimeInput from '../DatetimeInput';
 
 const meta: Meta<typeof Input> = {
   title: 'components/ui/Input',
@@ -77,10 +78,29 @@ export const SelectInputBoard: SelectInputStory = {
   },
   args: {
     items: [
-      { label: '성장', value: 'growth' },
-      { label: '배움', value: 'learn' },
-      { label: '도전', value: 'challenge' },
-      { label: '연결', value: 'connect' },
+      { label: '성장', value: 'growth', location: '건대입구' },
+      { label: '배움', value: 'learn', location: '을지로3가' },
+      { label: '도전', value: 'challenge', location: '신림' },
+      { label: '연결', value: 'connect', location: '홍대입구' },
     ],
+  },
+};
+
+type CalendarStory = StoryObj<typeof DatetimeInput>;
+
+export const DatetimeInputBoard: CalendarStory = {
+  render: args => (
+    <div className="flex w-[217px] flex-col gap-4">
+      <DatetimeInput {...args} />
+    </div>
+  ),
+  argTypes: {
+    value: {
+      control: { type: 'date' },
+      description: '선택된 날짜 (Date 객체)',
+    },
+  },
+  args: {
+    value: undefined,
   },
 };

@@ -1,5 +1,4 @@
-// src/services/PolymorphicHttpClient.ts
-
+import { ENV } from '@/constants/env';
 import HttpClient from './HttpClient';
 import { useAuthStore } from '@/stores/useAuthStore';
 
@@ -10,11 +9,13 @@ export default class PolymorphicHttpClient extends HttpClient {
     super(baseUrl);
   }
 
-  public static getInstance(
-    baseUrl: string = 'https://fe-adv-project-together-dallaem.vercel.app',
-  ) {
+  public static getInstance(baseUrl?: string) {
     if (!PolymorphicHttpClient.pInstance) {
-      PolymorphicHttpClient.pInstance = new PolymorphicHttpClient(baseUrl);
+      const finalBaseUrl = baseUrl ?? ENV.API_BASE_URL;
+      if (!finalBaseUrl) {
+        throw new Error('API_BASE_URL is not configured');
+      }
+      PolymorphicHttpClient.pInstance = new PolymorphicHttpClient(finalBaseUrl);
     }
     return PolymorphicHttpClient.pInstance;
   }

@@ -8,7 +8,7 @@ export interface SelectboxProps {
 export default function Selectbox({ title, subtitle, isSelected, onSelect }: SelectboxProps) {
   return (
     <label
-      className={`flex h-[70px] w-[149px] cursor-pointer gap-2 rounded-sm pt-3 pr-5 pb-4 pl-4 transition-colors ${
+      className={`flex h-[70px] w-full cursor-pointer gap-2 rounded-sm p-2 transition-colors md:pt-3 md:pr-5 md:pb-4 md:pl-4 ${
         isSelected ? 'bg-purple-600 text-white' : 'bg-gray-50 text-gray-900'
       }`}>
       <input type="checkbox" checked={isSelected} onChange={onSelect} className="checkbox" />

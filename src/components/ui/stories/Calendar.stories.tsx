@@ -5,7 +5,6 @@ import { useState } from 'react';
 const meta = {
   title: 'components/ui/Calendar',
   component: Calendar,
-  // parameters: { layout: 'centered' },
 } satisfies Meta<typeof Calendar>;
 
 export default meta;
@@ -15,13 +14,15 @@ type Story = StoryObj<typeof meta>;
 export const date: Story = {
   args: {
     value: undefined,
-    onChange: () => {},
+    onCancel: () => {},
+    onConfirm: () => {},
+    variant: 'date',
   },
   render: args => {
     const [value, setValue] = useState<Date | undefined>(args.value);
     return (
-      <div className="inline-block h-[326px] w-[336px]">
-        <Calendar {...args} value={value} onChange={(date: Date | undefined) => setValue(date)} />
+      <div className="inline-block">
+        <Calendar {...args} value={value} onConfirm={(date: Date | undefined) => setValue(date)} />
       </div>
     );
   },
@@ -30,19 +31,21 @@ export const date: Story = {
 export const datetime: Story = {
   args: {
     value: undefined,
-    onChange: () => {},
+    onCancel: () => {},
+    onConfirm: () => {},
     variant: 'datetime',
-    timeStep: 5,
   },
   render: args => {
     const [value, setValue] = useState<Date | undefined>(args.value);
+
     return (
       <div className="inline-block">
         <Calendar
           {...args}
           variant="datetime"
           value={value}
-          onChange={(date: Date | undefined) => setValue(date)}
+          onConfirm={(date: Date | undefined) => setValue(date)}
+          onCancel={() => {}}
         />
       </div>
     );

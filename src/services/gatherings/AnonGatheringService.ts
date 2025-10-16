@@ -1,5 +1,3 @@
-// src/services/gatherings/AnonGatheringService.ts
-
 import Service from '../Service';
 import { IGathering, IParticipant } from '@/types/gatherings';
 

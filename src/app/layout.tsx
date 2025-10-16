@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Pretendard } from '../lib/font';
+import ScrollVisibility from '../utils/ScrollVisibility';
 
 export const metadata: Metadata = {
   title: {
@@ -38,7 +39,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko" className={Pretendard.variable}>
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        <ScrollVisibility />
+        {children}
+      </body>
     </html>
   );
 }

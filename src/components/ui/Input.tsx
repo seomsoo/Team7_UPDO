@@ -11,6 +11,7 @@ export interface InputProps
   className?: string;
   inputClassName?: string;
   rightSlot?: React.ReactNode;
+  disableFocusStyle?: boolean; // NEW: when true, do not switch to typing border on focus
 }
 
 export const INPUT_VARIANT = {
@@ -43,7 +44,19 @@ const inputVariants = cva(
 );
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ inputSize, type, errorMessage, className, inputClassName, rightSlot, ...props }, ref) => {
+  (
+    {
+      inputSize,
+      type,
+      errorMessage,
+      className,
+      inputClassName,
+      rightSlot,
+      disableFocusStyle,
+      ...props
+    },
+    ref,
+  ) => {
     const isPasswordField = type === 'password';
     const [showPassword, setShowPassword] = useState(false);
 
@@ -56,7 +69,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       setIsFilled(!!(props.value ?? props.defaultValue));
     }, [props.value, props.defaultValue]);
 
-    const currentVariant = isFocused ? 'typing' : isFilled ? 'done' : 'default';
+    const currentVariant = disableFocusStyle
+      ? isFilled
+        ? 'done'
+        : 'default'
+      : isFocused
+        ? 'typing'
+        : isFilled
+          ? 'done'
+          : 'default';
 
     const errorId = props.id ? `${props.id}-error` : undefined;
 
@@ -73,11 +94,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             )}
             type={isPasswordField ? (showPassword ? 'text' : 'password') : (type ?? 'text')}
             onFocus={e => {
-              setIsFocused(true);
+              if (!disableFocusStyle) setIsFocused(true);
               props.onFocus?.(e);
             }}
             onBlur={e => {
-              setIsFocused(false);
+              if (!disableFocusStyle) setIsFocused(false);
               setIsFilled(!!e.currentTarget.value);
               props.onBlur?.(e);
             }}

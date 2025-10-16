@@ -1,5 +1,3 @@
-// src/types/reviews/create.ts
-
 import { IReview } from './models';
 
 export interface CreateReviewRequest {

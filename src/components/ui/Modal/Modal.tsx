@@ -13,6 +13,7 @@ export interface ModalProps {
   onOpenChange: (open: boolean) => void; // ESC 키, 바깥 클릭 등의 이벤트로 Modal 닫기 구현용
   initialFocusRef?: React.RefObject<HTMLElement>; // Modal이 열릴 때 초기에 포커스가 적용될 HTMLElement
   className?: string;
+  ResponsiveClassName?: string;
   children?: React.ReactNode; // Modal 내부 실제 내용
 }
 
@@ -83,7 +84,14 @@ function Footer({
   );
 }
 
-function ModalRoot({ open, onOpenChange, initialFocusRef, className, children }: ModalProps) {
+function ModalRoot({
+  open,
+  onOpenChange,
+  initialFocusRef,
+  className,
+  children,
+  ResponsiveClassName,
+}: ModalProps) {
   const contentRef = React.useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
 
   useBodyScrollLock(open);
@@ -100,19 +108,19 @@ function ModalRoot({ open, onOpenChange, initialFocusRef, className, children }:
     <Portal>
       <div className="fixed inset-0 z-[1000]">
         <Overlay onClick={handleOutside} />
-        <div className="pointer-events-none fixed inset-0 flex items-start justify-center overflow-y-auto">
+        <div
+          className={cn(
+            'pointer-events-none fixed inset-0 flex items-start justify-center overflow-y-auto',
+          )}>
           <div
-            className="pointer-events-auto my-10"
+            className={(cn('pointer-events-auto my-10'), ResponsiveClassName)}
             aria-modal="true"
             role="dialog"
             aria-labelledby="modal-title"
             aria-describedby="modal-desc">
             <div
               ref={contentRef}
-              className={cn(
-                'mx-auto flex flex-col overflow-hidden rounded-2xl bg-white shadow-xl',
-                className,
-              )}>
+              className={cn('mx-auto flex flex-col overflow-hidden bg-white shadow-xl', className)}>
               {children}
             </div>
           </div>

@@ -15,7 +15,7 @@ export default {
     formatter: { control: false, table: { disable: true } },
   },
   args: {
-    size: 'sm',
+    size: 'responsive',
     value: 1,
     max: 99,
   },

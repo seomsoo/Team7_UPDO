@@ -1,7 +1,3 @@
-// src/types/reviews/params.ts
-
-// 공통 Path/Query Params 정의
-
 // GET /{teamId}/reviews
 export interface GetReviewsParams {
   teamId: string;
