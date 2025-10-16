@@ -24,7 +24,11 @@ export default function SaveButton({
   return (
     <motion.button
       type="button"
-      onClick={onToggle}
+      onClick={e => {
+        e.stopPropagation();
+        e.preventDefault();
+        onToggle();
+      }}
       aria-label={ariaLabel}
       aria-pressed={isSaved}
       className={cn('relative inline-flex cursor-pointer items-center justify-center', className)}
