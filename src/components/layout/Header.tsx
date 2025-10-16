@@ -83,12 +83,6 @@ export default function Header({ user, favoriteCount = 0, className }: HeaderPro
                       <Badge value={favoriteCount} size="responsive" />
                     )}
                   </span>
-                  {active && (
-                    <span
-                      className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-[var(--color-purple-600)] transition-transform duration-300 ease-out"
-                      style={{ transform: 'scaleX(1)' }}
-                    />
-                  )}
                 </Link>
               );
             })}
