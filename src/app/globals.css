@@ -48,8 +48,8 @@ html::-webkit-scrollbar-track {
   --w-bold: 700;
 
   /* Breakpoints */
-  --breakpoint-sm: 480px;
-  --breakpoint-md: 768px;
+  --breakpoint-sm: 650px;
+  --breakpoint-md: 1280px;
   --breakpoint-lg: 1920px;
 
   /* Colors */
@@ -214,6 +214,7 @@ html::-webkit-scrollbar-track {
     font-weight: var(--w-normal);
     background: var(--canvas);
     word-break: keep-all;
+    color: black;
     -webkit-text-size-adjust: 100%;
   }
 }
