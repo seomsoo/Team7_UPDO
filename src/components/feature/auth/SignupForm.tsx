@@ -70,9 +70,9 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
   const onSubmit = handleSubmit(async data => {
     try {
       // 실제 프로젝트에서는 teamId를 상위 컨텍스트/환경변수로부터 주입하는 것이 이상적
-      const teamId = '1';
+      // const teamId = '1';
 
-      await authService.signup(teamId, {
+      await authService.signup({
         email: data.email,
         password: data.password,
         name: data.name,

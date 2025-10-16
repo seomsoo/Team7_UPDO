@@ -85,8 +85,8 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
 
   const onSubmit = handleSubmit(async data => {
     try {
-      const teamId = '1'; // 실서비스에서는 Context 또는 환경변수에서 주입
-      const response = await authService.signin(teamId, data);
+      // const teamId = '1'; // 실서비스에서는 Context 또는 환경변수에서 주입
+      const response = await authService.signin(data);
 
       // ✅ JWT 토큰 저장 (만료시간은 1시간)
       // const expiresAt = Date.now() + 60 * 60 * 1000;
