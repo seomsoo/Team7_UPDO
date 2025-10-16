@@ -1,11 +1,5 @@
 import { Banner } from '@/components/ui/common/Banner';
 
-/**
- * Page layout that displays a favorites banner and renders page content.
- *
- * @param children - Content to be rendered inside the layout's main element.
- * @returns The layout element containing a favorites Banner and the provided `children`.
- */
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
