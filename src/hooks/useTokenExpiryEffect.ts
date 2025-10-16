@@ -11,7 +11,6 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { on } from 'events';
 
 export function useTokenExpiryEffect(onExpired?: () => void) {
   const tokenExpiry = useAuthStore(s => s.tokenExpiry);

@@ -26,9 +26,9 @@ export default class PolymorphicHttpClient extends HttpClient {
 
     // ✅ useAuthStore에서 상태를 직접 읽음
     const { token, checkTokenValidity } = useAuthStore.getState();
-    const isValid = checkTokenValidity();
 
-    if (!isValid) {
+    // 토큰이 만료되었으면 요청 전에 에러 던짐
+    if (token && !checkTokenValidity()) {
       throw { status: 401, code: 'UNAUTHORIZED', message: '인증이 필요합니다.' };
     }
 
