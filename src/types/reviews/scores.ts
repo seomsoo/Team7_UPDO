@@ -1,5 +1,3 @@
-// src/types/reviews/scores.ts
-
 import { Type } from '@/utils/mapping';
 
 export interface IReviewScore {
