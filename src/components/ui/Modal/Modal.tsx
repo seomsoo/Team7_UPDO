@@ -9,7 +9,7 @@ import { useBodyScrollLock, useEscape, useFocusTrap } from './useModal';
 import Icon from '../Icon';
 
 export interface ModalProps {
-  id: string;
+  id?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void; // ESC 키, 바깥 클릭 등의 이벤트로 Modal 닫기 구현용
   initialFocusRef?: React.RefObject<HTMLElement>; // Modal이 열릴 때 초기에 포커스가 적용될 HTMLElement
