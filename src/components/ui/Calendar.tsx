@@ -25,6 +25,11 @@ function mergeDateTime(date: Date | undefined, h: number, m: number) {
 }
 
 function CustomNav({ onPreviousClick, onNextClick, previousMonth, nextMonth }: NavProps) {
+  const currentMonth = previousMonth
+    ? new Date(previousMonth.getFullYear(), previousMonth.getMonth() + 1, 1)
+    : nextMonth
+      ? new Date(nextMonth.getFullYear(), nextMonth.getMonth() - 1, 1)
+      : undefined;
   return (
     <div className="mb-2 flex w-full items-center justify-between">
       <button
@@ -44,11 +49,7 @@ function CustomNav({ onPreviousClick, onNextClick, previousMonth, nextMonth }: N
         </svg>
       </button>
       <div className="flex-1 text-center text-xl font-bold text-gray-900">
-        {previousMonth &&
-          new Date(previousMonth.getFullYear(), previousMonth.getMonth() + 1).toLocaleString(
-            'default',
-            { month: 'long', year: 'numeric' },
-          )}
+        {currentMonth?.toLocaleString('default', { month: 'long', year: 'numeric' })}
       </div>
       <button
         type="button"
@@ -141,12 +142,12 @@ export const Calendar = ({
     disabledPrimary: boolean;
   }) => (
     <div className="flex w-full items-center justify-center gap-[6px] px-0">
-      <Button variant={'calendarOutline'} size="calendar" onClick={onCancel}>
+      <Button variant={'calendarOutline'} size="calendar_small" onClick={onCancel}>
         {cancelLabel || '취소'}
       </Button>
       <Button
         variant={'calendarSolid'}
-        size="calendar"
+        size="calendar_small"
         disabled={disabledPrimary}
         onClick={onPrimary}>
         {primaryLabel}

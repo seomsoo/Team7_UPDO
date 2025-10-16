@@ -7,7 +7,7 @@ export const CreateGatheringFormSchema = z
     name: z.string().min(1, { message: '모임 이름을 입력해주세요.' }),
 
     // 2. 모임 태그 (배움/도전/성장/연결)
-    location: z.enum(['배움', '도전', '성장', '연결'], {
+    location: z.enum(['건대입구', '신림', '을지로3가', '홍대입구'], {
       message: '모임 태그를 선택해주세요.',
     }),
 
@@ -20,7 +20,7 @@ export const CreateGatheringFormSchema = z
       .optional(),
 
     // 4. 모임 서비스 종류 (스킬업/챌린지/네트워킹)
-    type: z.enum(['스킬업', '챌린지', '네트워킹'], {
+    type: z.enum(['OFFICE_STRETCHING', 'MINDFULNESS', 'WORKATION'], {
       message: '모임 서비스를 선택해주세요.',
     }),
 
