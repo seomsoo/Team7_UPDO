@@ -33,15 +33,22 @@ export const formatDeadline = (isoString: string) => {
   const date = dayjs.utc(isoString).tz('Asia/Seoul');
   const now = dayjs().tz('Asia/Seoul');
 
+  if (date.isBefore(now)) {
+    return '마감';
+  }
+
+  const diffInDays = date.diff(now, 'day', true);
+  const isTomorrow = date.date() === now.add(1, 'day').date();
+
+  if (diffInDays < 1 && isTomorrow) {
+    return `내일 ${date.format('HH시')} 마감`;
+  }
+
   if (date.isToday()) {
     return `오늘 ${date.format('HH시')} 마감`;
   }
 
-  const diff = date.diff(now, 'day');
-  if (date.isBefore(now)) {
-    return '마감';
-  }
-  return `${diff}일 후 마감`;
+  return `${date.diff(now, 'day')}일 후 마감`;
 };
 
 export const isClosed = (isoString?: string) => {
