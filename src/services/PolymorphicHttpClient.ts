@@ -1,5 +1,6 @@
 import { ENV } from '@/constants/env';
 import HttpClient from './HttpClient';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 export default class PolymorphicHttpClient extends HttpClient {
   private static pInstance: PolymorphicHttpClient;
@@ -23,7 +24,21 @@ export default class PolymorphicHttpClient extends HttpClient {
     if (typeof window === 'undefined') {
       options.credentials = 'include';
     }
-    const res = await fetch(`${this.baseUrl}/${ENV.TEAM_ID}${path}`, options);
-    return res.json() as Promise<T>;
+
+    // ✅ useAuthStore에서 상태를 직접 읽음
+    const { token, checkTokenValidity } = useAuthStore.getState();
+
+    // 토큰이 만료되었으면 요청 전에 에러 던짐
+    if (token && !checkTokenValidity()) {
+      throw { status: 401, code: 'UNAUTHORIZED', message: '인증이 필요합니다.' };
+    }
+
+    // ✅ Authorization 헤더 자동 주입
+    const headers = new Headers(options.headers ?? {});
+    if (token && !headers.has('Authorization')) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return super.request<T>(path, { ...options, headers });
   }
 }

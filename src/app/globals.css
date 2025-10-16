@@ -13,11 +13,6 @@ html.scroll-hidden {
   color: transparent;
 }
 
-/* html에서 스크롤바 색상을 위해 color를 쓰니 body에서 별도로 지정 */
-body {
-  color: black;
-}
-
 html::-webkit-scrollbar {
   width: 12px;
   height: 12px;
@@ -53,8 +48,8 @@ html::-webkit-scrollbar-track {
   --w-bold: 700;
 
   /* Breakpoints */
-  --breakpoint-sm: 480px;
-  --breakpoint-md: 768px;
+  --breakpoint-sm: 650px;
+  --breakpoint-md: 1280px;
   --breakpoint-lg: 1920px;
 
   /* Colors */
@@ -219,6 +214,7 @@ html::-webkit-scrollbar-track {
     font-weight: var(--w-normal);
     background: var(--canvas);
     word-break: keep-all;
+    color: black;
     -webkit-text-size-adjust: 100%;
   }
 }
