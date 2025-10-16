@@ -30,7 +30,6 @@ type SignupFormProps = {
 };
 
 const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
-  // RHF 기본 설정: Zod resolver로 동기/비동기 검증 수행
   const {
     register, // input에 연결(값/이벤트 바인딩)
     handleSubmit, // 제출 시 검증+핸들 실행
@@ -38,7 +37,28 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
     setError, // 서버/비즈니스 로직 에러를 필드에 바인딩
     formState: { errors, isSubmitting }, // 에러 오브젝트 및 제출 상태
   } = useForm<JoinFormType>({
-    resolver: zodResolver(JoinFormSchema), // Zod 스키마 바인딩
+    resolver: async values => {
+      // Zod + RHF 통합 검증 : resolver 직접 구현
+      const result = JoinFormSchema.safeParse(values);
+      if (result.success) {
+        return { values: result.data, errors: {} };
+      }
+      // Zod 에러를 RHF 포맷으로 변환
+      const formErrors = result.error.flatten().fieldErrors;
+      return {
+        values: {},
+        errors: Object.entries(formErrors).reduce(
+          (acc, [key, messages]) => {
+            acc[key as keyof JoinFormType] = {
+              type: 'manual',
+              message: messages?.[0],
+            };
+            return acc;
+          },
+          {} as Record<string, { type: string; message: string }>,
+        ),
+      };
+    },
     mode: 'onBlur', // blur 시 1차 검증
     reValidateMode: 'onChange', // 값 변경 시 재검증
   });
