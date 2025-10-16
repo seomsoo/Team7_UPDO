@@ -1,5 +1,3 @@
-// src/components/feature/auth/SignupForm.stories.tsx
-
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import SignupForm from './SignupForm';
 

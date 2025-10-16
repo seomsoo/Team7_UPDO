@@ -1,5 +1,3 @@
-// src/components/common/LoadingSpinner.tsx
-
 import clsx from 'clsx';
 
 /**

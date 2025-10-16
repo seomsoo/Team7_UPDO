@@ -1,5 +1,3 @@
-// src/components/feature/auth/SignupForm.tsx
-
 // -----------------------------------------------------------------------------
 // NOTE: 팀 공용 UI Input 인터페이스(placeholder, errorMessage, inputSize, rightSlot 등)
 //       를 100% 준수하는 회원가입 폼 구현입니다.
@@ -12,16 +10,16 @@
 'use client';
 
 import React from 'react';
-import { useForm } from 'react-hook-form'; // 폼 상태 관리 라이브러리
-import { zodResolver } from '@hookform/resolvers/zod'; // Zod 스키마를 RHF에 연결
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
-import { JoinFormSchema } from '@/schemas/authsSchema'; // 회원가입 입력 검증 스키마(Zod)
-import { Input } from '@/components/ui/Input'; // 팀 공용 Input (라벨은 외부에서 제공)
-import { Button } from '@/components/ui/Button'; // 팀 공용 버튼
-import LoadingSpinner from '@/components/common/LoadingSpinner'; // 제출 중 로딩 표시
-import useDebounce from '@/hooks/useDebounce'; // 입력 검증 Debounce
-import { authService } from '@/services/auths/AuthService'; // 서버 통신 서비스
+import { JoinFormSchema } from '@/schemas/authsSchema';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
+import useDebounce from '@/hooks/useDebounce';
+import { authService } from '@/services/auths/AuthService';
 
 // Zod 스키마로부터 TS 타입 자동 생성
 export type JoinFormType = z.infer<typeof JoinFormSchema>;
@@ -69,9 +67,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
   // 제출 핸들러: 서버에 회원가입 요청 → 성공 시 onSignupSuccess 콜백 실행
   const onSubmit = handleSubmit(async data => {
     try {
-      // 실제 프로젝트에서는 teamId를 상위 컨텍스트/환경변수로부터 주입하는 것이 이상적
-      // const teamId = '1';
-
+      // 서버에 회원가입 요청
       await authService.signup({
         email: data.email,
         password: data.password,

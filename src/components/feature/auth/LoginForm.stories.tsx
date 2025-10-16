@@ -1,5 +1,3 @@
-// src/components/feature/auth/LoginForm.stories.tsx
-
 // -----------------------------------------------------------------------------
 // NOTE: 로그인 폼 Storybook (UI 프리뷰 전용)
 //       - RHF + Zod + useDebounce 기반 구조

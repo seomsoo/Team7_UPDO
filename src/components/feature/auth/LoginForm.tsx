@@ -1,5 +1,3 @@
-// src/components/feature/auth/LoginForm.tsx
-
 // -----------------------------------------------------------------------------
 // NOTE: 로그인 전용 폼 컴포넌트
 //       - RHF + Zod 기반 폼 검증
@@ -8,41 +6,32 @@
 //       - 로그인 성공 시: JWT 토큰 저장 + 만료시간 기록 (1시간)
 //       - 로그인 상태는 전역 Zustand 스토어(useAuthStore)로 관리
 //       - 라우팅은 외부 콜백(onLoginSuccess) 주입 방식으로 제어 (Next Router 미의존)
-// -----------------------------------------------------------------------------
-
-// -----------------------------------------------------------------------------
-// NOTE: 이메일/비밀번호 로그인 폼
-//       - RHF + Zod 검증
 //       - 입력 중 1초 디바운스 검증
-//       - JWT 토큰 저장 + 만료 시각 기록 (1시간)
 // -----------------------------------------------------------------------------
 
 'use client';
 
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod'; // ✅ Zod 직접 import
-
+import { z } from 'zod';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import useDebounce from '@/hooks/useDebounce';
 import { authService } from '@/services/auths/AuthService';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { LoginFormSchema } from '@/schemas/authsSchema'; // ✅ Zod 스키마 import
+import { LoginFormSchema } from '@/schemas/authsSchema';
 
 type LoginFormProps = {
   onLoginSuccess?: () => void;
 };
 
-// ✅ Zod로부터 타입 직접 추론
 type LoginFormType = z.infer<typeof LoginFormSchema>;
 
+const firstIssueMessage = (err: z.ZodError) =>
+  err.issues[0]?.message ?? '입력값이 올바르지 않습니다.';
+
 export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
-  // ---------------------------------------------------------------------------
-  // RHF 기본 설정: Zod 스키마를 기반으로 자동 검증
-  // ---------------------------------------------------------------------------
   const {
     register,
     handleSubmit,
@@ -50,21 +39,25 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
     setError,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormType>({
-    resolver: zodResolver(LoginFormSchema),
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
 
-  // ---------------------------------------------------------------------------
-  // 입력 중 과도한 trigger 호출 억제 (입력 멈춤 1000ms 후 검증)
-  // ---------------------------------------------------------------------------
+  const [globalError, setGlobalError] = useState<string | null>(null);
   const debouncedValidate = useDebounce((field: keyof LoginFormType) => {
     void trigger(field);
   }, 1000);
 
-  // RHF의 register에 Debounce 검증을 결합
   const registerWithValidation = (name: keyof LoginFormType) => {
-    const base = register(name);
+    const shape = LoginFormSchema.shape[name];
+    const base = register(name, {
+      required: name === 'email' ? '이메일을 입력해주세요.' : '비밀번호를 입력해주세요.',
+      validate: (value: string) => {
+        const parsed = shape.safeParse(value);
+        return parsed.success ? true : firstIssueMessage(parsed.error);
+      },
+    });
+
     return {
       ...base,
       onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
@@ -78,53 +71,50 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
     };
   };
 
-  // ---------------------------------------------------------------------------
-  // 제출 핸들러: 로그인 요청 → JWT 저장 → 성공 콜백 실행
-  // ---------------------------------------------------------------------------
-  const [globalError, setGlobalError] = useState<string | null>(null);
-
   const onSubmit = handleSubmit(async data => {
+    // ✅ 전체 Zod 검증
+    const parsed = LoginFormSchema.safeParse(data);
+    if (!parsed.success) {
+      parsed.error.issues.forEach(issue => {
+        const path = issue.path[0] as keyof LoginFormType | undefined;
+        if (path) {
+          setError(path, { type: 'zod', message: issue.message });
+        }
+      });
+      return;
+    }
+
     try {
-      // const teamId = '1'; // 실서비스에서는 Context 또는 환경변수에서 주입
-      const response = await authService.signin(data);
-
-      // ✅ JWT 토큰 저장 (만료시간은 1시간)
-      // const expiresAt = Date.now() + 60 * 60 * 1000;
+      const response = await authService.signin(parsed.data);
       useAuthStore.getState().setToken(response.token, 60 * 60 * 1000);
-
-      // ✅ 성공 시 외부 콜백 실행
       onLoginSuccess?.();
     } catch (err: unknown) {
       if (typeof err === 'object' && err !== null) {
         const e = err as { parameter?: keyof LoginFormType; message?: string };
 
-        // 서버 오류(전역)
-        if (!e.parameter) {
-          // ✅ 전역 서버 오류: 전역 에러 상태로 표시 (테스트에서 기대하는 role="alert")
-          setGlobalError(e.message ?? '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        // ✅ 필드별 서버 오류
+        if (e.parameter) {
+          setError(e.parameter, {
+            type: 'server',
+            message: e.message ?? '입력값이 올바르지 않습니다.',
+          });
           return;
         }
 
-        // 필드 오류
-        setError(e.parameter, {
-          type: 'server',
-          message: e.message ?? '로그인에 실패했습니다.',
-        });
+        // ✅ 전역 서버 오류
+        setGlobalError(e.message ?? '서버 오류가 발생했습니다.');
+        return;
       }
+      setGlobalError('서버 오류가 발생했습니다.');
     }
   });
 
-  // ---------------------------------------------------------------------------
-  // 렌더링
-  // ---------------------------------------------------------------------------
   return (
     <form
       onSubmit={onSubmit}
       className="flex w-full max-w-[400px] flex-col gap-5 rounded-xl bg-white p-6 shadow-md"
       noValidate>
-      {/* ////////////////////////////////////////////////////////////////
-          이메일 입력
-      //////////////////////////////////////////////////////////////// */}
+      {/* 이메일 입력 */}
       <div className="flex flex-col gap-1">
         <label htmlFor="email" className="pl-1 text-sm font-medium text-gray-700">
           이메일
@@ -141,9 +131,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
         />
       </div>
 
-      {/* ////////////////////////////////////////////////////////////////
-          비밀번호 입력
-      //////////////////////////////////////////////////////////////// */}
+      {/* 비밀번호 입력 */}
       <div className="flex flex-col gap-1">
         <label htmlFor="password" className="pl-1 text-sm font-medium text-gray-700">
           비밀번호
@@ -160,9 +148,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
         />
       </div>
 
-      {/* ////////////////////////////////////////////////////////////////
-          제출 버튼
-      //////////////////////////////////////////////////////////////// */}
+      {/* 버튼 */}
       <Button
         type="submit"
         variant="primary"
@@ -172,6 +158,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
         {isSubmitting ? <LoadingSpinner size="xs" color="white" /> : '로그인'}
       </Button>
 
+      {/* 전역 오류 메시지 */}
       {globalError && (
         <p role="alert" className="typo-sm mt-3 text-center text-red-500">
           {globalError}

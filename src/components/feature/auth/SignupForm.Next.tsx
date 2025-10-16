@@ -1,4 +1,3 @@
-// src/components/feature/auth/SignupForm.Next.tsx
 // -----------------------------------------------------------------------------
 // NOTE: Next.js 환경 전용 얇은 래퍼 컴포넌트
 //       - 실제 라우팅 로직(useRouter().replace('/login'))은 여기에서만 수행

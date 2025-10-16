@@ -1,5 +1,3 @@
-// src/components/feature/auth/AuthSessionWatcher.tsx
-
 // -----------------------------------------------------------------------------
 // NOTE: 전역 세션 워처 컴포넌트
 //       - 앱 상단(예: src/app/layout.tsx)에서 한 번만 장착하면

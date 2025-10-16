@@ -1,5 +1,3 @@
-// src/components/feature/auth/LoginForm.Next.tsx
-
 // -----------------------------------------------------------------------------
 // NOTE: Next.js 환경 전용 로그인 폼 래퍼 컴포넌트
 //       - router.replace('/') 라우팅 동작을 수행
