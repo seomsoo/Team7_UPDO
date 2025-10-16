@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { cn } from '@/utils/cn';
-import { TAB_OPTIONS } from '@/constants/tabs';
+import { MainCategory, TAB_OPTIONS } from '@/constants/tabs';
 
 export interface CategoryItem {
   id: string;
@@ -11,7 +11,7 @@ export interface CategoryItem {
 }
 
 export interface CategoryProps {
-  mainCategory: string; // 대분류 (성장 | 네트워킹)
+  mainCategory: MainCategory; // 대분류 (성장 | 네트워킹)
   activeId?: string; // 현재 선택된 중분류 (UI)
   activeType?: string; // 현재 선택된 중분류 (API)
   onChange: (id: string, apiType: string) => void;
