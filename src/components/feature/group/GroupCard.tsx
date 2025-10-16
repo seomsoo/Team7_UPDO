@@ -24,7 +24,7 @@ export default function GroupCard({ data }: GroupCardProps) {
   const { name, location, dateTime, registrationEnd, participantCount, capacity, image } = data;
   const isClosed = registrationEnd && new Date(registrationEnd) < new Date();
   const topic = LocationtoTag(location) as 'growth' | 'learn' | 'challenge' | 'connect' | 'default';
-
+  const safeCapacity = Math.max(1, capacity);
   const category = TAG_OPTIONS.find(option => option.value === topic)?.label ?? '';
   return (
     <Link
@@ -124,7 +124,7 @@ export default function GroupCard({ data }: GroupCardProps) {
             <footer className="flex w-full items-center gap-3 sm:justify-between">
               <div className="flex w-full items-center gap-1 sm:max-w-[260px] md:max-w-[230px]">
                 <Icon name="person" size={18} />
-                <ProgressBar current={participantCount} max={capacity} min={5} />
+                <ProgressBar current={participantCount} max={safeCapacity} min={5} />
                 <span
                   className="label ml-2 text-[var(--color-purple-500)]"
                   aria-label={`현재 ${participantCount}명 참여, 정원 ${capacity}명`}>
