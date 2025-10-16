@@ -31,3 +31,10 @@ export const formatDeadline = (isoString: string) => {
   }
   return `${diff}일 후 마감`;
 };
+
+export const isClosed = (isoString?: string) => {
+  if (!isoString) return false;
+  const date = dayjs.utc(isoString).tz('Asia/Seoul');
+  const now = dayjs().tz('Asia/Seoul');
+  return date.isBefore(now);
+};
