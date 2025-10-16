@@ -44,3 +44,12 @@ function stringifyParams(obj: Record<string, string | number | boolean>) {
 
 const anonGatheringService = new AnonGatheringService();
 export default anonGatheringService;
+
+export const getGatheringList = anonGatheringService.getGatheringList.bind(anonGatheringService);
+export const getGatheringInfiniteList =
+  anonGatheringService.getGatheringInfiniteList.bind(anonGatheringService);
+export const getFavoriteList = anonGatheringService.getFavoriteList.bind(anonGatheringService);
+export const getGatheringDetail =
+  anonGatheringService.getGatheringDetail.bind(anonGatheringService);
+export const getGatheringParticipants =
+  anonGatheringService.getGatheringParticipants.bind(anonGatheringService);

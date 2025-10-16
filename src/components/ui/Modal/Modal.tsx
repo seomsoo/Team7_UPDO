@@ -9,11 +9,13 @@ import { useBodyScrollLock, useEscape, useFocusTrap } from './useModal';
 import Icon from '../Icon';
 
 export interface ModalProps {
+  id?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void; // ESC 키, 바깥 클릭 등의 이벤트로 Modal 닫기 구현용
   initialFocusRef?: React.RefObject<HTMLElement>; // Modal이 열릴 때 초기에 포커스가 적용될 HTMLElement
   className?: string;
   ResponsiveClassName?: string;
+  modalClassName?: string; // 모달 전체 컨테이너 (화면 중앙 정렬 등)
   children?: React.ReactNode; // Modal 내부 실제 내용
 }
 
@@ -85,12 +87,14 @@ function Footer({
 }
 
 function ModalRoot({
+  id,
   open,
   onOpenChange,
   initialFocusRef,
   className,
   children,
   ResponsiveClassName,
+  modalClassName,
 }: ModalProps) {
   const contentRef = React.useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
 
@@ -111,14 +115,16 @@ function ModalRoot({
         <div
           className={cn(
             'pointer-events-none fixed inset-0 flex items-start justify-center overflow-y-auto',
+            modalClassName,
           )}>
           <div
-            className={(cn('pointer-events-auto my-10'), ResponsiveClassName)}
+            className={cn('pointer-events-auto my-10', ResponsiveClassName)}
             aria-modal="true"
             role="dialog"
             aria-labelledby="modal-title"
             aria-describedby="modal-desc">
             <div
+              id={id}
               ref={contentRef}
               className={cn('mx-auto flex flex-col overflow-hidden bg-white shadow-xl', className)}>
               {children}

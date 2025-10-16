@@ -20,6 +20,7 @@ export default function SelectInput({ items, value, onChange, placeholder }: Sel
   const toggleOpen = () => setOpen(prev => !prev);
 
   const selectedLabel = items.find(item => item.value === value)?.label ?? '';
+  items = items.filter(item => item.location !== '');
 
   return (
     <div className="relative w-full">
@@ -52,7 +53,7 @@ export default function SelectInput({ items, value, onChange, placeholder }: Sel
       </div>
 
       {open && (
-        <div className="absolute top-full left-0 z-[1000] w-full">
+        <div className="absolute top-full left-0 z-[1000] max-h-64 w-full overflow-y-auto">
           <Dropdown
             items={items}
             onChange={next => {

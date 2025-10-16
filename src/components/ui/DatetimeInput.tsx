@@ -101,8 +101,21 @@ export default function DatetimeInput({ value, onChange, blockPast = false }: Da
         createPortal(
           <div
             ref={panelRef}
-            style={{ position: 'fixed', top: panelPos.top, left: panelPos.left }}
-            className="z-[9999] rounded-2xl shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+            className="z-[9999] max-h-[80vh] rounded-2xl bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+            style={
+              window.matchMedia('(min-width: 768px)').matches
+                ? {
+                    position: 'absolute',
+                    top: (() => {
+                      const host = document.getElementById('create-group-modal');
+                      if (!host) return panelPos.top;
+                      const hostTop = host.getBoundingClientRect().top;
+                      return panelPos.top - hostTop + 34;
+                    })(),
+                    left: panelPos.left,
+                  }
+                : { position: 'fixed', bottom: 0, left: 0, right: 0 }
+            }
             role="dialog"
             aria-modal="true">
             <Calendar
@@ -119,7 +132,7 @@ export default function DatetimeInput({ value, onChange, blockPast = false }: Da
               onCancel={() => setOpen(false)}
             />
           </div>,
-          document.body,
+          document.getElementById('create-group-modal') ?? document.body,
         )}
     </div>
   );

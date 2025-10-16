@@ -41,3 +41,11 @@ export function TypetoTab(type: Type): Tab {
 
   return typeToTabMap[type];
 }
+
+// capacity: 5
+// date: "2025-10-16T15:00:00.000Z"
+// image: File {name: '제목 없음 2025년 9월 11일 (1).png', lastModified: 1757572515702, lastModifiedDate: Thu Sep 11 2025 15:35:15 GMT+0900 (한국 표준시), webkitRelativePath: '', size: 66313, …}
+// location: "을지로3가"
+// name: "1234"
+// registrationEnd: "2025-10-23T15:00:00.000Z"
+// type: "MINDFULNESS"

@@ -68,3 +68,12 @@ export class GatheringService {
 }
 
 export const gatheringService = new GatheringService();
+
+export const createGathering = gatheringService.createGathering.bind(gatheringService);
+export const getGatherings = gatheringService.getGatherings.bind(gatheringService);
+export const getGatheringDetail = gatheringService.getGatheringDetail.bind(gatheringService);
+export const getJoinedGatherings = gatheringService.getJoinedGatherings.bind(gatheringService);
+export const getParticipants = gatheringService.getParticipants.bind(gatheringService);
+export const cancelGathering = gatheringService.cancelGathering.bind(gatheringService);
+export const joinGathering = gatheringService.joinGathering.bind(gatheringService);
+export const leaveGathering = gatheringService.leaveGathering.bind(gatheringService);
