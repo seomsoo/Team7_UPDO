@@ -24,7 +24,7 @@ export type JoinFormType = z.infer<typeof JoinFormSchema>;
 
 // 외부에서 라우팅 등 성공 후 동작을 주입받기 위한 prop
 type SignupFormProps = {
-  onSignupSuccess?: () => void; // 예: Next.js 환경에서 router.replace('/login')
+  onSignupSuccess?: (data?: JoinFormType) => void; // 예: Next.js 환경에서 router.replace('/login')
 };
 
 const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
@@ -94,7 +94,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
       });
 
       // 라우팅/토스트 등 성공 후 동작은 외부에서 주입받아 실행
-      onSignupSuccess?.();
+      onSignupSuccess?.(data);
     } catch (err: unknown) {
       // 서버 응답 예: { status, code, message, parameter }
       // parameter가 있으면 해당 필드 하단에 에러 메시지를 표시
