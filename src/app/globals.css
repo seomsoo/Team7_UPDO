@@ -1,5 +1,35 @@
 @import 'tailwindcss';
 
+html {
+  scrollbar-gutter: stable;
+  overflow-y: auto;
+
+  /* 스크롤바의 box-shadow 색상값을 지정 */
+  color: rgba(0, 0, 0, 0.25);
+  transition: all 0.4s ease; /* 부드러운 애니메이션 */
+}
+
+html.scroll-hidden {
+  color: transparent;
+}
+
+html::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+html::-webkit-scrollbar-thumb {
+  outline: none;
+  border-radius: 10px;
+  border: 3px solid transparent;
+  /* box-shadow 색상은 지정 안했을 경우 기본적으로 color 값을 따라감 */
+  box-shadow: inset 6px 6px 0;
+}
+
+html::-webkit-scrollbar-track {
+  box-shadow: none;
+  background-color: transparent;
+}
 /* ================================
    TOKENS (@theme)
    ================================ */
@@ -17,20 +47,9 @@
   --w-semibold: 600;
   --w-bold: 700;
 
-  /* Type Scale (참고용) */
-  --text-xs: 12px / 16px var(--font-sans);
-  --text-sm: 14px / 20px var(--font-sans);
-  --text-base: 16px / 24px var(--font-sans);
-  --text-lg: 18px / 28px var(--font-sans);
-  --text-xl: 20px / 28px var(--font-sans);
-  --text-2xl: 24px / 32px var(--font-sans);
-  --text-3xl: 32px / 36px var(--font-sans);
-  --text-4xl: 40px / 40px var(--font-sans);
-  --text-5xl: 56px / 64px var(--font-sans);
-
   /* Breakpoints */
-  --breakpoint-sm: 375px;
-  --breakpoint-md: 768px;
+  --breakpoint-sm: 650px;
+  --breakpoint-md: 1280px;
   --breakpoint-lg: 1920px;
 
   /* Colors */
@@ -91,9 +110,9 @@
   --color-disabled-2: var(--color-gray-400); /* 텍스트 */
   --color-disabled-3: var(--color-gray-500); /* 컨트롤 */
 
-  --color-primary: var(--color-purple-500);
-  --color-primary-hover: var(--color-purple-600);
-  --color-primary-active: var(--color-purple-700);
+  --color-primary: var(--color-purple-250);
+  --color-primary-hover: var(--color-purple-450);
+  --color-primary-active: var(--color-purple-600);
   --color-danger: var(--color-red-500);
 
   /* Surfaces */
@@ -195,6 +214,7 @@
     font-weight: var(--w-normal);
     background: var(--canvas);
     word-break: keep-all;
+    color: black;
     -webkit-text-size-adjust: 100%;
   }
 }
@@ -206,6 +226,7 @@
   margin-inline: auto;
   width: 100%;
   padding-inline: 16px;
+  max-width: 1280px;
 }
 @media (min-width: 768px) {
   .layout-container {
@@ -216,13 +237,6 @@
   .layout-container {
     padding-inline: 0;
   }
-}
-
-@utility layout-content {
-  width: 100%;
-  max-width: 1280px;
-  margin-inline: auto;
-  background: var(--canvas);
 }
 
 /* Surface presets  */
@@ -277,311 +291,296 @@
 /* ================================
    TYPOGRAPHY (@layer components)
    ================================ */
-@layer components {
-  /* Scale */
-  .typo-xs {
-    font-size: 12px;
-    line-height: 16px;
-    font-family: var(--font-sans);
-  }
-  .typo-sm {
-    font-size: 14px;
-    line-height: 20px;
-    font-family: var(--font-sans);
-  }
-  .typo-base {
-    font-size: 16px;
-    line-height: 24px;
-    font-family: var(--font-sans);
-  }
-  .typo-lg {
-    font-size: 18px;
-    line-height: 28px;
-    font-family: var(--font-sans);
-  }
-  .typo-xl {
-    font-size: 20px;
-    line-height: 28px;
-    font-family: var(--font-sans);
-  }
-  .typo-2xl {
-    font-size: 24px;
-    line-height: 32px;
-    font-family: var(--font-sans);
-  }
-  .typo-3xl {
-    font-size: 32px;
-    line-height: 36px;
-    font-family: var(--font-sans);
-  }
-  .typo-4xl {
-    font-size: 40px;
-    line-height: 40px;
-    font-family: var(--font-sans);
-  }
-  .typo-5xl {
-    font-size: 56px;
-    line-height: 64px;
-    font-family: var(--font-sans);
-  }
+@utility typo-xs {
+  font-size: 12px;
+  line-height: 16px;
+  font-family: var(--font-sans);
+}
+@utility typo-sm {
+  font-size: 14px;
+  line-height: 20px;
+  font-family: var(--font-sans);
+}
+@utility typo-base {
+  font-size: 16px;
+  line-height: 24px;
+  font-family: var(--font-sans);
+}
+@utility typo-lg {
+  font-size: 18px;
+  line-height: 28px;
+  font-family: var(--font-sans);
+}
+@utility typo-xl {
+  font-size: 20px;
+  line-height: 28px;
+  font-family: var(--font-sans);
+}
+@utility typo-2xl {
+  font-size: 24px;
+  line-height: 32px;
+  font-family: var(--font-sans);
+}
+@utility typo-3xl {
+  font-size: 32px;
+  line-height: 36px;
+  font-family: var(--font-sans);
+}
+@utility typo-4xl {
+  font-size: 40px;
+  line-height: 40px;
+  font-family: var(--font-sans);
+}
+@utility typo-5xl {
+  font-size: 56px;
+  line-height: 64px;
+  font-family: var(--font-sans);
+}
 
-  /* Headings (h1~h5) */
-  .h1 {
-    font-size: 56px;
-    line-height: 64px;
-    font-family: var(--font-sans);
-    font-weight: var(--w-normal);
-  }
-  .h1Semibold {
-    font-size: 56px;
-    line-height: 64px;
-    font-family: var(--font-sans);
-    font-weight: var(--w-semibold);
-  }
-  .h1Bold {
-    font-size: 56px;
-    line-height: 64px;
-    font-family: var(--font-sans);
-    font-weight: var(--w-bold);
-  }
+@utility h1 {
+  font-size: 56px;
+  line-height: 64px;
+  font-family: var(--font-sans);
+  font-weight: var(--w-normal);
+}
+@utility h1Semibold {
+  font-size: 56px;
+  line-height: 64px;
+  font-family: var(--font-sans);
+  font-weight: var(--w-semibold);
+}
+@utility h1Bold {
+  font-size: 56px;
+  line-height: 64px;
+  font-family: var(--font-sans);
+  font-weight: var(--w-bold);
+}
 
-  .h2 {
-    font-size: 40px;
-    line-height: 44px;
-    font-family: var(--font-sans);
-    font-weight: var(--w-normal);
-  }
-  .h2Semibold {
-    font-size: 40px;
-    line-height: 44px;
-    font-family: var(--font-sans);
-    font-weight: var(--w-semibold);
-  }
-  .h2Bold {
-    font-size: 40px;
-    line-height: 44px;
-    font-family: var(--font-sans);
-    font-weight: var(--w-bold);
-  }
+@utility h2 {
+  font-size: 40px;
+  line-height: 44px;
+  font-family: var(--font-sans);
+  font-weight: var(--w-normal);
+}
+@utility h2Semibold {
+  font-size: 40px;
+  line-height: 44px;
+  font-family: var(--font-sans);
+  font-weight: var(--w-semibold);
+}
+@utility h2Bold {
+  font-size: 40px;
+  line-height: 44px;
+  font-family: var(--font-sans);
+  font-weight: var(--w-bold);
+}
 
-  .h3 {
-    font-size: 32px;
-    line-height: 36px;
-    font-family: var(--font-sans);
-    font-weight: var(--w-normal);
-  }
-  .h3Semibold {
-    font-size: 32px;
-    line-height: 36px;
-    font-family: var(--font-sans);
-    font-weight: var(--w-semibold);
-  }
-  .h3Bold {
-    font-size: 32px;
-    line-height: 36px;
-    font-family: var(--font-sans);
-    font-weight: var(--w-bold);
-  }
+@utility h3 {
+  font-size: 32px;
+  line-height: 36px;
+  font-family: var(--font-sans);
+  font-weight: var(--w-normal);
+}
+@utility h3Semibold {
+  font-size: 32px;
+  line-height: 36px;
+  font-family: var(--font-sans);
+  font-weight: var(--w-semibold);
+}
+@utility h3Bold {
+  font-size: 32px;
+  line-height: 36px;
+  font-family: var(--font-sans);
+  font-weight: var(--w-bold);
+}
 
-  .h4 {
-    font-size: 24px;
-    line-height: 32px;
-    font-family: var(--font-sans);
-    font-weight: var(--w-normal);
-  }
-  .h4Semibold {
-    font-size: 24px;
-    line-height: 32px;
-    font-family: var(--font-sans);
-    font-weight: var(--w-semibold);
-  }
-  .h4Bold {
-    font-size: 24px;
-    line-height: 32px;
-    font-family: var(--font-sans);
-    font-weight: var(--w-bold);
-  }
+@utility h4 {
+  font-size: 24px;
+  line-height: 32px;
+  font-family: var(--font-sans);
+  font-weight: var(--w-normal);
+}
+@utility h4Semibold {
+  font-size: 24px;
+  line-height: 32px;
+  font-family: var(--font-sans);
+  font-weight: var(--w-semibold);
+}
+@utility h4Bold {
+  font-size: 24px;
+  line-height: 32px;
+  font-family: var(--font-sans);
+  font-weight: var(--w-bold);
+}
 
-  .h5 {
-    font-size: 20px;
-    line-height: 28px;
-    font-family: var(--font-sans);
-    font-weight: var(--w-normal);
-  }
-  .h5Semibold {
-    font-size: 20px;
-    line-height: 28px;
-    font-family: var(--font-sans);
-    font-weight: var(--w-semibold);
-  }
-  .h5Bold {
-    font-size: 20px;
-    line-height: 28px;
-    font-family: var(--font-sans);
-    font-weight: var(--w-bold);
-  }
+@utility h5 {
+  font-size: 20px;
+  line-height: 28px;
+  font-family: var(--font-sans);
+  font-weight: var(--w-normal);
+}
+@utility h5Semibold {
+  font-size: 20px;
+  line-height: 28px;
+  font-family: var(--font-sans);
+  font-weight: var(--w-semibold);
+}
+@utility h5Bold {
+  font-size: 20px;
+  line-height: 28px;
+  font-family: var(--font-sans);
+  font-weight: var(--w-bold);
+}
 
-  /* Titles */
-  .page-title {
-    font-size: 24px;
-    line-height: 32px;
-    font-weight: var(--w-semibold);
-    font-family: var(--font-sans);
-  }
-  .section-title {
-    font-size: 20px;
-    line-height: 28px;
-    font-weight: var(--w-semibold);
-    font-family: var(--font-sans);
-  }
-  .card-title {
-    font-size: 18px;
-    line-height: 28px;
-    font-weight: var(--w-semibold);
-    font-family: var(--font-sans);
-  }
-  .modal-title {
-    font-size: 24px;
-    line-height: 32px;
-    font-weight: var(--w-semibold);
-    font-family: var(--font-sans);
-  }
+@utility page-title {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: var(--w-semibold);
+  font-family: var(--font-sans);
+}
+@utility section-title {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: var(--w-semibold);
+  font-family: var(--font-sans);
+}
+@utility card-title {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: var(--w-semibold);
+  font-family: var(--font-sans);
+}
+@utility modal-title {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: var(--w-semibold);
+  font-family: var(--font-sans);
+}
 
-  /* Body */
-  .typo-body-sm {
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: var(--w-medium);
-    font-family: var(--font-sans);
-  }
-  .typo-body {
-    font-size: 16px;
-    line-height: 24px;
-    font-weight: var(--w-medium);
-    font-family: var(--font-sans);
-  }
-  .typo-body-bold {
-    font-size: 16px;
-    line-height: 24px;
-    font-weight: var(--w-semibold);
-    font-family: var(--font-sans);
-  }
-  .typo-body-lg {
-    font-size: 18px;
-    line-height: 28px;
-    font-weight: var(--w-normal);
-    font-family: var(--font-sans);
-  }
+@utility typo-body-sm {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: var(--w-medium);
+  font-family: var(--font-sans);
+}
+@utility typo-body {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: var(--w-medium);
+  font-family: var(--font-sans);
+}
+@utility typo-body-bold {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: var(--w-semibold);
+  font-family: var(--font-sans);
+}
+@utility typo-body-lg {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: var(--w-normal);
+  font-family: var(--font-sans);
+}
 
-  /* Meta / Label */
-  .label {
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: var(--w-semibold);
-    font-family: var(--font-sans);
-  }
-  .label-sm {
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: var(--w-semibold);
-    font-family: var(--font-sans);
-  }
-  .eyebrow {
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: var(--w-semibold);
-    font-family: var(--font-sans);
-  }
-  .caption {
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: var(--w-normal);
-    font-family: var(--font-sans);
-  }
-  .caption-bold {
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: var(--w-semibold);
-    font-family: var(--font-sans);
-  }
+@utility label {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: var(--w-semibold);
+  font-family: var(--font-sans);
+}
+@utility label-sm {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--w-semibold);
+  font-family: var(--font-sans);
+}
+@utility eyebrow {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: var(--w-semibold);
+  font-family: var(--font-sans);
+}
+@utility caption {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--w-normal);
+  font-family: var(--font-sans);
+}
+@utility caption-bold {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--w-semibold);
+  font-family: var(--font-sans);
+}
 
-  /* Special */
-  .tag {
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: var(--w-medium);
-    font-family: var(--font-sans);
-  }
-  .badge {
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: var(--w-bold);
-    font-family: var(--font-sans);
-  }
+@utility tag {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: var(--w-medium);
+  font-family: var(--font-sans);
+  letter-spacing: -0.03em;
+}
+@utility badge-lg {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--w-bold);
+  font-family: var(--font-sans);
+}
+@utility badge-xs {
+  font-size: 10px;
+  line-height: 11px;
+  font-weight: var(--w-semibold);
+  font-family: var(--font-sans);
+}
 
-  /* 리뷰 점수(40/36) */
-  .metric-40 {
-    font-size: 40px;
-    line-height: 36px;
-    font-weight: var(--w-bold);
-    font-family: var(--font-sans);
-  }
+@utility metric-40 {
+  font-size: 40px;
+  line-height: 36px;
+  font-weight: var(--w-bold);
+  font-family: var(--font-sans);
+}
 
-  /* 호환 네이밍 */
-  .typo-display {
-    font-size: 32px;
-    line-height: 36px;
-    font-weight: var(--w-bold);
-    font-family: var(--font-sans);
-  }
-  .typo-title {
-    font-size: 24px;
-    line-height: 32px;
-    font-weight: var(--w-semibold);
-    font-family: var(--font-sans);
-  }
-  .typo-subtitle {
-    font-size: 20px;
-    line-height: 28px;
-    font-weight: var(--w-medium);
-    font-family: var(--font-sans);
-  }
-  .typo-subtitle-bold {
-    font-size: 20px;
-    line-height: 28px;
-    font-weight: var(--w-semibold);
-    font-family: var(--font-sans);
-  }
-  .typo-eyebrow {
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: var(--w-semibold);
-    font-family: var(--font-sans);
-  }
-  .typo-caption {
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: var(--w-normal);
-    font-family: var(--font-sans);
-  }
-  .typo-caption-bold {
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: var(--w-medium);
-    font-family: var(--font-sans);
-  }
-  .typo-tag {
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: var(--w-medium);
-    font-family: var(--font-sans);
-  }
-  .typo-badge {
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: var(--w-semibold);
-    font-family: var(--font-sans);
-  }
+@utility typo-display {
+  font-size: 32px;
+  line-height: 36px;
+  font-weight: var(--w-bold);
+  font-family: var(--font-sans);
+}
+@utility typo-title {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: var(--w-semibold);
+  font-family: var(--font-sans);
+}
+@utility typo-subtitle {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: var(--w-medium);
+  font-family: var(--font-sans);
+}
+@utility typo-subtitle-bold {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: var(--w-semibold);
+  font-family: var(--font-sans);
+}
+@utility typo-eyebrow {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: var(--w-semibold);
+  font-family: var(--font-sans);
+}
+@utility typo-caption {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--w-normal);
+  font-family: var(--font-sans);
+}
+@utility typo-caption-bold {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--w-medium);
+  font-family: var(--font-sans);
 }
 
 /* ================================
@@ -639,4 +638,48 @@
 }
 @utility bg-grad-600c {
   background-image: linear-gradient(90deg, var(--grad-600c-from), var(--grad-600c-to));
+}
+
+/* === Form Controls: Custom Checkbox === */
+.checkbox {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-gray-300);
+  background: #fff;
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+}
+
+.checkbox:active {
+  transform: scale(0.98);
+}
+
+.checkbox:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(134 51 243 / 0.25);
+}
+
+.checkbox:checked {
+  background-color: #fff;
+  border-color: var(--color-purple-600);
+}
+
+.checkbox:checked::after {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 6px;
+  border: solid var(--color-purple-600);
+  border-width: 0 0 2px 2px;
+  transform: translateY(-1px) rotate(-45deg);
+}
+
+.checkbox:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
