@@ -1,4 +1,4 @@
-import Service from '../Service';
+import Service from '../service';
 import { SigninRequest, SignupRequest, SigninResponse, SignupResponse } from '@/types/auths';
 
 class AnonAuthService extends Service {

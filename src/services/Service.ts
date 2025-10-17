@@ -1,5 +1,5 @@
-import HttpClient from './HttpClient';
-import PolymorphicHttpClient from './PolymorphicHttpClient';
+import HttpClient from './httpClient';
+import PolymorphicHttpClient from './polymorphicHttpClient';
 
 export default abstract class Service {
   protected http = HttpClient.getInstance();

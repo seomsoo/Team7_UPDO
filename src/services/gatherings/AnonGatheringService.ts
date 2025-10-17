@@ -1,4 +1,4 @@
-import Service from '../Service';
+import Service from '../service';
 import { IGathering, IParticipant } from '@/types/gatherings';
 
 class AnonGatheringService extends Service {

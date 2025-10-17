@@ -8,7 +8,7 @@ import {
   UpdateUserRequest,
   UpdateUserResponse,
 } from '@/types/auths';
-import PolymorphicHttpClient from '../PolymorphicHttpClient';
+import PolymorphicHttpClient from '../polymorphicHttpClient';
 
 export class AuthService {
   private http = PolymorphicHttpClient.getInstance();
