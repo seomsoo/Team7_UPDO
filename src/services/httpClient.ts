@@ -1,18 +1,38 @@
 import { ENV } from '@/constants/env';
 
+// -----------------------------------------------------------------------------
+// NOTE: HttpClient Singleton
+//       - CSR 환경 전용이지만, SSR 빌드 시에도 안전하게 동작하도록 보호 처리 포함
+//       - process.env.NEXT_PUBLIC_API_BASE_URL 우선 사용
+//       - Fetch API 기반 (CSR 환경 전용)
+//       - 싱글톤 패턴 적용 (getInstance())
+//       - /constants/env.ts의 ENV.API_BASE_URL 사용
+//       - 모든 서비스(authService, gatheringService 등)의 공통 기반
+// -----------------------------------------------------------------------------
+
 export default class HttpClient {
   private static instance: HttpClient;
-  private static DEFAULT_BASE_URL = ENV.API_BASE_URL;
-  protected readonly baseUrl: string;
+  private baseUrl: string;
 
+  // constructor는 외부에서 직접 호출 불가 (Singleton)
   protected constructor(baseUrl: string) {
-    this.baseUrl = baseUrl || HttpClient.DEFAULT_BASE_URL!;
+    if (!baseUrl) {
+      throw new Error('❌ API_BASE_URL is not configured. Check your .env file.');
+    }
+    this.baseUrl = baseUrl;
   }
 
-  // baseUrl을 적합한 url로 변경하여 설정.
+  // ✅ 단일 인스턴스 생성 (CSR 환경 기준)
   public static getInstance(baseUrl?: string) {
+    const finalBaseUrl = baseUrl ?? ENV.API_BASE_URL;
+    if (!finalBaseUrl) {
+      throw new Error(
+        '❌ API_BASE_URL is not configured. Please set NEXT_PUBLIC_API_BASE_URL in .env',
+      );
+    }
+
     if (!HttpClient.instance) {
-      HttpClient.instance = new HttpClient(baseUrl || HttpClient.DEFAULT_BASE_URL!);
+      HttpClient.instance = new HttpClient(finalBaseUrl);
     }
     return HttpClient.instance;
   }

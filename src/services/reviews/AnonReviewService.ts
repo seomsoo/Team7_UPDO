@@ -1,4 +1,4 @@
-import Service from '../Service';
+import Service from '../service';
 import { GetReviewsResponse, GetReviewScoresResponse } from '@/types/reviews';
 
 class AnonReviewService extends Service {
