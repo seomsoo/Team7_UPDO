@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic'; // ✅ 빌드 시 SSR 프리렌더링 비활성화
+
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import LoginForm from '@/components/feature/auth/LoginForm';
