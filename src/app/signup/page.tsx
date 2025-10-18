@@ -12,7 +12,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import SignupForm from '@/components/feature/auth/SignupForm';
-import { authService } from '@/services/auths/AuthService';
+import { authService } from '@/services/auths/authService';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 export default function SignupPage() {

@@ -6,7 +6,7 @@
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SignupForm from '@/components/feature/auth/SignupForm';
-import { authService } from '@/services/auths/AuthService';
+import { authService } from '@/services/auths/authService';
 
 // ✅ authService.signup 모듈 Mock
 jest.mock('@/services/auths/AuthService', () => ({

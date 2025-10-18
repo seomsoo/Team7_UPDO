@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import useDebounce from '@/hooks/useDebounce';
-import { authService } from '@/services/auths/AuthService';
+import { authService } from '@/services/auths/authService';
 
 // Zod 스키마로부터 TS 타입 자동 생성
 export type JoinFormType = z.infer<typeof JoinFormSchema>;

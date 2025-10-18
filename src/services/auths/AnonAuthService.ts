@@ -1,3 +1,5 @@
+// src/services/auths/anonAuthService.ts
+
 import Service from '../service';
 import { SigninRequest, SignupRequest, SigninResponse, SignupResponse } from '@/types/auths';
 

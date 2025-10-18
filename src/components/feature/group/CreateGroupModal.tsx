@@ -12,7 +12,7 @@ import { Type, Location, TabtoType, TagtoLocation } from '@/utils/mapping';
 import { formatDateToLocalISO } from '@/utils/date';
 
 import { CreateGatheringFormSchema } from '@/schemas/gatheringsSchema';
-import { createGathering } from '@/services/gatherings/GatheringService';
+import { createGathering } from '@/services/gatherings/gatheringService';
 import { useGroupStore } from '@/stores/groupStore';
 
 export type CreateGroupForm = {
