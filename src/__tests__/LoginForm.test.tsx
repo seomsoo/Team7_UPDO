@@ -9,7 +9,7 @@ import LoginForm from '@/components/feature/auth/LoginForm';
 import { authService } from '@/services/auths/authService';
 
 // ✅ authService.signin 모듈 Mock
-jest.mock('@/services/auths/AuthService', () => ({
+jest.mock('@/services/auths/authService', () => ({
   authService: {
     signin: jest.fn(),
   },
