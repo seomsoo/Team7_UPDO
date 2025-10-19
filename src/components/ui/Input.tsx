@@ -4,35 +4,23 @@ import { type VariantProps, cva } from 'class-variance-authority';
 
 import Icon from './Icon';
 
-export type BaseProps = VariantProps<typeof inputVariants> & {
+export interface InputProps
+  extends Omit<ComponentPropsWithoutRef<'input'>, 'size'>,
+    VariantProps<typeof inputVariants> {
   errorMessage?: string;
   className?: string;
   inputClassName?: string;
   rightSlot?: React.ReactNode;
   disableFocusStyle?: boolean;
 
-  onFocus?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-};
-
-export type InputOnlyProps = Omit<
-  ComponentPropsWithoutRef<'input'>,
-  'size' | 'onBlur' | 'onChange' | 'onFocus'
-> & {
-  multiline?: false;
-};
-
-export type TextareaOnlyProps = Omit<
-  ComponentPropsWithoutRef<'textarea'>,
-  'size' | 'onBlur' | 'onChange' | 'onFocus'
-> & {
-  multiline: true;
+  multiline?: boolean;
   rows?: number;
   autoResize?: boolean;
-};
 
-export type InputProps = BaseProps & (InputOnlyProps | TextareaOnlyProps);
+  onFocus?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onBlur?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+}
 
 export const INPUT_VARIANT = {
   default: '',
@@ -67,25 +55,42 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
   (
     {
       inputSize,
+      type,
       errorMessage,
       className,
       inputClassName,
       rightSlot,
       disableFocusStyle,
       multiline,
+      rows,
+      autoResize,
       ...props
     },
     ref,
   ) => {
-    // Narrow props per element based on discriminant `multiline`
-    const inputProps = !multiline ? (props as InputOnlyProps) : undefined;
-    const textareaProps = multiline ? (props as TextareaOnlyProps) : undefined;
+    // 안전한 Props 사용 : Input Focus Handler 관련
+    const {
+      onFocus: _omitOnFocus,
+      onBlur: _omitOnBlur,
+      onChange: _omitOnChange,
+      ...domRestProps
+    } = props;
 
-    // Derive rows/autoResize safely from narrowed textarea props
-    const effectiveRows = textareaProps?.rows ?? 3;
-    const autoResize = !!textareaProps?.autoResize;
+    // 안전한 Props 사용 : TextArea 사용 관련
+    const textareaSafeProps: React.TextareaHTMLAttributes<HTMLTextAreaElement> = {
+      id: props.id,
+      name: (props as ComponentPropsWithoutRef<'textarea'>).name,
+      placeholder: props.placeholder,
+      disabled: props.disabled,
+      value: props.value as string | number | readonly string[] | undefined,
+      defaultValue: props.defaultValue as string | number | readonly string[] | undefined,
+      maxLength: (props as ComponentPropsWithoutRef<'textarea'>).maxLength,
+      minLength: (props as ComponentPropsWithoutRef<'textarea'>).minLength,
+      required: props.required,
+      readOnly: props.readOnly,
+    };
 
-    const isPasswordField = !multiline && inputProps?.type === 'password';
+    const isPasswordField = !multiline && type === 'password';
     const [showPassword, setShowPassword] = useState(false);
 
     const isError = !!errorMessage?.trim();
@@ -130,7 +135,6 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
     const errorId = props.id ? `${props.id}-error` : undefined;
 
     const togglePasswordVisibility = () => setShowPassword(prev => !prev);
-
     return (
       <>
         <div
@@ -138,7 +142,7 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
           {multiline ? (
             <textarea
               ref={setRefs}
-              rows={effectiveRows}
+              rows={rows ?? 3}
               className={cn(
                 'flex-1 resize-none outline-none placeholder:text-gray-400 disabled:placeholder:text-gray-400',
                 inputClassName,
@@ -163,7 +167,7 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
               }}
               aria-invalid={!!isError}
               aria-describedby={isError && errorId ? errorId : undefined}
-              {...textareaProps!}
+              {...textareaSafeProps}
             />
           ) : (
             <input
@@ -172,13 +176,7 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
                 'flex-1 outline-none placeholder:text-gray-400 disabled:placeholder:text-gray-400',
                 inputClassName,
               )}
-              type={
-                isPasswordField
-                  ? showPassword
-                    ? 'text'
-                    : 'password'
-                  : (inputProps?.type ?? 'text')
-              }
+              type={isPasswordField ? (showPassword ? 'text' : 'password') : (type ?? 'text')}
               onFocus={e => {
                 if (!disableFocusStyle) setIsFocused(true);
                 props.onFocus?.(e);
@@ -194,7 +192,7 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
               }}
               aria-invalid={!!isError}
               aria-describedby={isError && errorId ? errorId : undefined}
-              {...inputProps!}
+              {...domRestProps}
             />
           )}
           {isPasswordField && (
