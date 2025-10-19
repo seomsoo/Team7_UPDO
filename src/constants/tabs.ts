@@ -1,3 +1,5 @@
+export type MainCategory = (typeof TAB_OPTIONS)[number]['title'];
+
 export type TabOption = { title: string; subtitle: string; value: string; type: string };
 
 export const tabs = ['스킬업', '챌린지', '네트워킹', '성장'];

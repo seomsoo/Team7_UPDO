@@ -3,6 +3,7 @@ import './globals.css';
 import { Pretendard } from '../lib/font';
 import ScrollVisibility from '../utils/ScrollVisibility';
 import { Toast } from '@/components/ui/Toast';
+import Header from '@/components/layout/Header';
 
 export const metadata: Metadata = {
   title: {
@@ -40,10 +41,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko" className={Pretendard.variable}>
-      <body className="font-sans">
+      <body>
+        <Header />
         <ScrollVisibility />
-        {children}
         <Toast />
+        <main className="layout-container font-sans">{children}</main>
       </body>
     </html>
   );

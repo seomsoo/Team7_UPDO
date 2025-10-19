@@ -1,5 +1,5 @@
 import { ENV } from '@/constants/env';
-import HttpClient from './HttpClient';
+import HttpClient from './httpClient';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 export default class PolymorphicHttpClient extends HttpClient {
@@ -10,12 +10,15 @@ export default class PolymorphicHttpClient extends HttpClient {
   }
 
   public static getInstance(baseUrl?: string) {
+    // ✅ CSR 전용 환경에서는 NEXT_PUBLIC_API_BASE_URL만 사용
     if (!PolymorphicHttpClient.pInstance) {
       const finalBaseUrl = baseUrl ?? ENV.API_BASE_URL;
       if (!finalBaseUrl) {
-        throw new Error('API_BASE_URL is not configured');
+        throw new Error('API_BASE_URL is not configured. Please check your .env file.');
       }
-      PolymorphicHttpClient.pInstance = new PolymorphicHttpClient(finalBaseUrl);
+      if (!PolymorphicHttpClient.pInstance) {
+        PolymorphicHttpClient.pInstance = new PolymorphicHttpClient(finalBaseUrl);
+      }
     }
     return PolymorphicHttpClient.pInstance;
   }

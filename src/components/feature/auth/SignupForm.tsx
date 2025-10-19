@@ -11,26 +11,23 @@
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-
 import { JoinFormSchema } from '@/schemas/authsSchema';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import useDebounce from '@/hooks/useDebounce';
-import { authService } from '@/services/auths/AuthService';
+import { authService } from '@/services/auths/authService';
 
 // Zod 스키마로부터 TS 타입 자동 생성
 export type JoinFormType = z.infer<typeof JoinFormSchema>;
 
 // 외부에서 라우팅 등 성공 후 동작을 주입받기 위한 prop
 type SignupFormProps = {
-  onSignupSuccess?: () => void; // 예: Next.js 환경에서 router.replace('/login')
+  onSignupSuccess?: (data?: JoinFormType) => void; // 예: Next.js 환경에서 router.replace('/login')
 };
 
 const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
-  // RHF 기본 설정: Zod resolver로 동기/비동기 검증 수행
   const {
     register, // input에 연결(값/이벤트 바인딩)
     handleSubmit, // 제출 시 검증+핸들 실행
@@ -38,7 +35,28 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
     setError, // 서버/비즈니스 로직 에러를 필드에 바인딩
     formState: { errors, isSubmitting }, // 에러 오브젝트 및 제출 상태
   } = useForm<JoinFormType>({
-    resolver: zodResolver(JoinFormSchema), // Zod 스키마 바인딩
+    resolver: async values => {
+      // Zod + RHF 통합 검증 : resolver 직접 구현
+      const result = JoinFormSchema.safeParse(values);
+      if (result.success) {
+        return { values: result.data, errors: {} };
+      }
+      // Zod 에러를 RHF 포맷으로 변환
+      const formErrors = result.error.flatten().fieldErrors;
+      return {
+        values: {},
+        errors: Object.entries(formErrors).reduce(
+          (acc, [key, messages]) => {
+            acc[key as keyof JoinFormType] = {
+              type: 'manual',
+              message: messages?.[0],
+            };
+            return acc;
+          },
+          {} as Record<string, { type: string; message: string }>,
+        ),
+      };
+    },
     mode: 'onBlur', // blur 시 1차 검증
     reValidateMode: 'onChange', // 값 변경 시 재검증
   });
@@ -76,7 +94,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
       });
 
       // 라우팅/토스트 등 성공 후 동작은 외부에서 주입받아 실행
-      onSignupSuccess?.();
+      onSignupSuccess?.(data);
     } catch (err: unknown) {
       // 서버 응답 예: { status, code, message, parameter }
       // parameter가 있으면 해당 필드 하단에 에러 메시지를 표시

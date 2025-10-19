@@ -50,7 +50,7 @@ export default function GroupCard({ data }: GroupCardProps) {
         </div>
         <div className="absolute top-5 right-5">
           {isClosed ? (
-            <div role="img" aria-label="모집 마감됨">
+            <div role="img" aria-label="모집 마감됨" className="cursor-not-allowed">
               <Icon name="save" size={48} />
             </div>
           ) : (

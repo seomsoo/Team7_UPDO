@@ -18,7 +18,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import useDebounce from '@/hooks/useDebounce';
-import { authService } from '@/services/auths/AuthService';
+import { authService } from '@/services/auths/authService';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { LoginFormSchema } from '@/schemas/authsSchema';
 

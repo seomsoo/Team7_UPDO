@@ -1,4 +1,4 @@
-import PolymorphicHttpClient from '../PolymorphicHttpClient';
+import PolymorphicHttpClient from '../polymorphicHttpClient';
 import {
   CreateReviewRequest,
   CreateReviewResponse,
