@@ -69,12 +69,7 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
     ref,
   ) => {
     // 안전한 Props 사용 : Input Focus Handler 관련
-    const {
-      onFocus: _omitOnFocus,
-      onBlur: _omitOnBlur,
-      onChange: _omitOnChange,
-      ...domRestProps
-    } = props;
+    const { onFocus, onBlur, onChange, ...domRestProps } = props;
 
     // 안전한 Props 사용 : TextArea 사용 관련
     const textareaSafeProps: React.TextareaHTMLAttributes<HTMLTextAreaElement> = {
@@ -149,12 +144,12 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
               )}
               onFocus={e => {
                 if (!disableFocusStyle) setIsFocused(true);
-                props.onFocus?.(e);
+                onFocus?.(e);
               }}
               onBlur={e => {
                 if (!disableFocusStyle) setIsFocused(false);
                 setIsFilled(!!(e.currentTarget as HTMLTextAreaElement).value);
-                props.onBlur?.(e);
+                onBlur?.(e);
               }}
               onChange={e => {
                 const target = e.currentTarget as HTMLTextAreaElement;
@@ -163,7 +158,7 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
                   target.style.height = 'auto';
                   target.style.height = `${target.scrollHeight}px`;
                 }
-                props.onChange?.(e);
+                onChange?.(e);
               }}
               aria-invalid={!!isError}
               aria-describedby={isError && errorId ? errorId : undefined}

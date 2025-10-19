@@ -1,9 +1,9 @@
 'use client';
 
+import { useId, useState } from 'react';
 import { Input } from './Input';
 import Dropdown from './Dropdown';
 
-import { useState } from 'react';
 import Icon from './Icon';
 
 import type { Option } from '@/constants/tags';
@@ -17,6 +17,7 @@ export interface SelectInputProps {
 
 export default function SelectInput({ items, value, onChange, placeholder }: SelectInputProps) {
   const [open, setOpen] = useState(false);
+  const listboxId = useId();
   const toggleOpen = () => setOpen(prev => !prev);
 
   const selectedLabel = items.find(item => item.value === value)?.label ?? '';
@@ -27,6 +28,7 @@ export default function SelectInput({ items, value, onChange, placeholder }: Sel
       <div
         role="combobox"
         aria-expanded={open}
+        aria-controls={listboxId}
         aria-haspopup="listbox"
         onClick={toggleOpen}
         onKeyDown={e => {
@@ -53,7 +55,10 @@ export default function SelectInput({ items, value, onChange, placeholder }: Sel
       </div>
 
       {open && (
-        <div className="absolute top-full left-0 z-[1000] max-h-64 w-full overflow-y-auto">
+        <div
+          id={listboxId}
+          role="listbox"
+          className="absolute top-full left-0 z-[1000] max-h-64 w-full overflow-y-auto">
           <Dropdown
             items={items}
             onChange={next => {

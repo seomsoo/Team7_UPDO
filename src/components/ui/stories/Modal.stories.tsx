@@ -103,8 +103,11 @@ type CreateGroupModalStory = StoryObj<typeof CreateGroupModal>;
 export const CreateGroupModalPlayground: CreateGroupModalStory = {
   render: args => {
     const [open, setOpen] = useState(false);
+    <button className="rounded-md border px-3 py-2 text-sm" onClick={() => setOpen(true)}>
+      모달
+    </button>;
 
-    return <CreateGroupModal {...args} open={true} onOpenChange={setOpen} />;
+    return <CreateGroupModal {...args} open={open} onOpenChange={setOpen} />;
   },
   argTypes: {},
   args: {},
@@ -114,8 +117,11 @@ type EditReviewModalStory = StoryObj<typeof EditReviewModal>;
 export const EditReviewModalPlayground: EditReviewModalStory = {
   render: args => {
     const [open, setOpen] = useState(false);
+    <button className="rounded-md border px-3 py-2 text-sm" onClick={() => setOpen(true)}>
+      모달
+    </button>;
 
-    return <EditReviewModal {...args} open={true} onOpenChange={setOpen} />;
+    return <EditReviewModal {...args} open={open} onOpenChange={setOpen} />;
   },
   argTypes: {},
   args: {},
