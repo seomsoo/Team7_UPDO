@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { DayPicker, type NavProps } from 'react-day-picker';
 import { Button } from './Button';

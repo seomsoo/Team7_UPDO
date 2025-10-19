@@ -1,3 +1,4 @@
+'use client';
 import { forwardRef, useEffect, useRef, useState, type ComponentPropsWithoutRef } from 'react';
 import { cn } from '@/utils/cn';
 import { type VariantProps, cva } from 'class-variance-authority';

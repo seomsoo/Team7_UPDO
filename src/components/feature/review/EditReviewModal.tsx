@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
@@ -9,7 +11,6 @@ import { Toast, useToast } from '@/components/ui/Toast';
 import { ReviewFormSchema } from '@/schemas/reviewsSchema';
 import { createReview } from '@/services/reviews/ReviewService';
 
-// ❾ [문자열 상수 분리] 사용자 메시지 상수 (i18n/재사용 대비)
 const TOAST_MESSAGE = {
   successReview: '리뷰가 성공적으로 등록되었습니다',
   submitError: '리뷰 등록 중 오류가 발생했습니다.',
@@ -44,7 +45,7 @@ export default function EditReviewModal({
     }
 
     try {
-      setIsSubmitting(true); // ① 시작: 버튼 비활성화
+      setIsSubmitting(true);
       const validData = validation.data;
       await createReview(validData);
 
