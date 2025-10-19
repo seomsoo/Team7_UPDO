@@ -32,3 +32,7 @@ export class ReviewService {
 }
 
 export const reviewService = new ReviewService();
+
+export const createReview = reviewService.createReview.bind(reviewService);
+export const getReviews = reviewService.getReviews.bind(reviewService);
+export const getReviewScores = reviewService.getReviewScores.bind(reviewService);

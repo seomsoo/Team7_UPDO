@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Pretendard } from '../lib/font';
 import ScrollVisibility from '../utils/ScrollVisibility';
+import { Toast } from '@/components/ui/Toast';
 
 export const metadata: Metadata = {
   title: {
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="font-sans">
         <ScrollVisibility />
         {children}
+        <Toast />
       </body>
     </html>
   );

@@ -151,11 +151,11 @@ const ReviewScore: React.FC<ReviewScoreProps> = ({
   }, [value, hoveredIndex, disabled, handleClick, handleHoverStart, handleHoverEnd]);
 
   return (
-    <div className={`flex flex-col gap-4 ${className}`}>
-      {label && <p className="text-base font-medium text-gray-800">{label}</p>}
+    <div className={`flex flex-col gap-[10px] ${className}`}>
+      {label && <p className="typo-lg indent-1 font-medium text-gray-800">{label}</p>}
 
       <div
-        className="flex items-center gap-1"
+        className="flex items-center"
         role="radiogroup"
         aria-label="평점 선택"
         style={{ width: 204, height: 40 }}>

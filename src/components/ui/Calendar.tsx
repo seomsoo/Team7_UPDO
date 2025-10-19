@@ -140,20 +140,32 @@ export const Calendar = ({
     onPrimary: () => void;
     onCancel?: () => void;
     disabledPrimary: boolean;
-  }) => (
-    <div className="flex w-full items-center justify-center gap-[6px] px-0">
-      <Button variant={'calendarOutline'} size="calendar_small" onClick={onCancel}>
-        {cancelLabel || '취소'}
-      </Button>
-      <Button
-        variant={'calendarSolid'}
-        size="calendar_small"
-        disabled={disabledPrimary}
-        onClick={onPrimary}>
-        {primaryLabel}
-      </Button>
-    </div>
-  );
+  }) => {
+    const buttonClassName = 'h-[48px] md:w-[100px] md:h-[44px] typo-body-bold rounded-md';
+    return (
+      <div className="flex w-full items-center justify-center gap-[6px] px-0">
+        <div className="h-full w-full">
+          <Button
+            variant={'calendarOutline'}
+            size="responsive_full"
+            className={buttonClassName}
+            onClick={onCancel}>
+            {cancelLabel || '취소'}
+          </Button>
+        </div>
+        <div className="h-full w-full">
+          <Button
+            variant={'calendarSolid'}
+            size="responsive_full"
+            disabled={disabledPrimary}
+            className={buttonClassName}
+            onClick={onPrimary}>
+            {primaryLabel}
+          </Button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="rounded-md border-[1px] border-gray-200 bg-white">

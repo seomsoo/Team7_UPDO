@@ -1,18 +1,38 @@
-import { InputHTMLAttributes, forwardRef, useEffect, useState } from 'react';
+import { forwardRef, useEffect, useRef, useState, type ComponentPropsWithoutRef } from 'react';
 import { cn } from '@/utils/cn';
 import { type VariantProps, cva } from 'class-variance-authority';
 
 import Icon from './Icon';
 
-export interface InputProps
-  extends InputHTMLAttributes<HTMLInputElement>,
-    VariantProps<typeof inputVariants> {
+export type BaseProps = VariantProps<typeof inputVariants> & {
   errorMessage?: string;
   className?: string;
   inputClassName?: string;
   rightSlot?: React.ReactNode;
-  disableFocusStyle?: boolean; // NEW: when true, do not switch to typing border on focus
-}
+  disableFocusStyle?: boolean;
+
+  onFocus?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+};
+
+export type InputOnlyProps = Omit<
+  ComponentPropsWithoutRef<'input'>,
+  'size' | 'onBlur' | 'onChange' | 'onFocus'
+> & {
+  multiline?: false;
+};
+
+export type TextareaOnlyProps = Omit<
+  ComponentPropsWithoutRef<'textarea'>,
+  'size' | 'onBlur' | 'onChange' | 'onFocus'
+> & {
+  multiline: true;
+  rows?: number;
+  autoResize?: boolean;
+};
+
+export type InputProps = BaseProps & (InputOnlyProps | TextareaOnlyProps);
 
 export const INPUT_VARIANT = {
   default: '',
@@ -43,32 +63,44 @@ const inputVariants = cva(
   },
 );
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
+export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
   (
-    {
-      inputSize,
-      type,
-      errorMessage,
-      className,
-      inputClassName,
-      rightSlot,
-      disableFocusStyle,
-      ...props
-    },
+    { inputSize, errorMessage, className, inputClassName, rightSlot, disableFocusStyle, ...props },
     ref,
   ) => {
-    const isPasswordField = type === 'password';
+    // 엄격한 type 설정으로 분기점 처리하기
+    const multiline = 'multiline' in props && (props as TextareaOnlyProps).multiline === true;
+    const inputProps = !multiline ? (props as InputOnlyProps) : undefined;
+    const textareaProps = multiline ? (props as TextareaOnlyProps) : undefined;
+    const autoResize = multiline ? !!textareaProps?.autoResize : false;
+
+    const isPasswordField = !multiline && inputProps?.type === 'password';
     const [showPassword, setShowPassword] = useState(false);
 
     const isError = !!errorMessage?.trim();
     const [isFocused, setIsFocused] = useState(false);
     const [isFilled, setIsFilled] = useState(!!(props.value ?? props.defaultValue));
 
-    // 외부에서 값이 업데이트되어도 setIsFilled가 바뀔 수 있도록 수정
-    useEffect(() => {
-      setIsFilled(!!(props.value ?? props.defaultValue));
-    }, [props.value, props.defaultValue]);
+    // textArea ref 설정 및 관리
+    const innerRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
+    const setRefs = (el: HTMLInputElement | HTMLTextAreaElement | null) => {
+      innerRef.current = el;
+      if (typeof ref === 'function') ref(el);
+      else if (ref && typeof ref !== 'function' && 'current' in ref) {
+        (ref as { current: HTMLInputElement | HTMLTextAreaElement | null }).current = el;
+      }
+    };
 
+    // textArea 기능 중 Auto-resize
+    useEffect(() => {
+      if (!multiline || !autoResize) return;
+      const el = innerRef.current as HTMLTextAreaElement | null;
+      if (!el) return;
+      el.style.height = 'auto';
+      el.style.height = `${el.scrollHeight}px`;
+    }, [multiline, autoResize, props.value, props.defaultValue]);
+
+    // 자동으로 입력란 포커스 스타일 조절
     const currentVariant = disableFocusStyle
       ? isFilled
         ? 'done'
@@ -79,37 +111,81 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ? 'done'
           : 'default';
 
+    // 외부에서 값이 업데이트되어도 setIsFilled가 바뀔 수 있도록 수정
+    useEffect(() => {
+      setIsFilled(!!(props.value ?? props.defaultValue));
+    }, [props.value, props.defaultValue]);
+
     const errorId = props.id ? `${props.id}-error` : undefined;
 
     const togglePasswordVisibility = () => setShowPassword(prev => !prev);
+
     return (
       <>
         <div
           className={cn(inputVariants({ variant: currentVariant, inputSize, isError }), className)}>
-          <input
-            ref={ref}
-            className={cn(
-              'flex-1 outline-none placeholder:text-gray-400 disabled:placeholder:text-gray-400',
-              inputClassName,
-            )}
-            type={isPasswordField ? (showPassword ? 'text' : 'password') : (type ?? 'text')}
-            onFocus={e => {
-              if (!disableFocusStyle) setIsFocused(true);
-              props.onFocus?.(e);
-            }}
-            onBlur={e => {
-              if (!disableFocusStyle) setIsFocused(false);
-              setIsFilled(!!e.currentTarget.value);
-              props.onBlur?.(e);
-            }}
-            onChange={e => {
-              setIsFilled(!!e.currentTarget.value);
-              props.onChange?.(e);
-            }}
-            aria-invalid={!!isError}
-            aria-describedby={isError && errorId ? errorId : undefined}
-            {...props}
-          />
+          {multiline ? (
+            <textarea
+              ref={setRefs}
+              rows={textareaProps?.rows ?? 3}
+              className={cn(
+                'flex-1 resize-none outline-none placeholder:text-gray-400 disabled:placeholder:text-gray-400',
+                inputClassName,
+              )}
+              onFocus={e => {
+                if (!disableFocusStyle) setIsFocused(true);
+                props.onFocus?.(e);
+              }}
+              onBlur={e => {
+                if (!disableFocusStyle) setIsFocused(false);
+                setIsFilled(!!(e.currentTarget as HTMLTextAreaElement).value);
+                props.onBlur?.(e);
+              }}
+              onChange={e => {
+                const target = e.currentTarget as HTMLTextAreaElement;
+                setIsFilled(!!target.value);
+                if (autoResize) {
+                  target.style.height = 'auto';
+                  target.style.height = `${target.scrollHeight}px`;
+                }
+                props.onChange?.(e);
+              }}
+              aria-invalid={!!isError}
+              aria-describedby={isError && errorId ? errorId : undefined}
+              {...textareaProps!}
+            />
+          ) : (
+            <input
+              ref={setRefs}
+              className={cn(
+                'flex-1 outline-none placeholder:text-gray-400 disabled:placeholder:text-gray-400',
+                inputClassName,
+              )}
+              type={
+                isPasswordField
+                  ? showPassword
+                    ? 'text'
+                    : 'password'
+                  : (inputProps?.type ?? 'text')
+              }
+              onFocus={e => {
+                if (!disableFocusStyle) setIsFocused(true);
+                props.onFocus?.(e);
+              }}
+              onBlur={e => {
+                if (!disableFocusStyle) setIsFocused(false);
+                setIsFilled(!!e.currentTarget.value);
+                props.onBlur?.(e);
+              }}
+              onChange={e => {
+                setIsFilled(!!e.currentTarget.value);
+                props.onChange?.(e);
+              }}
+              aria-invalid={!!isError}
+              aria-describedby={isError && errorId ? errorId : undefined}
+              {...inputProps!}
+            />
+          )}
           {isPasswordField && (
             <button
               type="button"

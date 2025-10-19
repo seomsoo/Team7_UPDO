@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Modal, ConfirmModal } from '../Modal';
 import CreateGroupModal from '@/components/feature/group/CreateGroupModal';
+import EditReviewModal from '@/components/feature/review/EditReviewModal';
 
 const meta: Meta<typeof Modal> = {
   title: 'components/ui/Modal',
@@ -103,7 +104,18 @@ export const CreateGroupModalPlayground: CreateGroupModalStory = {
   render: args => {
     const [open, setOpen] = useState(false);
 
-    return <CreateGroupModal open={true} onOpenChange={setOpen} />;
+    return <CreateGroupModal {...args} open={true} onOpenChange={setOpen} />;
+  },
+  argTypes: {},
+  args: {},
+};
+
+type EditReviewModalStory = StoryObj<typeof EditReviewModal>;
+export const EditReviewModalPlayground: EditReviewModalStory = {
+  render: args => {
+    const [open, setOpen] = useState(false);
+
+    return <EditReviewModal {...args} open={true} onOpenChange={setOpen} />;
   },
   argTypes: {},
   args: {},

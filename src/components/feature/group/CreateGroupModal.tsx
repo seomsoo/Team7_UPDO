@@ -8,12 +8,12 @@ import { TabOption } from '@/constants/tabs';
 
 import CreateGroupModalForm from './CreateGroupModalForm';
 
-import { Type, Location, TabtoType, TagtoLocation } from '@/utils/mapping';
+import { Type, Location, TabToType, TagToLocation } from '@/utils/mapping';
 import { formatDateToLocalISO } from '@/utils/date';
 
 import { CreateGatheringFormSchema } from '@/schemas/gatheringsSchema';
-import { createGathering } from '@/services/gatherings/GatheringService';
-import { useGroupStore } from '@/stores/groupStore';
+// import { createGathering } from '@/services/gatherings/GatheringService';
+// import { useGroupStore } from '@/stores/groupStore';
 
 export type CreateGroupForm = {
   name: string;
@@ -40,13 +40,13 @@ export default function CreateGroupModal({ open, onOpenChange }: ModalProps) {
     image: null,
   });
 
-  const { updateForm } = useGroupStore();
+  // const { updateForm } = useGroupStore();
 
   const handleSubmit = async () => {
     const payload = {
       name: form.name.trim(),
-      type: form.tab && TabtoType(form.tab),
-      location: form.tag && TagtoLocation(form.tag),
+      type: form.tab && TabToType(form.tab),
+      location: form.tag && TagToLocation(form.tag),
       dateTime: form.date && formatDateToLocalISO(new Date(form.date)),
       registrationEnd: form.registrationEnd && formatDateToLocalISO(new Date(form.registrationEnd)),
       capacity: form.capacity ? Number(form.capacity) : 0,
@@ -59,7 +59,7 @@ export default function CreateGroupModal({ open, onOpenChange }: ModalProps) {
       alert(firstError.message);
       return;
     }
-    const validData = validation.data;
+    // const validData = validation.data;
 
     // const res = await createGathering(validData);
   };
@@ -85,7 +85,11 @@ export default function CreateGroupModal({ open, onOpenChange }: ModalProps) {
       </Modal.Body>
       <Modal.Footer className="h-15 p-0">
         <div>
-          <Button size={'xlarge_responsive'} onClick={handleSubmit} disabled={!isFormComplete}>
+          <Button
+            size={'responsive_full'}
+            className="h5Semibold h-[60px] rounded-xl md:w-[474px]"
+            onClick={handleSubmit}
+            disabled={!isFormComplete}>
             확인
           </Button>
         </div>
