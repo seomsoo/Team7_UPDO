@@ -1,26 +1,20 @@
 import { forwardRef } from 'react';
-import { Input, type InputProps, type TextareaOnlyProps, type BaseProps } from './Input';
+import { Input, type InputProps } from './Input';
+import type { BaseProps, TextareaOnlyProps } from './Input';
 
-// Base props we allow to pass through from Input's shared props
-type BaseSubset = Pick<
-  BaseProps,
-  | 'variant'
-  | 'inputSize'
-  | 'errorMessage'
-  | 'className'
-  | 'inputClassName'
-  | 'rightSlot'
-  | 'disableFocusStyle'
-  | 'onFocus'
-  | 'onBlur'
-  | 'onChange'
->;
+// Make BaseProps textarea-safe by omitting shared handlers and re-adding textarea-specific ones
+type BaseWithoutHandlers = Omit<BaseProps, 'onFocus' | 'onBlur' | 'onChange'>;
 
-export type InputAreaProps = BaseSubset & Omit<TextareaOnlyProps, 'multiline'>; // Always multiline in this wrapper
+export type InputAreaProps = BaseWithoutHandlers &
+  Omit<TextareaOnlyProps, 'multiline'> & {
+    onFocus?: React.FocusEventHandler<HTMLTextAreaElement>;
+    onBlur?: React.FocusEventHandler<HTMLTextAreaElement>;
+    onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
+  };
 
 const InputArea = forwardRef<HTMLTextAreaElement, InputAreaProps>(
   ({ rows = 3, autoResize = true, ...props }, ref) => {
-    const merged = { ...props, multiline: true } as InputProps;
+    const merged = { ...props, multiline: true, autoResize, rows } as InputProps;
     return <Input {...merged} ref={ref} />;
   },
 );

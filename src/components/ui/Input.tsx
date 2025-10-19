@@ -65,14 +65,25 @@ const inputVariants = cva(
 
 export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
   (
-    { inputSize, errorMessage, className, inputClassName, rightSlot, disableFocusStyle, ...props },
+    {
+      inputSize,
+      errorMessage,
+      className,
+      inputClassName,
+      rightSlot,
+      disableFocusStyle,
+      multiline,
+      ...props
+    },
     ref,
   ) => {
-    // 엄격한 type 설정으로 분기점 처리하기
-    const multiline = 'multiline' in props && (props as TextareaOnlyProps).multiline === true;
+    // Narrow props per element based on discriminant `multiline`
     const inputProps = !multiline ? (props as InputOnlyProps) : undefined;
     const textareaProps = multiline ? (props as TextareaOnlyProps) : undefined;
-    const autoResize = multiline ? !!textareaProps?.autoResize : false;
+
+    // Derive rows/autoResize safely from narrowed textarea props
+    const effectiveRows = textareaProps?.rows ?? 3;
+    const autoResize = !!textareaProps?.autoResize;
 
     const isPasswordField = !multiline && inputProps?.type === 'password';
     const [showPassword, setShowPassword] = useState(false);
@@ -127,7 +138,7 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
           {multiline ? (
             <textarea
               ref={setRefs}
-              rows={textareaProps?.rows ?? 3}
+              rows={effectiveRows}
               className={cn(
                 'flex-1 resize-none outline-none placeholder:text-gray-400 disabled:placeholder:text-gray-400',
                 inputClassName,
