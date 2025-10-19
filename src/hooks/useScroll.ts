@@ -1,7 +1,8 @@
 'use client';
+
 import { useEffect, useRef } from 'react';
 
-export default function ScrollVisibility() {
+export function useScroll() {
   const timer = useRef<number | undefined>(undefined);
 
   useEffect(() => {
@@ -24,6 +25,4 @@ export default function ScrollVisibility() {
       html.classList.remove('scroll-hidden');
     };
   }, []);
-
-  return null;
 }
