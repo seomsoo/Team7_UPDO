@@ -39,9 +39,10 @@ export default function GroupDetailHeader({ data, isHost = false }: GroupDetailH
             icon="alarm"
             size="sm"
             density="tight"
-            radius="rounded"
-            tone="topicSoft"
+            tone="topicSolid"
+            topic={topic}
             typo="tag"
+            radius="rounded"
             className="pr-2 pl-1">
             {deadlineText}
           </IconText>
