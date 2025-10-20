@@ -9,7 +9,7 @@ import ReviewScore from '@/components/ui/ReviewScore';
 import { Toast, useToast } from '@/components/ui/Toast';
 
 import { ReviewFormSchema } from '@/schemas/reviewsSchema';
-import { createReview } from '@/services/reviews/ReviewService';
+import { createReview } from '@/services/reviews/reviewService';
 
 const TOAST_MESSAGE = {
   successReview: '리뷰가 성공적으로 등록되었습니다',
