@@ -2,7 +2,6 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import IconText from '../IconText';
 import Badge from '../Badge';
-import { string } from 'zod';
 
 const meta: Meta<typeof IconText> = {
   title: 'components/ui/IconText',

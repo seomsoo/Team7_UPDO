@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Pretendard } from '../lib/font';
+import { Toast } from '@/components/ui/Toast';
 import Header from '@/components/layout/Header';
 import ScrollWrapper from '@/components/ui/ScrollVisibility';
 
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ScrollWrapper />
         <Header />
+        <Toast />
         <main className="layout-container font-sans">{children}</main>
       </body>
     </html>

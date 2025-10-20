@@ -114,11 +114,11 @@ function ModalRoot({
         <Overlay onClick={handleOutside} />
         <div
           className={cn(
-            'pointer-events-none fixed inset-0 flex items-start justify-center overflow-y-auto',
+            'pointer-events-none fixed inset-0 flex items-center justify-center overflow-y-auto',
             modalClassName,
           )}>
           <div
-            className={cn('pointer-events-auto my-10', ResponsiveClassName)}
+            className={cn('pointer-events-auto', ResponsiveClassName)}
             aria-modal="true"
             role="dialog"
             aria-labelledby="modal-title"

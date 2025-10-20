@@ -8,7 +8,7 @@ import { IGathering } from '@/types/gatherings/models';
 import Tag from '@/components/ui/Tag';
 import IconText from '@/components/ui/IconText';
 import { formatTime, formatDate, formatDeadline, isClosed as checkClosed } from '@/utils/date';
-import { LocationtoTag } from '@/utils/mapping';
+import { LocationToTag } from '@/utils/mapping';
 import { TAG_OPTIONS } from '@/constants';
 import { useState } from 'react';
 import SaveButton from '@/components/ui/SaveButton';
@@ -22,7 +22,7 @@ export default function GroupCard({ data }: GroupCardProps) {
   const onToggle = () => setIsSaved(prev => !prev);
   const { name, location, dateTime, registrationEnd, participantCount, capacity, image } = data;
   const isClosed = checkClosed(registrationEnd);
-  const topic = LocationtoTag(location) as 'growth' | 'learn' | 'challenge' | 'connect' | 'default';
+  const topic = LocationToTag(location) as 'growth' | 'learn' | 'challenge' | 'connect' | 'default';
   const safeCapacity = Math.max(1, capacity);
   const category = TAG_OPTIONS.find(option => option.value === topic)?.label ?? '';
   return (

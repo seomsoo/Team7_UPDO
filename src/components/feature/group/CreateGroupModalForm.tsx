@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useRef } from 'react';
 
 import { Input } from '@/components/ui/Input';
