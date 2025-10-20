@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Pretendard } from '../lib/font';
-import ScrollVisibility from '../utils/ScrollVisibility';
 import { Toast } from '@/components/ui/Toast';
 import Header from '@/components/layout/Header';
+import ScrollWrapper from '@/components/ui/ScrollVisibility';
 
 export const metadata: Metadata = {
   title: {
@@ -42,8 +42,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko" className={Pretendard.variable}>
       <body>
+        <ScrollWrapper />
         <Header />
-        <ScrollVisibility />
         <Toast />
         <main className="layout-container font-sans">{children}</main>
       </body>
