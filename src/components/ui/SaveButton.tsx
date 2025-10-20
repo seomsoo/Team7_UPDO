@@ -9,7 +9,7 @@ import SaveOutline from './Icon/Icons/SaveOutline';
 export interface SaveButtonProps {
   isSaved: boolean;
   onToggle: () => void;
-  size?: number;
+  size?: number | 'responsive';
   className?: string;
   ariaLabel?: string;
 }
@@ -21,6 +21,9 @@ export default function SaveButton({
   className,
   ariaLabel = '찜하기',
 }: SaveButtonProps) {
+  const isResponsive = size === 'responsive';
+  const buttonSize = isResponsive ? undefined : (size as number);
+
   return (
     <motion.button
       type="button"
@@ -31,21 +34,38 @@ export default function SaveButton({
       }}
       aria-label={ariaLabel}
       aria-pressed={isSaved}
-      className={cn('relative inline-flex cursor-pointer items-center justify-center', className)}
-      style={{
-        width: size,
-        height: size,
-        background: 'none',
-        border: 'none',
-        padding: 0,
-        outline: 'none',
-      }}
+      className={cn(
+        'relative inline-flex cursor-pointer items-center justify-center',
+        isResponsive && 'h-10 w-10 sm:h-12 sm:w-12 md:h-15 md:w-15',
+        className,
+      )}
+      style={
+        !isResponsive
+          ? {
+              width: buttonSize,
+              height: buttonSize,
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              outline: 'none',
+            }
+          : {
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              outline: 'none',
+            }
+      }
       whileTap={{ scale: 0.9 }}
       whileHover={{ scale: 1.05 }}
       transition={{ type: 'spring', stiffness: 400, damping: 17 }}>
       {/* Default (Outline) */}
-      <div className="absolute inset-0">
-        <SaveOutline size={size} />
+      <div
+        className={cn(
+          'absolute inset-0 flex items-center justify-center',
+          isResponsive && '[&>svg]:h-full [&>svg]:w-full',
+        )}>
+        <SaveOutline size={isResponsive ? undefined : buttonSize} />
       </div>
 
       {/* Active (Filled) */}
@@ -53,7 +73,10 @@ export default function SaveButton({
         {isSaved && (
           <motion.div
             key="filled"
-            className="absolute inset-0"
+            className={cn(
+              'absolute inset-0 flex items-center justify-center',
+              isResponsive && '[&>svg]:h-full [&>svg]:w-full',
+            )}
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
@@ -63,7 +86,7 @@ export default function SaveButton({
               damping: 25,
               mass: 0.5,
             }}>
-            <SaveFilled size={size} />
+            <SaveFilled size={isResponsive ? undefined : buttonSize} />
           </motion.div>
         )}
       </AnimatePresence>
