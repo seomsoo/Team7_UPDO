@@ -24,9 +24,9 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: '모임 찾기', href: '/gathering/growth' },
+  { label: '모임 찾기', href: '/gathering' },
   { label: '찜한 모임', href: '/favorites', hasBadge: true },
-  { label: '모든 리뷰', href: '/allreviews/growth' },
+  { label: '모든 리뷰', href: '/reviews' },
 ];
 
 export default function Header({ user, favoriteCount = 0, className }: HeaderProps) {

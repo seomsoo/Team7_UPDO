@@ -4,6 +4,7 @@ import { Pretendard } from '../lib/font';
 import { Toast } from '@/components/ui/Toast';
 import Header from '@/components/layout/Header';
 import ScrollWrapper from '@/components/ui/ScrollVisibility';
+import QueryProvider from '@/components/providers/QueryProvider';
 
 export const metadata: Metadata = {
   title: {
@@ -42,10 +43,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko" className={Pretendard.variable}>
       <body>
-        <ScrollWrapper />
-        <Header />
-        <Toast />
-        <main className="layout-container font-sans">{children}</main>
+        <QueryProvider>
+          <ScrollWrapper />
+          <Header />
+          <Toast />
+          <main className="layout-container font-sans">{children}</main>
+        </QueryProvider>
       </body>
     </html>
   );
