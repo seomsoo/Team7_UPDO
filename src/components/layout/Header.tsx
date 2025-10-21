@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { cn } from '@/utils/cn';
 import Badge from '@/components/ui/Badge';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 interface HeaderProps {
   user?: {
@@ -30,6 +31,7 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 export default function Header({ user, favoriteCount = 0, className }: HeaderProps) {
+  const { isAuthenticated } = useAuthStore();
   const pathname = usePathname();
 
   const isActive = (href: string) => {
@@ -87,9 +89,10 @@ export default function Header({ user, favoriteCount = 0, className }: HeaderPro
             </nav>
           </div>
 
-          {/* Right: Profile(MyPage) */}
+          {/* Right: profile(Login or MyPage) */}
+
           <Link
-            href="/mypage"
+            href={isAuthenticated ? '/mypage' : '/login'}
             className="flex-shrink-0 overflow-hidden rounded-full transition-opacity hover:opacity-80">
             <Image
               src={user?.image || '/images/profile.png'}

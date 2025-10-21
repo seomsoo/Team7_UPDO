@@ -12,13 +12,19 @@ import { TAG_OPTIONS } from '@/constants/tags';
 import { TAB_OPTIONS } from '@/constants/tabs';
 
 import { CreateGroupForm } from './CreateGroupModal';
+import type { SubmitErrors } from './CreateGroupModal';
 
 type CreateGroupModalFormProps = {
   form: CreateGroupForm;
   setForm: React.Dispatch<React.SetStateAction<CreateGroupForm>>;
+  submitErrors?: SubmitErrors | null;
 };
 
-export default function CreateGroupModalForm({ form, setForm }: CreateGroupModalFormProps) {
+export default function CreateGroupModalForm({
+  form,
+  setForm,
+  submitErrors,
+}: CreateGroupModalFormProps) {
   const [selectedIdx, setSelectedIdx] = useState<number | null>(0);
 
   const labelClassName = 'block typo-body-bold text-gray-800 mb-3';
@@ -118,6 +124,7 @@ export default function CreateGroupModalForm({ form, setForm }: CreateGroupModal
       <div className="grid gap-10 md:grid-cols-2">
         <div>
           <label className="label mb-2 block text-gray-800">모임 날짜</label>
+
           <DatetimeInput
             value={form.date ?? ''}
             onChange={nextValue =>
@@ -130,7 +137,9 @@ export default function CreateGroupModalForm({ form, setForm }: CreateGroupModal
           />
         </div>
         <div>
-          <label className="label mb-2 block text-gray-800">마감 날짜</label>
+          <div className="flex justify-between">
+            <label className="label mb-2 block text-gray-800">마감 날짜</label>
+          </div>
           <DatetimeInput
             value={form.registrationEnd ?? ''}
             onChange={nextValue =>
@@ -141,21 +150,33 @@ export default function CreateGroupModalForm({ form, setForm }: CreateGroupModal
             }
             blockPast
           />
+          {submitErrors?.registrationEnd && (
+            <span className="typo-body-sm md:typo-caption-bold text-red-500">
+              {submitErrors.registrationEnd[0]}
+            </span>
+          )}
         </div>
       </div>
 
       <div>
-        <label className={labelClassName}>모집 인원</label>
+        <div className="label flex justify-between">
+          <label className={labelClassName}>모집 인원</label>
+          {submitErrors?.capacity && (
+            <span className="typo-body-sm text-red-500">{submitErrors.capacity[0]}</span>
+          )}
+        </div>
         <Input
           type="number"
           placeholder="모집 인원을 입력해주세요"
           value={form.capacity ? String(form.capacity) : ''}
-          onChange={e =>
+          onChange={e => {
+            const val = e.target.value === '' ? null : Number(e.target.value);
+            if (val !== null && val < 0) return; // prevent values above 20
             setForm(s => ({
               ...s,
-              capacity: e.target.value === '' ? null : Number(e.target.value),
-            }))
-          }
+              capacity: val,
+            }));
+          }}
         />
       </div>
     </>
