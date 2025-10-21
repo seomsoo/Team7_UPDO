@@ -1,4 +1,5 @@
 import { ENV } from '@/constants/env';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 // -----------------------------------------------------------------------------
 // NOTE: HttpClient Singleton
@@ -38,18 +39,30 @@ export default class HttpClient {
   }
 
   protected async request<T>(path: string, options: RequestInit = {}): Promise<T> {
-    const { body } = options;
+    // SSR 빌드 시 쿠키 전달 필요할 수 있으므로 일관 처리
+    const baseOptions: RequestInit = {
+      ...options,
+      ...(typeof window === 'undefined' ? { credentials: 'include' } : {}),
+    };
 
-    const headers =
+    const { token, checkTokenValidity } = useAuthStore.getState();
+    if (token && !checkTokenValidity()) {
+      throw { status: 401, code: 'UNAUTHORIZED', message: '인증이 필요합니다.' };
+    }
+
+    const { body } = baseOptions;
+    const headers = new Headers(
       body instanceof FormData
-        ? options.headers || {}
-        : {
-            'Content-Type': 'application/json',
-            ...(options.headers || {}),
-          };
+        ? (baseOptions.headers ?? {})
+        : { 'Content-Type': 'application/json', ...(baseOptions.headers ?? {}) },
+    );
+
+    if (token && !headers.has('Authorization')) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
 
     const res = await fetch(`${this.baseUrl}/${ENV.TEAM_ID}${path}`, {
-      ...options,
+      ...baseOptions,
       headers,
     });
 
