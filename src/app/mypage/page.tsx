@@ -52,7 +52,7 @@ export default function MyPage() {
 
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<IUser | null>(null);
-  const [userGatherings, setUserGatherings] = useState<IJoinedGathering | null>(null);
+  const [userGatherings, setUserGatherings] = useState<IJoinedGathering[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handlerLogout = () => {
@@ -139,7 +139,7 @@ export default function MyPage() {
         {/* 우측(PC) 겸 하단(태블릿, 모바일) */}
         <div className="flex min-h-0 w-full flex-1 flex-col">
           <Tab items={MYPAGETABS} value={selectedTab} onChange={setSelectedTab} />
-          {!!userGatherings ? (
+          {userGatherings && userGatherings.length > 0 ? (
             // 데이터가 있으면, CardList
             <div></div>
           ) : (
