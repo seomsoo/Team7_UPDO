@@ -142,14 +142,14 @@ export const Calendar = ({
     onCancel?: () => void;
     disabledPrimary: boolean;
   }) => {
-    const buttonClassName = 'h-[48px] md:w-[100px] md:h-[44px] typo-body-bold rounded-md';
+    const buttonClassName = 'h-[48px] typo-body-bold rounded-md';
     return (
       <div className="flex w-full items-center justify-center gap-[6px] px-0">
         <div className="h-full w-full">
           <Button
             variant={'calendarOutline'}
             size="responsive_full"
-            className={buttonClassName}
+            className={`${buttonClassName} shrink-0`}
             onClick={onCancel}>
             {cancelLabel || '취소'}
           </Button>
@@ -159,7 +159,7 @@ export const Calendar = ({
             variant={'calendarSolid'}
             size="responsive_full"
             disabled={disabledPrimary}
-            className={buttonClassName}
+            className={`${buttonClassName} shrink-0`}
             onClick={onPrimary}>
             {primaryLabel}
           </Button>

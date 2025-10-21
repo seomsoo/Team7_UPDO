@@ -18,15 +18,31 @@ export default function DatetimeInput({ value, onChange, blockPast = false }: Da
   const rootRef = useRef<HTMLDivElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
 
+  const PANEL_GAP = 8;
+  const PANEL_WIDTH = 344;
+  const PANEL_MARGIN = 8;
+
   const [panelPos, setPanelPos] = useState<{ top: number; left: number } | null>(null);
 
   const updatePanelPosition = () => {
     if (!rootRef.current) return;
     const rect = rootRef.current.getBoundingClientRect();
-    setPanelPos({
-      top: Math.round(rect.bottom + 2),
-      left: Math.round(rect.left),
-    });
+
+    const desiredTop = Math.round(rect.bottom + PANEL_GAP);
+    const assumedW = Math.min(PANEL_WIDTH, window.innerWidth - PANEL_MARGIN * 2);
+    const maxLeft = Math.max(PANEL_MARGIN, window.innerWidth - assumedW - PANEL_MARGIN);
+    const left = Math.round(Math.max(PANEL_MARGIN, Math.min(rect.left, maxLeft)));
+
+    // Clamp bottom edge to viewport when panel height is known
+    const viewportH = window.innerHeight;
+    const panelH = panelRef.current?.offsetHeight ?? 0;
+    let top = desiredTop;
+    if (panelH > 0) {
+      // ensure we keep an 8px margin from bottom/top
+      top = Math.min(desiredTop, Math.max(8, viewportH - panelH - 8));
+    }
+
+    setPanelPos({ top, left });
   };
 
   const formatToDisplay = (date: Date) => {
@@ -66,6 +82,8 @@ export default function DatetimeInput({ value, onChange, blockPast = false }: Da
   useEffect(() => {
     if (!open) return;
     updatePanelPosition();
+    // re-measure on next frame to use actual panel height
+    requestAnimationFrame(updatePanelPosition);
     const handleClick = (e: MouseEvent) => {
       const t = e.target as Node;
       if (!rootRef.current) return;
@@ -77,13 +95,16 @@ export default function DatetimeInput({ value, onChange, blockPast = false }: Da
     };
     document.addEventListener('mousedown', handleClick);
     document.addEventListener('keydown', handleKey);
+    // capture 단계에서 리스닝하여 내부 스크롤 컨테이너에서도 위치 갱신
     window.addEventListener('resize', updatePanelPosition, { passive: true });
-    window.addEventListener('scroll', updatePanelPosition, { passive: true });
+    window.addEventListener('scroll', updatePanelPosition, { passive: true, capture: true });
+    document.addEventListener('scroll', updatePanelPosition, { passive: true, capture: true });
     return () => {
       document.removeEventListener('mousedown', handleClick);
       document.removeEventListener('keydown', handleKey);
-      window.removeEventListener('resize', updatePanelPosition);
-      window.removeEventListener('scroll', updatePanelPosition);
+      window.removeEventListener('resize', updatePanelPosition as EventListener);
+      window.removeEventListener('scroll', updatePanelPosition as EventListener, true);
+      document.removeEventListener('scroll', updatePanelPosition as EventListener, true);
     };
   }, [open]);
 
@@ -102,20 +123,12 @@ export default function DatetimeInput({ value, onChange, blockPast = false }: Da
           <div
             ref={panelRef}
             className="z-[9999] max-h-[80vh] rounded-2xl bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
-            style={
-              window.matchMedia('(min-width: 768px)').matches
-                ? {
-                    position: 'absolute',
-                    top: (() => {
-                      const host = document.getElementById('create-group-modal');
-                      if (!host) return panelPos.top;
-                      const hostTop = host.getBoundingClientRect().top;
-                      return panelPos.top - hostTop + 34;
-                    })(),
-                    left: panelPos.left,
-                  }
-                : { position: 'fixed', bottom: 0, left: 0, right: 0 }
-            }
+            style={{
+              position: 'fixed',
+              top: panelPos.top,
+              left: panelPos.left,
+              width: 'min(344px, calc(100vw - 16px))',
+            }}
             role="dialog"
             aria-modal="true">
             <Calendar
@@ -132,7 +145,7 @@ export default function DatetimeInput({ value, onChange, blockPast = false }: Da
               onCancel={() => setOpen(false)}
             />
           </div>,
-          document.getElementById('create-group-modal') ?? document.body,
+          document.body,
         )}
     </div>
   );
