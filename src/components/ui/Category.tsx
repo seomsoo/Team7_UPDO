@@ -56,10 +56,10 @@ export default function Category({
             onClick={() => onChange(category.id, category.apiType)}
             className={cn(
               'typo-sm flex cursor-pointer items-center justify-center rounded-[16px] px-4 py-2 select-none hover:opacity-90',
-              'md:typo-body lg:typo-body text-white transition-all duration-200',
+              'md:typo-body text-white transition-all duration-200',
               isActive
-                ? 'typo-sm-bold md:typo-body-bold lg:typo-body-bold bg-[var(--color-purple-500)]'
-                : 'bg-[var(--color-gray-50)]',
+                ? 'eyebrow sm:typo-body-bold bg-[var(--color-purple-500)]'
+                : 'typo-body-sm sm:typo-body bg-[var(--color-gray-100)] text-gray-500',
             )}>
             {category.label}
           </button>
