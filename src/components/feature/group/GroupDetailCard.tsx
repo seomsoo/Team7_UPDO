@@ -2,13 +2,11 @@
 
 import React, { useState } from 'react';
 import { cn } from '@/utils/cn';
-import IconText from '@/components/ui/IconText';
+import IconText, { type Topic } from '@/components/ui/IconText';
 import Tag from '@/components/ui/Tag';
 import SaveButton from '@/components/ui/SaveButton';
 import Icon from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
-
-type Topic = 'growth' | 'learn' | 'challenge' | 'connect' | 'default';
 
 interface HeaderData {
   id: number;
