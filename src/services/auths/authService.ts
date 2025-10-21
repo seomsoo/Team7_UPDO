@@ -8,7 +8,7 @@ import {
   UpdateUserRequest,
   UpdateUserResponse,
 } from '@/types/auths';
-import PolymorphicHttpClient from '../polymorphicHttpClient';
+import HttpClient from '../httpClient';
 
 class AuthService {
   private http;
@@ -30,7 +30,7 @@ class AuthService {
       };
     } else {
       // ✅ CSR 환경에서만 실제 HttpClient 생성
-      this.http = PolymorphicHttpClient.getInstance();
+      this.http = HttpClient.getInstance();
     }
   }
 

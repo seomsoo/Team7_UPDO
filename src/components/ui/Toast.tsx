@@ -16,7 +16,7 @@ export const useToast = create<ToastState>(set => ({
   isOpen: false,
   showToast: (message, type = 'info') => {
     set({ message, type, isOpen: true });
-    setTimeout(() => set({ isOpen: false }), 2000);
+    setTimeout(() => set({ isOpen: false }), 1000);
   },
   hideToast: () => set({ isOpen: false }),
 }));

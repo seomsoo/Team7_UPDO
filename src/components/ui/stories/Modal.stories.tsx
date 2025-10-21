@@ -77,23 +77,17 @@ export const ConfirmModalPlayground: ConfirmModalStory = {
           onOpenChange={setOpen}
           content={args.content}
           tone="brand"
-          size={args.size}
           onConfirm={() => {}}
         />
       </div>
     );
   },
   argTypes: {
-    size: {
-      control: { type: 'radio' },
-      options: ['small', 'large'],
-    },
     content: {
       control: { type: 'text' },
     },
   },
   args: {
-    size: 'large',
     content: '로그아웃 하시겠습니까?',
   },
 };

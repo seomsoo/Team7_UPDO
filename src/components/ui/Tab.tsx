@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/utils/cn';
@@ -45,17 +45,9 @@ export interface TabProps extends VariantProps<typeof tabItem> {
   onChange: (value: string) => void;
   fullWidth?: boolean;
   className?: string;
-  contentClassName?: string;
 }
 
-const Tab: React.FC<TabProps> = ({
-  items,
-  value,
-  onChange,
-  fullWidth = true,
-  className,
-  contentClassName,
-}) => {
+const Tab: React.FC<TabProps> = ({ items, value, onChange, fullWidth = true, className }) => {
   const [indicatorStyle, setIndicatorStyle] = React.useState({ width: 0, left: 0 });
   const tabRefs = React.useRef<Map<number, HTMLButtonElement>>(new Map());
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -179,24 +171,6 @@ const Tab: React.FC<TabProps> = ({
           }}
         />
       </div>
-
-      {/* ── Tab Content ── */}
-      {activeItem?.content && (
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={value}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className={twMerge(
-              'typo-body md:typo-subtitle mt-4 px-3 leading-[20px] md:mt-6 md:px-6 md:leading-[28px]',
-              contentClassName,
-            )}>
-            {activeItem.content}
-          </motion.div>
-        </AnimatePresence>
-      )}
     </div>
   );
 };

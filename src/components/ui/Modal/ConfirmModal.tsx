@@ -4,14 +4,12 @@ import Modal from './Modal';
 import { cn } from '@/utils/cn';
 
 type ConfirmTone = 'neutral' | 'brand' | 'danger';
-type ConfirmSize = 'small' | 'large';
 
 interface ConfirmModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   content: string;
 
-  size?: ConfirmSize; // 'small' | 'large'
   tone?: ConfirmTone;
 
   onConfirm?: () => void | Promise<void>;
@@ -23,40 +21,10 @@ interface ConfirmModalProps {
   footerClassName?: string;
 }
 
-const sizeStyles: Record<
-  ConfirmSize,
-  {
-    modal: string;
-    padding: string;
-    height: string;
-    font: string;
-    confirmButton: string;
-    cancelButton: string;
-  }
-> = {
-  small: {
-    modal: 'w-[342px] h-[216px]',
-    padding: 'p-6',
-    height: 'h-12',
-    font: 'card-title',
-    confirmButton: 'bg-purple-450 hover:bg-purple-600 text-white typo-body-bold',
-    cancelButton: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 typo-body',
-  },
-  large: {
-    modal: 'w-[600px] h-[289px]',
-    padding: 'p-10 pt-12',
-    height: 'h-15',
-    font: 'page-title',
-    confirmButton: 'bg-purple-250 hover:bg-purple-450 text-white h5Bold',
-    cancelButton: 'typo-subtitle hover:bg-gray-50',
-  },
-};
-
 export default function ConfirmModal({
   open,
   onOpenChange,
   content,
-  size = 'small',
   onConfirm,
   onCancel,
 }: ConfirmModalProps) {
@@ -77,30 +45,27 @@ export default function ConfirmModal({
     }
   };
 
-  const { modal, padding, height, font, confirmButton, cancelButton } = sizeStyles[size];
-
   return (
     <Modal
       open={open}
       onOpenChange={onOpenChange}
       initialFocusRef={confirmRef as React.RefObject<HTMLElement>}
-      className={cn(modal, padding)}>
+      className="h-[216px] w-[342px] rounded-xl p-6 md:h-[289px] md:w-[600px] md:rounded-3xl md:p-10 md:pt-12">
       <Modal.Header
         onClose={() => {
           onOpenChange(false);
         }}
         className="p-0"
       />
-      <Modal.Body
-        className={cn('flex flex-col items-center p-0 pt-6 text-center text-gray-700', font)}>
+      <Modal.Body className="card-title md:page-title flex flex-col items-center p-0 pt-6 text-center text-gray-700">
         <p>{content}</p>
       </Modal.Body>
 
-      <Modal.Footer className={cn('gap-3 p-0', height)}>
+      <Modal.Footer className="h-12 gap-3 p-0 md:h-15">
         <div className="flex h-full w-full justify-between gap-3">
           <button
             type="button"
-            className={cn('h-full w-full cursor-pointer rounded-md', cancelButton)}
+            className="typo-body md:typo-subtitle h-full w-full cursor-pointer rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
             onClick={() => {
               onCancel?.();
               onOpenChange(false);
@@ -115,7 +80,7 @@ export default function ConfirmModal({
             className={cn(
               'h-full w-full cursor-pointer rounded-md transition-colors',
               loading && 'cursor-not-allowed opacity-70',
-              confirmButton,
+              'bg-purple-450 typo-body-bold md:h5Bold md:bg-purple-250 md:hover:bg-purple-450 text-white hover:bg-purple-600',
             )}
             onClick={handleConfirm}
             disabled={loading}>

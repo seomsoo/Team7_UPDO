@@ -1,4 +1,4 @@
-import PolymorphicHttpClient from '../polymorphicHttpClient';
+import HttpClient from '../httpClient';
 import {
   CreateReviewRequest,
   CreateReviewResponse,
@@ -9,7 +9,7 @@ import {
 } from '@/types/reviews';
 
 export class ReviewService {
-  private http = PolymorphicHttpClient.getInstance();
+  private http = HttpClient.getInstance();
 
   private toQuery<T extends object>(params?: T) {
     if (!params) return '';
