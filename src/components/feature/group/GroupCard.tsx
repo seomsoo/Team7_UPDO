@@ -57,7 +57,7 @@ export default function GroupCard({ data }: GroupCardProps) {
             <SaveButton isSaved={isSaved} onToggle={onToggle} size={48} />
           )}
         </div>
-        <div className="flex flex-1 flex-col justify-between p-4 sm:pt-4 sm:pl-4">
+        <div className="flex flex-1 flex-col justify-between p-4 sm:pt-4 sm:pl-4 md:pr-0">
           <header className="flex flex-col gap-2 sm:order-1">
             <div className="flex flex-col items-start gap-1.5">
               <div className="flex items-center">
