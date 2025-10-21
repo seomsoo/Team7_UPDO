@@ -27,7 +27,7 @@ export default function ReviewCard({ user, score, comment, createdAt }: ReviewCa
           </div>
         </div>
       </div>
-      <p className="typo-sm md:typo-base mt-4 mb-5 font-medium text-[var(--color-gray-700)] md:mt-6 md:mb-7 md:text-sm">
+      <p className="typo-sm md:typo-base mt-4 mb-5 font-medium text-[var(--color-gray-700)] md:mt-6 md:mb-7">
         {comment}
       </p>
     </li>

@@ -63,7 +63,7 @@ export default function GroupDetailReviewList() {
 
       <div
         className={cn(
-          'bg-surface sm: mt-4 rounded-md px-5 pt-[2px] pb-8 sm:rounded-md sm:px-10 md:mt-6 md:rounded-2xl md:px-12 md:pb-10',
+          'bg-surface rounded-md px-5 pt-[2px] pb-8 sm:mt-4 sm:rounded-md sm:px-10 md:mt-6 md:rounded-2xl md:px-12 md:pb-10',
         )}>
         {list.length === 0 ? (
           <div className="flex h-48 items-center justify-center">
