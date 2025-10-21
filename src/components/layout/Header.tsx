@@ -1,12 +1,14 @@
 'use client';
 
-import React from 'react';
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { cn } from '@/utils/cn';
+
 import Badge from '@/components/ui/Badge';
 import { useAuthStore } from '@/stores/useAuthStore';
+
+import { cn } from '@/utils/cn';
 
 interface HeaderProps {
   user?: {
@@ -31,7 +33,7 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 export default function Header({ user, favoriteCount = 0, className }: HeaderProps) {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, checkTokenValidity } = useAuthStore();
   const pathname = usePathname();
 
   const isActive = (href: string) => {
@@ -41,6 +43,10 @@ export default function Header({ user, favoriteCount = 0, className }: HeaderPro
     }
     return pathname?.startsWith(href);
   };
+
+  useEffect(() => {
+    checkTokenValidity();
+  }, [checkTokenValidity]);
 
   return (
     <header className={cn('sticky top-0 z-50 w-full bg-[var(--canvas)]', className)}>

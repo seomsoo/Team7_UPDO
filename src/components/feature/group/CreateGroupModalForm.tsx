@@ -100,27 +100,6 @@ export default function CreateGroupModalForm({
         </div>
       </div>
 
-      <div>
-        <label className={labelClassName}>선택 서비스</label>
-        <div className="flex gap-3">
-          {TAB_OPTIONS.filter(o => o.value !== '성장').map(({ title, subtitle, value }, idx) => (
-            <Selectbox
-              key={idx}
-              title={title}
-              subtitle={subtitle ?? ''}
-              isSelected={selectedIdx === idx}
-              onSelect={() => {
-                setSelectedIdx(idx);
-                setForm(s => ({
-                  ...s,
-                  tab: value,
-                }));
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
       <div className="grid gap-10 md:grid-cols-2">
         <div>
           <label className="label mb-2 block text-gray-800">모임 날짜</label>
@@ -155,6 +134,27 @@ export default function CreateGroupModalForm({
               {submitErrors.registrationEnd[0]}
             </span>
           )}
+        </div>
+      </div>
+
+      <div>
+        <label className={labelClassName}>선택 서비스</label>
+        <div className="flex gap-3">
+          {TAB_OPTIONS.filter(o => o.value !== '성장').map(({ title, subtitle, value }, idx) => (
+            <Selectbox
+              key={idx}
+              title={title}
+              subtitle={subtitle ?? ''}
+              isSelected={selectedIdx === idx}
+              onSelect={() => {
+                setSelectedIdx(idx);
+                setForm(s => ({
+                  ...s,
+                  tab: value,
+                }));
+              }}
+            />
+          ))}
         </div>
       </div>
 

@@ -18,8 +18,9 @@ export default function DatetimeInput({ value, onChange, blockPast = false }: Da
   const rootRef = useRef<HTMLDivElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
 
-  const PANEL_GAP = 8; // px gap between input and panel
-  const PANEL_WIDTH = 344; // assumed panel width to clamp within viewport
+  const PANEL_GAP = 8;
+  const PANEL_WIDTH = 344;
+  const PANEL_MARGIN = 8;
 
   const [panelPos, setPanelPos] = useState<{ top: number; left: number } | null>(null);
 
@@ -28,8 +29,9 @@ export default function DatetimeInput({ value, onChange, blockPast = false }: Da
     const rect = rootRef.current.getBoundingClientRect();
 
     const desiredTop = Math.round(rect.bottom + PANEL_GAP);
-    const maxLeft = Math.max(8, window.innerWidth - PANEL_WIDTH - 8);
-    const left = Math.round(Math.min(rect.left, maxLeft));
+    const assumedW = Math.min(PANEL_WIDTH, window.innerWidth - PANEL_MARGIN * 2);
+    const maxLeft = Math.max(PANEL_MARGIN, window.innerWidth - assumedW - PANEL_MARGIN);
+    const left = Math.round(Math.max(PANEL_MARGIN, Math.min(rect.left, maxLeft)));
 
     // Clamp bottom edge to viewport when panel height is known
     const viewportH = window.innerHeight;
@@ -120,11 +122,12 @@ export default function DatetimeInput({ value, onChange, blockPast = false }: Da
         createPortal(
           <div
             ref={panelRef}
-            className="z-[9999] max-h-[80vh] w-full rounded-2xl bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] md:w-[344px]"
+            className="z-[9999] max-h-[80vh] rounded-2xl bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
             style={{
               position: 'fixed',
               top: panelPos.top,
               left: panelPos.left,
+              width: 'min(344px, calc(100vw - 16px))',
             }}
             role="dialog"
             aria-modal="true">
