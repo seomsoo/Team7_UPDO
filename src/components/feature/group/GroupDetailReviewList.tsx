@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/utils/cn';
-import { Pagination } from '@/components/ui/Pagenation';
 import ReviewCard from './GroupDetailReview';
+import { Pagination } from '@/components/ui/Pagination';
 
 const mock = [
   {

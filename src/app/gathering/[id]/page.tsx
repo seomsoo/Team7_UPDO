@@ -1,9 +1,9 @@
 'use client';
 
+import GroupDetailHeader from '@/components/feature/group/GroupDetailCard';
+import GroupDetailParticipation from '@/components/feature/group/GroupDetailParticipationCard';
+import GroupDetailReviewList from '@/components/feature/group/GroupDetailReviewList';
 import Image from 'next/image';
-import GroupDetailHeader from '../GroupDetailCard';
-import GroupDetailParticipation from '../GroupDetailParticipationCard';
-import GroupDetailReviewList from '../GroupDetailReviewList';
 
 export default function GroupDetailPage() {
   const data = {
