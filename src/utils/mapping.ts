@@ -1,5 +1,6 @@
 import { tags, locations, TAG_OPTIONS, SORT_OPTIONS } from '@/constants/tags';
 import { tabs, types, TAB_OPTIONS } from '@/constants/tabs';
+import { formatDateToLocalISO } from './date';
 
 export type FilterState = {
   main: '성장' | '네트워킹';
@@ -95,7 +96,7 @@ export function buildFilters({
     main: activeMain,
     subType,
     location,
-    date: selectedDate ? selectedDate.toISOString().slice(0, 10) : undefined,
+    date: selectedDate ? formatDateToLocalISO(selectedDate).slice(0, 10) : undefined,
     sortBy,
     sortOrder,
     limit,
