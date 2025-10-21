@@ -50,7 +50,11 @@ export default function GroupDetailReviewList() {
   const totalPages = Math.ceil(mock.length / pageSize);
 
   useEffect(() => {
-    if (page > totalPages) setPage(totalPages);
+    if (totalPages === 0) {
+      setPage(1);
+    } else if (page > totalPages) {
+      setPage(totalPages);
+    }
   }, [page, totalPages]);
 
   const list = mock.slice((page - 1) * pageSize, page * pageSize);
