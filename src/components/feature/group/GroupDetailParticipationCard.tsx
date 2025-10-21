@@ -27,7 +27,7 @@ const GroupDetailParticipation = ({
 }: Props) => {
   const confirmed = current >= min;
   const last4 = participants.slice(-4);
-  const remain = Math.max(0, current - 4);
+  const remain = Math.max(0, participants.length - last4.length);
 
   return (
     <section
