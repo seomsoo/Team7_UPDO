@@ -44,7 +44,7 @@ export default function SignupPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <main className="flex min-h-screen items-center justify-center px-4">
       <section className="flex w-full max-w-[420px] flex-col items-center rounded-xl bg-white p-8 shadow-md">
         {/* 페이지 제목 */}
         <h1 className="mb-6 text-2xl font-semibold text-gray-800">회원가입</h1>
