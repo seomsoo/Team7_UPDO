@@ -1,6 +1,6 @@
 // GET /{teamId}/reviews
 export interface GetReviewsParams {
-  teamId: string;
+  teamId?: string;
   gatheringId?: number;
   userId?: number;
   type?: string;

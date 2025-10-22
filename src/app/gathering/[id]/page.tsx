@@ -191,7 +191,7 @@ export default function GroupDetailPage() {
 
       {/* 리뷰 섹션 */}
       <section className="mt-6 sm:mt-12 md:mt-16">
-        <GroupDetailReviewList />
+        {uiData && <GroupDetailReviewList gatheringId={uiData.id} />}
       </section>
     </main>
   );

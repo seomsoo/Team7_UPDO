@@ -7,20 +7,25 @@ import { Pagination } from '@/components/ui/Pagination';
 import { reviewService } from '@/services/reviews/reviewService';
 import Image from 'next/image';
 import { IReviewWithRelations } from '@/types/reviews';
+interface GroupDetailReviewListProps {
+  gatheringId: number;
+}
 
-export default function GroupDetailReviewList() {
+export default function GroupDetailReviewList({ gatheringId }: GroupDetailReviewListProps) {
   const [reviews, setReviews] = useState<IReviewWithRelations[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const teamId = 'UPDO';
 
   const pageSize = 4;
   const totalPages = Math.ceil(reviews.length / pageSize);
 
   useEffect(() => {
     async function fetchReviews() {
+      if (!gatheringId || !teamId) return;
       try {
         setLoading(true);
-        const res = await reviewService.getReviews();
+        const res = await reviewService.getReviews({ gatheringId });
         setReviews(res.data || []);
       } catch (err) {
         console.error('리뷰 불러오기 실패:', err);
@@ -31,7 +36,7 @@ export default function GroupDetailReviewList() {
     }
 
     fetchReviews();
-  }, []);
+  }, [gatheringId, teamId]);
 
   const list = reviews.slice((page - 1) * pageSize, page * pageSize);
 
@@ -51,7 +56,7 @@ export default function GroupDetailReviewList() {
           <div className="flex flex-col items-center justify-center gap-3 py-12">
             <Image
               src="/images/empty.png"
-              alt="empty"
+              alt="리뷰 빈화면 이미지"
               width={171}
               height={115}
               className="opacity-70"

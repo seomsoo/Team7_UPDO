@@ -2,6 +2,7 @@
 
 import ReviewScore from '@/components/ui/ReviewScore';
 import { IReviewWithRelations } from '@/types/reviews';
+import { formatReviewDate } from '@/utils/date';
 
 export default function ReviewCard({ User, score, comment, createdAt }: IReviewWithRelations) {
   return (
@@ -16,7 +17,7 @@ export default function ReviewCard({ User, score, comment, createdAt }: IReviewW
           <span className="text-sm text-[var(--color-gray-500)]">{User.name}</span>
           <div className="flex items-center justify-start">
             <ReviewScore value={score} disabled label="" size="sm" className="w-32" />
-            <span className="text-sm text-[var(--color-gray-400)]">{createdAt}</span>
+            <span className="text-sm text-gray-400">{formatReviewDate(createdAt)}</span>
           </div>
         </div>
       </div>
