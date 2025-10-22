@@ -1,4 +1,5 @@
 import type { StorybookConfig } from '@storybook/nextjs-vite';
+import { resolve } from 'path';
 
 const config: StorybookConfig = {
   stories: [
@@ -47,7 +48,7 @@ const config: StorybookConfig = {
       ...(cfg.resolve || {}),
       alias: {
         ...(cfg.resolve?.alias || {}),
-        'client-only': '/__mocks__/client-only.ts', // 가짜 모듈로 치환
+        'client-only': resolve(__dirname, './__mocks__/client-only.ts'), // 가짜 모듈로 치환
       },
     };
 
