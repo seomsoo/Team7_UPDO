@@ -1,29 +1,23 @@
 'use client';
 
 import ReviewScore from '@/components/ui/ReviewScore';
+import { IReviewWithRelations } from '@/types/reviews';
+import { formatReviewDate } from '@/utils/date';
 
-interface ReviewCardProps {
-  id: number;
-  user: { nickname: string; image?: string };
-  score: number;
-  comment: string;
-  createdAt: string;
-}
-
-export default function ReviewCard({ user, score, comment, createdAt }: ReviewCardProps) {
+export default function ReviewCard({ User, score, comment, createdAt }: IReviewWithRelations) {
   return (
     <li className="pt-6 md:pt-8">
       <div className="flex items-center gap-2">
         <img
-          src={user.image ?? '/images/profile.png'}
-          alt={user.nickname}
+          src={User.image ?? '/images/profile.png'}
+          alt={User.name}
           className="h-8 w-8 flex-shrink-0 rounded-full object-cover md:h-10 md:w-10"
         />
         <div className="min-w-0 flex-1">
-          <span className="text-sm text-[var(--color-gray-500)]">{user.nickname}</span>
+          <span className="text-sm text-[var(--color-gray-500)]">{User.name}</span>
           <div className="flex items-center justify-start">
             <ReviewScore value={score} disabled label="" size="sm" className="w-32" />
-            <span className="text-sm text-[var(--color-gray-400)]">{createdAt}</span>
+            <span className="text-sm text-gray-400">{formatReviewDate(createdAt)}</span>
           </div>
         </div>
       </div>
