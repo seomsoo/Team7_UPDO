@@ -11,7 +11,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const date: Story = {
+export const Date: Story = {
   args: {
     value: undefined,
     onCancel: () => {},
@@ -28,7 +28,7 @@ export const date: Story = {
   },
 };
 
-export const datetime: Story = {
+export const Datetime: Story = {
   args: {
     value: undefined,
     onCancel: () => {},

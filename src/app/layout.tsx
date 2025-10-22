@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Pretendard } from '../lib/font';
-import ScrollVisibility from '../utils/ScrollVisibility';
+import { Toast } from '@/components/ui/Toast';
 import Header from '@/components/layout/Header';
+import ScrollWrapper from '@/components/ui/ScrollVisibility';
+import QueryProvider from '@/components/providers/QueryProvider';
 
 export const metadata: Metadata = {
   title: {
@@ -10,6 +12,9 @@ export const metadata: Metadata = {
     template: '%s | UP DO',
   },
   description: '자기계발에 진심인 사람들을 위한 모임 플랫폼',
+  icons: {
+    icon: '/images/favicon.png',
+  },
   keywords: ['UPDO', '자기계발', '성장', '모임', '커뮤니티', '네트워킹', '챌린지'],
   authors: [{ name: 'UP DO', url: 'https://team7-updo.vercel.app' }],
   metadataBase: new URL('https://team7-updo.vercel.app'),
@@ -41,9 +46,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko" className={Pretendard.variable}>
       <body>
-        <Header />
-        <ScrollVisibility />
-        <main className="layout-container font-sans">{children}</main>
+        <QueryProvider>
+          <ScrollWrapper />
+          <Header />
+          <Toast />
+          <main className="layout-container font-sans">{children}</main>
+        </QueryProvider>
       </body>
     </html>
   );

@@ -66,6 +66,7 @@ html::-webkit-scrollbar-track {
   --color-gray-900: #0a0a0a;
 
   /* Purple (Main) */
+  --color-purple-10: #ece3ff;
   --color-purple-50: #e0d3ff;
   --color-purple-100: #d1bcff;
   --color-purple-150: #c8afff;
@@ -228,7 +229,7 @@ html::-webkit-scrollbar-track {
   padding-inline: 16px;
   max-width: 1280px;
 }
-@media (min-width: 768px) {
+@media (min-width: 650px) {
   .layout-container {
     padding-inline: 24px;
   }
@@ -547,7 +548,7 @@ html::-webkit-scrollbar-track {
   font-family: var(--font-sans);
 }
 @utility typo-title {
-  font-size: 24px;
+  font-size: 28px;
   line-height: 32px;
   font-weight: var(--w-semibold);
   font-family: var(--font-sans);
@@ -583,38 +584,6 @@ html::-webkit-scrollbar-track {
   font-family: var(--font-sans);
 }
 
-/* ================================
-   SHAPES / EFFECTS (utilities)
-   ================================ */
-.rounded-xs {
-  border-radius: var(--radius-xs);
-}
-.rounded-sm {
-  border-radius: var(--radius-sm);
-}
-.rounded-md {
-  border-radius: var(--radius-md);
-}
-.rounded-lg {
-  border-radius: var(--radius-lg);
-}
-.rounded-xl {
-  border-radius: var(--radius-xl);
-}
-.rounded-2xl {
-  border-radius: var(--radius-2xl);
-}
-.rounded-3xl {
-  border-radius: var(--radius-3xl);
-}
-.rounded-full {
-  border-radius: var(--radius-full);
-}
-
-.shadow-xl {
-  box-shadow: var(--shadow-xl);
-}
-
 /* Background helpers */
 @utility bg-canvas {
   background-color: var(--canvas);
@@ -626,6 +595,9 @@ html::-webkit-scrollbar-track {
 /* Gradients */
 @utility bg-grad-100 {
   background-image: linear-gradient(90deg, var(--grad-100-from), var(--grad-100-to));
+}
+@utility bg-grad-100-v {
+  background-image: linear-gradient(180deg, var(--grad-100-from), var(--grad-100-to));
 }
 @utility bg-grad-500 {
   background-image: linear-gradient(90deg, var(--grad-500-from), var(--grad-500-to));

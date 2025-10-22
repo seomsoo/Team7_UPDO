@@ -1,11 +1,10 @@
 'use client';
 import * as React from 'react';
 import { cn } from '@/utils/cn';
-import type { Option } from '@/constants/tags';
 
-export interface DropdownProps {
-  items: ReadonlyArray<Option>;
-  onChange?: (value: Option['value']) => void;
+export interface DropdownProps<T extends { label: string; value: string }> {
+  items: ReadonlyArray<T>;
+  onChange?: (value: T['value']) => void;
   onOpenChange?: (open: boolean) => void;
   size?: 'full' | 'large' | 'medium' | 'small';
   emptyText?: string;
@@ -16,7 +15,7 @@ export interface DropdownProps {
 
 const PanelBase = 'z-50 overflow-hidden rounded-md border border-gray-200 bg-white shadow-xl';
 
-export default function Dropdown({
+export default function Dropdown<T extends { label: string; value: string }>({
   items,
   onChange,
   onOpenChange,
@@ -25,7 +24,7 @@ export default function Dropdown({
   id,
   ariaLabel,
   className,
-}: DropdownProps) {
+}: DropdownProps<T>) {
   const widthClass =
     size === 'full'
       ? 'w-full'

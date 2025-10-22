@@ -1,4 +1,4 @@
-import PolymorphicHttpClient from '../PolymorphicHttpClient';
+import HttpClient from '../httpClient';
 import {
   CreateReviewRequest,
   CreateReviewResponse,
@@ -9,7 +9,7 @@ import {
 } from '@/types/reviews';
 
 export class ReviewService {
-  private http = PolymorphicHttpClient.getInstance();
+  private http = HttpClient.getInstance();
 
   private toQuery<T extends object>(params?: T) {
     if (!params) return '';
@@ -32,3 +32,7 @@ export class ReviewService {
 }
 
 export const reviewService = new ReviewService();
+
+export const createReview = reviewService.createReview.bind(reviewService);
+export const getReviews = reviewService.getReviews.bind(reviewService);
+export const getReviewScores = reviewService.getReviewScores.bind(reviewService);

@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Modal, ConfirmModal } from '../Modal';
 import CreateGroupModal from '@/components/feature/group/CreateGroupModal';
+import EditReviewModal from '@/components/feature/review/EditReviewModal';
 
 const meta: Meta<typeof Modal> = {
   title: 'components/ui/Modal',
@@ -76,23 +77,17 @@ export const ConfirmModalPlayground: ConfirmModalStory = {
           onOpenChange={setOpen}
           content={args.content}
           tone="brand"
-          size={args.size}
           onConfirm={() => {}}
         />
       </div>
     );
   },
   argTypes: {
-    size: {
-      control: { type: 'radio' },
-      options: ['small', 'large'],
-    },
     content: {
       control: { type: 'text' },
     },
   },
   args: {
-    size: 'large',
     content: '로그아웃 하시겠습니까?',
   },
 };
@@ -102,8 +97,37 @@ type CreateGroupModalStory = StoryObj<typeof CreateGroupModal>;
 export const CreateGroupModalPlayground: CreateGroupModalStory = {
   render: args => {
     const [open, setOpen] = useState(false);
+    return (
+      <>
+        <button
+          className="cursor-pointer rounded-md border px-3 py-2 text-sm"
+          onClick={() => setOpen(true)}>
+          모달
+        </button>
 
-    return <CreateGroupModal open={true} onOpenChange={setOpen} />;
+        <CreateGroupModal {...args} open={open} onOpenChange={setOpen} />
+      </>
+    );
+  },
+  argTypes: {},
+  args: {},
+};
+
+type EditReviewModalStory = StoryObj<typeof EditReviewModal>;
+export const EditReviewModalPlayground: EditReviewModalStory = {
+  render: args => {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <button
+          className="cursor-pointer rounded-md border px-3 py-2 text-sm"
+          onClick={() => setOpen(true)}>
+          모달
+        </button>
+
+        <EditReviewModal {...args} open={open} onOpenChange={setOpen} />
+      </>
+    );
   },
   argTypes: {},
   args: {},

@@ -26,10 +26,6 @@ const meta: Meta<typeof Tab> = {
       control: 'text',
       description: '추가 CSS 클래스',
     },
-    contentClassName: {
-      control: 'text',
-      description: '콘텐츠 영역 CSS 클래스',
-    },
   },
 };
 

@@ -42,6 +42,9 @@ jobs:
 
       - name: Build App
         run: pnpm build
+        env:
+          NEXT_PUBLIC_TEAM_ID: ${{ secrets.NEXT_PUBLIC_TEAM_ID }}
+          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
 
   chromatic:
     name: Chromatic Preview

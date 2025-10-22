@@ -1,4 +1,4 @@
-import PolymorphicHttpClient from '../PolymorphicHttpClient';
+import HttpClient from '../httpClient';
 import {
   GetGatheringsParams,
   GetGatheringsResponse,
@@ -15,7 +15,7 @@ import {
 } from '@/types/gatherings';
 
 export class GatheringService {
-  private http = PolymorphicHttpClient.getInstance();
+  private http = HttpClient.getInstance();
 
   private toQuery<T extends object>(params?: T) {
     if (!params) return '';

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Pagination } from '../Pagenation';
+import { Pagination } from '../Pagination';
 import { useState } from 'react';
 
 const meta: Meta<typeof Pagination> = {

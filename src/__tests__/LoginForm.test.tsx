@@ -6,10 +6,10 @@
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import LoginForm from '@/components/feature/auth/LoginForm';
-import { authService } from '@/services/auths/AuthService';
+import { authService } from '@/services/auths/authService';
 
 // ✅ authService.signin 모듈 Mock
-jest.mock('@/services/auths/AuthService', () => ({
+jest.mock('@/services/auths/authService', () => ({
   authService: {
     signin: jest.fn(),
   },
@@ -38,7 +38,7 @@ describe('🧪 LoginForm (로그인 폼)', () => {
   it('존재하지 않는 이메일일 경우 에러 메시지를 표시한다', async () => {
     (authService.signin as jest.Mock).mockRejectedValueOnce({
       parameter: 'email',
-      message: '존재하지 않는 아이디입니다.',
+      message: '존재하지 않는 이메일입니다.',
     });
 
     render(<LoginForm />);
@@ -50,7 +50,7 @@ describe('🧪 LoginForm (로그인 폼)', () => {
     fireEvent.click(screen.getByRole('button', { name: '로그인' }));
 
     await waitFor(() =>
-      expect(screen.getByText('존재하지 않는 아이디입니다.')).toBeInTheDocument(),
+      expect(screen.getByText('존재하지 않는 이메일입니다.')).toBeInTheDocument(),
     );
   });
 
