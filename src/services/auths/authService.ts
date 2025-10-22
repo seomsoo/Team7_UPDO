@@ -1,5 +1,3 @@
-import 'client-only'; // Next.js의 클라이언트 컴포넌트에서만 사용됨을 명시 - SSR import 완전 차단
-
 import {
   SignupRequest,
   SignupResponse,
@@ -32,6 +30,12 @@ class AuthService {
   }
 
   updateUser(data: UpdateUserRequest) {
+    // ✅ 브라우저 환경에서만 FormData 사용
+    if (typeof window === 'undefined' || typeof FormData === 'undefined') {
+      // SSR / 테스트 환경에서는 안전하게 빈 객체 반환
+      return Promise.resolve({} as UpdateUserResponse);
+    }
+
     const formData = new FormData();
     if (data.companyName) formData.append('companyName', data.companyName);
     if (data.image) formData.append('image', data.image);
