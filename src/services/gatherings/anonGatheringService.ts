@@ -1,6 +1,5 @@
 import Service from '../service';
 import { IGathering, IParticipant } from '@/types/gatherings';
-import 'client-only'; // Next.js의 클라이언트 컴포넌트에서만 사용됨을 명시 - SSR import 완전 차단
 
 class AnonGatheringService extends Service {
   getGatheringList(params?: Record<string, string | number | boolean>) {
