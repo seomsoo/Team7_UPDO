@@ -42,6 +42,15 @@ const config: StorybookConfig = {
       },
     };
 
+    // ✅ client-only alias 추가 (Chromatic용)
+    cfg.resolve = {
+      ...(cfg.resolve || {}),
+      alias: {
+        ...(cfg.resolve?.alias || {}),
+        'client-only': '/__mocks__/client-only.ts', // 가짜 모듈로 치환
+      },
+    };
+
     // ✅ use client 경고 줄이기
     cfg.esbuild = {
       ...cfg.esbuild,
