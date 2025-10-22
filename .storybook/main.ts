@@ -32,6 +32,23 @@ const config: StorybookConfig = {
         process.env.NEXT_PUBLIC_TEAM_ID || 'UPDO',
       ),
     };
+
+    // ✅ client-only 모듈을 외부화하여 번들에서 제외
+    cfg.build = {
+      ...cfg.build,
+      rollupOptions: {
+        ...(cfg.build?.rollupOptions || {}),
+        external: ['client-only'],
+      },
+    };
+
+    // ✅ use client 경고 줄이기
+    cfg.esbuild = {
+      ...cfg.esbuild,
+      legalComments: 'none',
+      banner: '',
+    };
+
     return cfg;
   },
 };
