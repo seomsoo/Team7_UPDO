@@ -7,6 +7,7 @@ import Tag from '@/components/ui/Tag';
 import SaveButton from '@/components/ui/SaveButton';
 import Icon from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
+import { isClosed } from '@/utils/date';
 
 interface HeaderData {
   id: number;
@@ -47,12 +48,7 @@ export default function GroupDetailHeader({
   const [isSaved, setIsSaved] = useState(false);
 
   // 마감 여부 판단 (registrationEnd 기준)
-  const isClosed = (() => {
-    if (!registrationEnd) return false;
-    const endDate = new Date(registrationEnd);
-    if (isNaN(endDate.getTime())) return false;
-    return endDate.getTime() < Date.now();
-  })();
+  const closed = isClosed(registrationEnd ?? undefined);
 
   return (
     <section
@@ -144,7 +140,7 @@ export default function GroupDetailHeader({
           ) : (
             <Button
               onClick={joined ? onLeave : onJoin}
-              disabled={isJoining || isLeaving || isClosed}
+              disabled={isJoining || isLeaving || closed}
               variant="primary"
               size="responsive_full"
               className={cn(
@@ -152,7 +148,7 @@ export default function GroupDetailHeader({
                 joined
                   ? 'border border-purple-600 bg-white text-purple-600 hover:bg-purple-50'
                   : 'bg-purple-400 text-white hover:bg-purple-600',
-                isClosed && 'pointer-events-none cursor-not-allowed opacity-50',
+                closed && 'pointer-events-none cursor-not-allowed opacity-50',
               )}>
               {joined ? '참여 취소하기' : '참여하기'}
             </Button>
