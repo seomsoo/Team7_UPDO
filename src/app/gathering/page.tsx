@@ -73,7 +73,13 @@ export default function GatheringPage() {
         </div>
 
         <div className="flex h-44 w-36 items-center justify-center sm:mr-16 sm:h-auto sm:w-[275px] md:mr-24 md:w-[316px]">
-          <Image src="/images/find_banner.png" alt="모임 찾기 배너" width={310} height={70} />
+          <Image
+            src="/images/find_banner.png"
+            alt="모임 찾기 배너"
+            width={310}
+            height={70}
+            priority
+          />
         </div>
       </header>
       <div className="mb-4 sm:mt-8">
