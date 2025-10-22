@@ -27,7 +27,9 @@ export const ProgressBar = ({ current, max, min, height = '6px' }: ProgressBarPr
           <div className="absolute inset-0 rounded-full border border-[var(--color-pink-200)] bg-white shadow-sm"></div>
           <div className="relative z-10 h-1 w-1 animate-ping rounded-full bg-[var(--color-pink-500)]"></div>
         </div>
-        <span className="text-[10px] font-bold text-[var(--color-pink-600)]">개설 확정</span>
+        <span className="text-[10px] font-bold text-nowrap text-[var(--color-pink-600)]">
+          개설 확정
+        </span>
       </div>
     </div>
   );

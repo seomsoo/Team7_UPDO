@@ -15,9 +15,12 @@ class AnonGatheringService extends Service {
       params && Object.keys(params).length
         ? `${new URLSearchParams(stringifyParams(params)).toString()}&${limitParams}`
         : limitParams;
-    return this.http.get<IGathering[]>(`/gatherings?${qs}`);
-  }
 
+    return this.http.get<IGathering[]>(`/gatherings?${qs}`).then(res => ({
+      data: res,
+      nextPage: res.length === ITEMS_PER_PAGE ? pageParam + 1 : undefined,
+    }));
+  }
   getFavoriteList(params: { id?: number[] }) {
     const ids = params?.id?.length ? params.id.join(',') : '';
     if (!ids) return Promise.resolve([] as IGathering[]);
@@ -37,6 +40,7 @@ function stringifyParams(obj: Record<string, string | number | boolean>) {
   const out: Record<string, string> = {};
   Object.entries(obj).forEach(([k, v]) => {
     if (v == null) return;
+    if (k === 'limit' || k === 'offset') return;
     out[k] = Array.isArray(v) ? v.join(',') : String(v);
   });
   return out;
