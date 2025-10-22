@@ -40,10 +40,10 @@ export const formatDeadline = (isoString: string) => {
   if (date.isToday()) {
     return `오늘 ${date.format('HH시')} 마감`;
   }
-  
+
   const tomorrow = now.add(1, 'day').startOf('day');
   const dateStart = date.startOf('day');
-  
+
   if (dateStart.isSame(tomorrow, 'day')) {
     return `내일 ${date.format('HH시')} 마감`;
   }
@@ -55,4 +55,8 @@ export const isClosed = (isoString?: string) => {
   const date = dayjs.utc(isoString).tz('Asia/Seoul');
   const now = dayjs().tz('Asia/Seoul');
   return date.isBefore(now);
+};
+
+export const formatReviewDate = (isoString: string) => {
+  return dayjs.utc(isoString).tz('Asia/Seoul').format('YYYY.MM.DD');
 };

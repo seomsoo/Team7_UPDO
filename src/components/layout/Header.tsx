@@ -1,11 +1,9 @@
-'use client';
-
-import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import Image from 'next/image';
+
 import { cn } from '@/utils/cn';
-import Badge from '@/components/ui/Badge';
+import HeaderProfile from './HeaderProfile';
+import HeaderNav from './HeaderNav';
 
 interface HeaderProps {
   user?: {
@@ -23,23 +21,7 @@ interface NavItem {
   hasBadge?: boolean;
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { label: '모임 찾기', href: '/gathering' },
-  { label: '찜한 모임', href: '/favorites', hasBadge: true },
-  { label: '모든 리뷰', href: '/reviews' },
-];
-
 export default function Header({ user, favoriteCount = 0, className }: HeaderProps) {
-  const pathname = usePathname();
-
-  const isActive = (href: string) => {
-    if (href === '/gathering') {
-      // '/gathering'으로 시작하는 모든 경로
-      return pathname === '/' || pathname?.startsWith('/gathering');
-    }
-    return pathname?.startsWith(href);
-  };
-
   return (
     <header className={cn('sticky top-0 z-50 w-full bg-[var(--canvas)]', className)}>
       <div className="layout-container m-auto w-full px-4 md:px-6">
@@ -54,51 +36,18 @@ export default function Header({ user, favoriteCount = 0, className }: HeaderPro
                 src="/images/header_logo.png"
                 alt="UPDO"
                 fill
+                sizes="(max-width: 768px) 50px, (max-width: 1024px) 57px, 80px"
                 className="object-contain"
                 priority
               />
             </Link>
 
             {/* Navigation */}
-            <nav className="flex items-center sm:gap-2 md:gap-4 lg:gap-6" role="navigation">
-              {NAV_ITEMS.map(item => {
-                const active = isActive(item.href);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      'relative inline-flex items-center transition-colors',
-                      'px-2 py-2 md:px-3 md:py-2 lg:px-4 lg:py-2',
-                      'typo-xs sm:typo-base sm:tracking-[-0.48px]',
-                      active
-                        ? 'font-semibold text-[var(--color-purple-600)] md:font-bold'
-                        : 'font-medium text-[var(--color-gray-500)] hover:text-[var(--color-purple-450)]',
-                    )}>
-                    <span className="inline-flex flex-shrink-0 items-center gap-1 whitespace-nowrap md:gap-2 lg:gap-2">
-                      {item.label}
-                      {item.hasBadge && favoriteCount > 0 && (
-                        <Badge value={favoriteCount} size="responsive" />
-                      )}
-                    </span>
-                  </Link>
-                );
-              })}
-            </nav>
+            <HeaderNav favoriteCount={favoriteCount} />
           </div>
 
-          {/* Right: Profile(MyPage) */}
-          <Link
-            href="/mypage"
-            className="flex-shrink-0 overflow-hidden rounded-full transition-opacity hover:opacity-80">
-            <Image
-              src={user?.image || '/images/profile.png'}
-              alt={user?.name || '프로필'}
-              width={54}
-              height={54}
-              className="mx-[1px] h-[34px] w-[34px] object-cover md:mx-[5px] md:h-[54px] md:w-[54px]"
-            />
-          </Link>
+          {/* Right: profile(Login or MyPage) */}
+          <HeaderProfile user={user} />
         </div>
       </div>
     </header>

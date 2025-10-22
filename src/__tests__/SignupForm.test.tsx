@@ -27,7 +27,7 @@ describe('🧪 SignupForm (회원가입 폼)', () => {
     render(<SignupForm onSignupSuccess={handleSuccess} />);
 
     fireEvent.change(screen.getByLabelText('이름'), { target: { value: '홍길동' } });
-    fireEvent.change(screen.getByLabelText('회사명'), { target: { value: '달램컴퍼니' } });
+    fireEvent.change(screen.getByLabelText('직업'), { target: { value: '달램컴퍼니' } });
     fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'test@example.com' } });
     fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'abcd1234' } });
     fireEvent.change(screen.getByLabelText('비밀번호 확인'), { target: { value: 'abcd1234' } });
@@ -45,7 +45,7 @@ describe('🧪 SignupForm (회원가입 폼)', () => {
     render(<SignupForm />);
 
     fireEvent.change(screen.getByLabelText('이름'), { target: { value: '홍길동' } });
-    fireEvent.change(screen.getByLabelText('회사명'), { target: { value: '달램컴퍼니' } });
+    fireEvent.change(screen.getByLabelText('직업'), { target: { value: '달램컴퍼니' } });
     fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'dup@example.com' } });
     fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'abcd1234' } });
     fireEvent.change(screen.getByLabelText('비밀번호 확인'), { target: { value: 'abcd1234' } });
@@ -87,7 +87,7 @@ describe('🧪 SignupForm (회원가입 폼)', () => {
     render(<SignupForm />);
 
     fireEvent.change(screen.getByLabelText('이름'), { target: { value: '홍길동' } });
-    fireEvent.change(screen.getByLabelText('회사명'), { target: { value: '테스트주식회사' } });
+    fireEvent.change(screen.getByLabelText('직업'), { target: { value: '테스트주식회사' } });
     fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'error@example.com' } });
     fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'abcd1234' } });
     fireEvent.change(screen.getByLabelText('비밀번호 확인'), { target: { value: 'abcd1234' } });

@@ -117,8 +117,13 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
     <form onSubmit={onSubmit} className="flex w-full flex-col items-start gap-4" noValidate>
       {/* 이름 */}
       <div className="flex w-full flex-col gap-1">
-        <label className="w-fit pl-[2px] text-left text-sm font-medium text-gray-700">이름</label>
+        <label
+          htmlFor="name"
+          className="w-fit pl-[2px] text-left text-sm font-medium text-gray-700">
+          이름
+        </label>
         <Input
+          id="name"
           inputSize="lg"
           placeholder="이름을 입력하세요"
           {...registerWithValidation('name')}
@@ -129,8 +134,13 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
 
       {/* 직업 */}
       <div className="flex w-full flex-col gap-1">
-        <label className="w-fit pl-[2px] text-left text-sm font-medium text-gray-700">직업</label>
+        <label
+          htmlFor="companyName"
+          className="w-fit pl-[2px] text-left text-sm font-medium text-gray-700">
+          직업
+        </label>
         <Input
+          id="companyName"
           inputSize="lg"
           placeholder="직업을 입력하세요"
           {...registerWithValidation('companyName')}
@@ -141,8 +151,13 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
 
       {/* 이메일 */}
       <div className="flex w-full flex-col gap-1">
-        <label className="w-fit pl-[2px] text-left text-sm font-medium text-gray-700">이메일</label>
+        <label
+          htmlFor="email"
+          className="w-fit pl-[2px] text-left text-sm font-medium text-gray-700">
+          이메일
+        </label>
         <Input
+          id="email"
           type="email"
           inputSize="lg"
           placeholder="이메일 주소를 입력하세요"
@@ -154,10 +169,13 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
 
       {/* 비밀번호 */}
       <div className="flex w-full flex-col gap-1">
-        <label className="w-fit pl-[2px] text-left text-sm font-medium text-gray-700">
+        <label
+          htmlFor="password"
+          className="w-fit pl-[2px] text-left text-sm font-medium text-gray-700">
           비밀번호
         </label>
         <Input
+          id="password"
           type="password"
           inputSize="lg"
           placeholder="비밀번호를 입력하세요"
@@ -169,10 +187,13 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
 
       {/* 비밀번호 확인 */}
       <div className="flex w-full flex-col gap-1">
-        <label className="w-fit pl-[2px] text-left text-sm font-medium text-gray-700">
+        <label
+          htmlFor="passwordConfirm"
+          className="w-fit pl-[2px] text-left text-sm font-medium text-gray-700">
           비밀번호 확인
         </label>
         <Input
+          id="passwordConfirm"
           type="password"
           inputSize="lg"
           placeholder="비밀번호를 다시 입력하세요"

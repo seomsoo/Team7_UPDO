@@ -5,10 +5,10 @@ import { Button } from './Button';
 
 export interface CalendarProps {
   value?: Date; // 선택된 날짜 or 날짜/시간
+  cancelLabel?: string; // 취소 대신 사용할 문자열
   onConfirm: (date?: Date) => void; // "확인" 버튼 클릭 시 최종 값 전달
   onNext?: (date?: Date) => void; // "다음" 클릭 시 날짜만 전달
   onCancel: () => void; // "취소" 버튼 클릭 핸들러
-  // onChange?: (date: Date | undefined) => void; // (선택) 즉시 변경 핸들러 (staged UI에서는 사용 안 함)
   startMonth?: Date; // 달력이 시작되는 월 (기본값: 2025-01-01)
   className?: string; // 추가 CSS 클래스
   variant?: 'date' | 'datetime'; // 달력 모드, 또는 날짜+시간 선택모드
@@ -74,6 +74,7 @@ function CustomNav({ onPreviousClick, onNextClick, previousMonth, nextMonth }: N
 
 export const Calendar = ({
   value,
+  cancelLabel,
   onCancel,
   onConfirm,
   onNext,
@@ -142,14 +143,14 @@ export const Calendar = ({
     onCancel?: () => void;
     disabledPrimary: boolean;
   }) => {
-    const buttonClassName = 'h-[48px] md:w-[100px] md:h-[44px] typo-body-bold rounded-md';
+    const buttonClassName = 'h-[48px] typo-body-bold rounded-md';
     return (
       <div className="flex w-full items-center justify-center gap-[6px] px-0">
         <div className="h-full w-full">
           <Button
             variant={'calendarOutline'}
             size="responsive_full"
-            className={buttonClassName}
+            className={`${buttonClassName} shrink-0`}
             onClick={onCancel}>
             {cancelLabel || '취소'}
           </Button>
@@ -159,7 +160,7 @@ export const Calendar = ({
             variant={'calendarSolid'}
             size="responsive_full"
             disabled={disabledPrimary}
-            className={buttonClassName}
+            className={`${buttonClassName} shrink-0`}
             onClick={onPrimary}>
             {primaryLabel}
           </Button>
@@ -297,7 +298,7 @@ export const Calendar = ({
             </div>
           </div>
           <FooterBar
-            cancelLabel="이전"
+            cancelLabel={cancelLabel}
             primaryLabel="확인"
             onPrimary={() => {
               const baseDate = tempDate ?? value;

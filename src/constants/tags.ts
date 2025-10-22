@@ -10,3 +10,12 @@ export const TAG_OPTIONS: Readonly<Option[]> = [
   { label: '도전', value: 'challenge', location: '신림' },
   { label: '연결', value: 'connect', location: '홍대입구' },
 ] as const;
+
+export type SortOption = {
+  label: string;
+  value: 'dateTime' | 'registrationEnd' | 'participantCount';
+};
+export const SORT_OPTIONS: Readonly<SortOption[]> = [
+  { label: '참여 인원순', value: 'participantCount' },
+  { label: '마감 임박', value: 'registrationEnd' },
+] as const;
