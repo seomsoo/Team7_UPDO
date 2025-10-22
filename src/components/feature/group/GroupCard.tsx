@@ -37,7 +37,13 @@ export default function GroupCard({ data }: GroupCardProps) {
             <div className="flex h-full w-full items-center justify-center bg-gray-100 text-gray-400 sm:rounded-xl"></div>
           ) : (
             <>
-              <Image src={image} alt={name} fill className="object-cover sm:rounded-xl" />
+              <Image
+                src={image}
+                alt={name}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover sm:rounded-xl"
+              />
               {isClosed && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/70 sm:rounded-xl">
                   <span className="bg-grad-500 bg-clip-text text-3xl leading-[1.1] font-bold text-transparent">
