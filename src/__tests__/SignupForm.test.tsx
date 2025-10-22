@@ -20,8 +20,7 @@ describe('🧪 SignupForm (회원가입 폼)', () => {
     jest.clearAllMocks();
   });
 
-  // ✅ 성공 케이스
-  it('회원가입 성공 시 onSignupSuccess 콜백이 호출된다', async () => {
+  test('회원가입 성공 시 onSignupSuccess 콜백이 호출된다', async () => {
     (authService.signup as jest.Mock).mockResolvedValueOnce({ message: 'ok' });
     const handleSuccess = jest.fn();
 
@@ -37,8 +36,7 @@ describe('🧪 SignupForm (회원가입 폼)', () => {
     await waitFor(() => expect(handleSuccess).toHaveBeenCalledTimes(1));
   });
 
-  // ❌ 이메일 중복 에러
-  it('이메일 중복 시 해당 에러 메시지를 표시한다', async () => {
+  test('이메일 중복 시 해당 에러 메시지를 표시한다', async () => {
     (authService.signup as jest.Mock).mockRejectedValueOnce({
       parameter: 'email',
       message: '중복된 이메일입니다.',
@@ -56,8 +54,7 @@ describe('🧪 SignupForm (회원가입 폼)', () => {
     await waitFor(() => expect(screen.getByText('중복된 이메일입니다.')).toBeInTheDocument());
   });
 
-  // ❌ 비밀번호 불일치
-  it('비밀번호와 비밀번호 확인이 일치하지 않으면 에러 메시지를 표시한다', async () => {
+  test('비밀번호와 비밀번호 확인이 일치하지 않으면 에러 메시지를 표시한다', async () => {
     render(<SignupForm />);
 
     fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'abcd1234' } });
@@ -70,8 +67,7 @@ describe('🧪 SignupForm (회원가입 폼)', () => {
     );
   });
 
-  // ❌ 필수 입력 누락
-  it('필수 필드를 모두 입력하지 않으면 제출되지 않는다', async () => {
+  test('필수 필드를 모두 입력하지 않으면 제출되지 않는다', async () => {
     render(<SignupForm />);
 
     fireEvent.click(screen.getByRole('button', { name: '회원가입' }));
@@ -83,8 +79,7 @@ describe('🧪 SignupForm (회원가입 폼)', () => {
     });
   });
 
-  // ❌ 서버 내부 오류
-  it('서버 오류 발생 시 일반 에러 메시지를 표시한다', async () => {
+  test('서버 오류 발생 시 일반 에러 메시지를 표시한다', async () => {
     (authService.signup as jest.Mock).mockRejectedValueOnce({
       message: '서버 오류가 발생했습니다.',
     });

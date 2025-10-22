@@ -1,3 +1,5 @@
+import 'client-only'; // Next.js의 클라이언트 컴포넌트에서만 사용됨을 명시 - SSR import 완전 차단
+
 import {
   SignupRequest,
   SignupResponse,
@@ -11,28 +13,7 @@ import {
 import HttpClient from '../httpClient';
 
 class AuthService {
-  private http;
-
-  constructor() {
-    // ✅ SSR(빌드 타임)에서는 HttpClient를 생성하지 않음
-    if (typeof window === 'undefined') {
-      // 빌드 중이면, 더미 http 객체로 대체 (절대 호출되지 않음)
-      this.http = {
-        post: () => {
-          throw new Error('API_BASE_URL is not configured (SSR build-time)');
-        },
-        get: () => {
-          throw new Error('API_BASE_URL is not configured (SSR build-time)');
-        },
-        put: () => {
-          throw new Error('API_BASE_URL is not configured (SSR build-time)');
-        },
-      };
-    } else {
-      // ✅ CSR 환경에서만 실제 HttpClient 생성
-      this.http = HttpClient.getInstance();
-    }
-  }
+  private http = HttpClient.getInstance();
 
   signup(data: SignupRequest) {
     return this.http.post<SignupResponse>('/auths/signup', data);

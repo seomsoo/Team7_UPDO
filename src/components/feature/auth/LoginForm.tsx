@@ -16,7 +16,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import useDebounce from '@/hooks/useDebounce';
 import { authService } from '@/services/auths/authService';
 import { useAuthStore } from '@/stores/useAuthStore';
@@ -26,7 +26,7 @@ type LoginFormProps = {
   onLoginSuccess?: () => void;
 };
 
-type LoginFormType = z.infer<typeof LoginFormSchema>;
+export type LoginFormType = z.infer<typeof LoginFormSchema>;
 
 const firstIssueMessage = (err: z.ZodError) =>
   err.issues[0]?.message ?? '입력값이 올바르지 않습니다.';
@@ -112,7 +112,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   return (
     <form
       onSubmit={onSubmit}
-      className="flex w-full max-w-[400px] flex-col gap-5 rounded-xl bg-white p-6 shadow-md"
+      className="flex w-[343px] flex-col gap-5 rounded-xl bg-white p-6 shadow-md sm:w-[568px]"
       noValidate>
       {/* 이메일 입력 */}
       <div className="flex flex-col gap-1">

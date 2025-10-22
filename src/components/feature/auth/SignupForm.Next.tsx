@@ -11,17 +11,23 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation'; // Next.js App Router 훅
-import SignupForm from './SignupForm';
+import { useToast } from '@/components/ui/Toast';
+import SignupForm, { JoinFormType } from './SignupForm';
 
 export default function SignupFormNext() {
   // Next.js의 App Router 인스턴스
   const router = useRouter();
+  const { showToast } = useToast();
 
   // 성공 시 라우팅을 수행하는 콜백
-  const handleSignupSuccess = React.useCallback(() => {
-    // 기존 요구사항: 회원가입 성공 → 로그인 페이지로 이동
-    router.replace('/login');
-  }, [router]);
+  const handleSignupSuccess = React.useCallback(
+    (data?: JoinFormType) => {
+      showToast('UPDO의 회원이 되신 것을 환영합니다!', 'success');
+      // 기존 요구시 메인 페이지로 이동
+      router.replace('/');
+    },
+    [router, showToast],
+  );
 
   return (
     // 라우팅 동작을 콜백으로 주입 → 본체는 Router 미의존

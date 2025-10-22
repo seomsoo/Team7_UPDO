@@ -9,21 +9,26 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation'; // ✅ App Router 훅
-import LoginForm from './LoginForm';
+import LoginForm, { LoginFormType } from './LoginForm';
+import { useToast } from '@/components/ui/Toast';
 
 export default function LoginFormNext() {
   // ---------------------------------------------------------------------------
   // Next.js 라우터 인스턴스
   // ---------------------------------------------------------------------------
   const router = useRouter();
+  const { showToast } = useToast();
 
   // ---------------------------------------------------------------------------
   // 로그인 성공 시 콜백 (라우팅 담당)
   // ---------------------------------------------------------------------------
-  const handleLoginSuccess = React.useCallback(() => {
-    console.log('[LoginFormNext] 로그인 성공 → (임시) 홈(/)으로 이동합니다.');
-    router.replace('/'); // ✅ 추후 '/mypage' 또는 '/dashboard'로 변경 가능
-  }, [router]);
+  const handleLoginSuccess = React.useCallback(
+    (data?: LoginFormType) => {
+      showToast('로그인을 성공하였습니다. 환영합니다!', 'success');
+      router.replace('/'); // ✅ 추후 '/mypage' 또는 '/dashboard'로 변경 가능
+    },
+    [router, showToast],
+  );
 
   // ---------------------------------------------------------------------------
   // 렌더링: 본체(LoginForm)에 콜백만 주입
