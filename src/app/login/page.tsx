@@ -1,22 +1,18 @@
+// -----------------------------------------------------------------------------
+// NOTE: 로그인 페이지 (AuthLayout 적용)
+//       - LoginForm.tsx 불러와서 AuthLayout 내 children으로 주입
+// -----------------------------------------------------------------------------
+
 'use client';
+export const dynamic = 'force-dynamic';
 
-export const dynamic = 'force-dynamic'; // ✅ 빌드 시 SSR 프리렌더링 비활성화
-
-import React from 'react';
-import { useRouter } from 'next/navigation';
+import AuthLayout from '@/components/layout/auth/AuthLayout';
 import LoginForm from '@/components/feature/auth/LoginForm';
+import LoginFormNext from '@/components/feature/auth/LoginForm.Next';
 
 export default function LoginPage() {
-  const router = useRouter();
-
-  // ✅ 로그인 성공 시 실행되는 콜백
-  const handleLoginSuccess = () => {
-    // 로그인 성공 시 홈으로 이동하거나 대시보드 등으로 리디렉션 가능
-    alert('로그인 성공!');
-    router.push('/');
-  };
-
   return (
+<<<<<<< HEAD
     <main className="flex min-h-screen items-center justify-center px-4">
       <section className="flex w-full max-w-[420px] flex-col items-center rounded-xl bg-white p-8 shadow-md">
         {/* 페이지 제목 */}
@@ -37,5 +33,14 @@ export default function LoginPage() {
         </p>
       </section>
     </main>
+=======
+    <AuthLayout
+      title="로그인"
+      bottomText="계정이 없으신가요?"
+      bottomLinkText="회원가입"
+      bottomLinkHref="/signup">
+      <LoginFormNext />
+    </AuthLayout>
+>>>>>>> fba4ffb ([FEAT] #124 complete signin and signup page UI work)
   );
 }

@@ -20,8 +20,7 @@ describe('🧪 LoginForm (로그인 폼)', () => {
     jest.clearAllMocks();
   });
 
-  // ✅ 성공 케이스
-  it('로그인 성공 시 onLoginSuccess 콜백이 호출된다', async () => {
+  test('로그인 성공 시 onLoginSuccess 콜백이 호출된다', async () => {
     (authService.signin as jest.Mock).mockResolvedValueOnce({ token: 'mocked-jwt' });
     const handleSuccess = jest.fn();
 
@@ -34,8 +33,7 @@ describe('🧪 LoginForm (로그인 폼)', () => {
     await waitFor(() => expect(handleSuccess).toHaveBeenCalledTimes(1));
   });
 
-  // ❌ 존재하지 않는 이메일
-  it('존재하지 않는 이메일일 경우 에러 메시지를 표시한다', async () => {
+  test('존재하지 않는 이메일일 경우 에러 메시지를 표시한다', async () => {
     (authService.signin as jest.Mock).mockRejectedValueOnce({
       parameter: 'email',
       message: '존재하지 않는 이메일입니다.',
@@ -54,8 +52,7 @@ describe('🧪 LoginForm (로그인 폼)', () => {
     );
   });
 
-  // ❌ 비밀번호 불일치
-  it('비밀번호 규칙이 잘못되면 경고 메시지를 표시한다', async () => {
+  test('비밀번호 규칙이 잘못되면 경고 메시지를 표시한다', async () => {
     (authService.signin as jest.Mock).mockRejectedValueOnce({
       parameter: 'password',
       message: '영문, 숫자 조합 필수, 특수문자는 선택사항입니다.',
@@ -71,8 +68,7 @@ describe('🧪 LoginForm (로그인 폼)', () => {
     await waitFor(() => expect(screen.getByText(/영문, 숫자 조합 필수/i)).toBeInTheDocument());
   });
 
-  // ❌ 필수 입력 누락
-  it('필수 입력이 누락되면 제출되지 않는다', async () => {
+  test('필수 입력이 누락되면 제출되지 않는다', async () => {
     render(<LoginForm />);
 
     fireEvent.click(screen.getByRole('button', { name: '로그인' }));
@@ -84,7 +80,6 @@ describe('🧪 LoginForm (로그인 폼)', () => {
     });
   });
 
-  // ❌ 서버 오류
   test.skip('서버 오류 발생 시 사용자에게 에러 메시지를 표시한다', async () => {
     (authService.signin as jest.Mock).mockRejectedValueOnce({
       message: '서버 오류가 발생했습니다.',
