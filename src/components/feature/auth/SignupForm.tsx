@@ -15,23 +15,25 @@
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { useDebouncedCallback } from 'use-debounce';
 import { z } from 'zod';
 import { JoinFormSchema } from '@/schemas/authsSchema';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import useDebounce from '@/hooks/useDebounce';
 import { authService } from '@/services/auths/authService';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/ui/Toast';
+import { useAuthStore } from '@/stores/useAuthStore';
 
-// Zod 스키마로부터 TS 타입 자동 생성
 export type JoinFormType = z.infer<typeof JoinFormSchema>;
 
-// 외부에서 라우팅 등 성공 후 동작을 주입받기 위한 prop
-type SignupFormProps = {
-  onSignupSuccess?: (data?: JoinFormType) => void; // 예: Next.js 환경에서 router.replace('/login')
-};
+export default function SignupForm() {
+  const router = useRouter();
+  const { showToast } = useToast();
 
-const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
+  const { setToken } = useAuthStore();
+
   const {
     register, // input에 연결(값/이벤트 바인딩)
     handleSubmit, // 제출 시 검증+핸들 실행
@@ -66,7 +68,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
   });
 
   // 입력 중 과도한 trigger 호출 억제: 사용자가 멈춘 뒤 1000ms 후 검증
-  const debouncedValidate = useDebounce((field: keyof JoinFormType) => {
+  const debouncedValidate = useDebouncedCallback((field: keyof JoinFormType) => {
     void trigger(field);
   }, 1000);
 
@@ -89,7 +91,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
   // 제출 핸들러: 서버에 회원가입 요청 → 성공 시 onSignupSuccess 콜백 실행
   const onSubmit = handleSubmit(async data => {
     try {
-      // 서버에 회원가입 요청
+      // 1️⃣ 서버에 회원가입 요청
       await authService.signup({
         email: data.email,
         password: data.password,
@@ -97,8 +99,16 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
         companyName: data.companyName,
       });
 
-      // 라우팅/토스트 등 성공 후 동작은 외부에서 주입받아 실행
-      onSignupSuccess?.(data);
+      // 2️⃣ 회원가입 성공 → 자동 로그인
+      const response = await authService.signin({
+        email: data.email,
+        password: data.password,
+      });
+      setToken(response.token);
+
+      // 3️⃣ 토스트 + 리다이렉트
+      showToast('UPDO의 회원이 되신 것을 환영합니다! 자동으로 로그인 되었습니다.', 'success');
+      router.replace('/');
     } catch (err: unknown) {
       // 서버 응답 예: { status, code, message, parameter }
       // parameter가 있으면 해당 필드 하단에 에러 메시지를 표시
@@ -191,6 +201,4 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
       </Button>
     </form>
   );
-};
-
-export default SignupForm;
+}
