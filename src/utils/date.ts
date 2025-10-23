@@ -57,3 +57,7 @@ export const isClosed = (isoString?: string) => {
   const now = dayjs().tz('Asia/Seoul');
   return date.isBefore(now);
 };
+
+export const formatReviewDate = (isoString: string) => {
+  return dayjs.utc(isoString).tz('Asia/Seoul').format('YYYY.MM.DD');
+};

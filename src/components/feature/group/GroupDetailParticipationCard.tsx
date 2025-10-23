@@ -34,7 +34,6 @@ const GroupDetailParticipation = ({
       className={cn(
         'bg-purple-10 flex w-full flex-col gap-3 rounded-md px-5 pt-[14px] pb-5 shadow-sm sm:rounded-md sm:px-6 sm:py-5 sm:pt-5 sm:pb-[22px] md:rounded-2xl md:px-10 md:pt-7 md:pb-[34px] lg:mt-4 lg:rounded-2xl lg:pt-7 lg:pb-8',
       )}>
-      {/* 상단: 참여수/아바타/라벨 */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <p className="typo-body-lg font-medium text-[var(--color-gray-800)]">
@@ -42,19 +41,17 @@ const GroupDetailParticipation = ({
             명 참여
           </p>
 
-          {/* 36px / -15px / 오른쪽이 위로 겹치도록 (zIndex = index) */}
           <div className="relative flex items-center overflow-visible">
             {last4.map((p, i) => (
               <div
                 key={p.id}
                 className={cn('relative shrink-0', i !== 0 && '-ml-[15px]')}
-                style={{ zIndex: i }} // 오른쪽이 위
-              >
+                style={{ zIndex: i }}>
                 <Image
                   src={p.image}
                   alt="participant"
-                  width={36}
-                  height={36}
+                  width={29}
+                  height={29}
                   className="rounded-full border border-[var(--surface-card)] object-cover"
                 />
               </div>
@@ -80,14 +77,11 @@ const GroupDetailParticipation = ({
         )}
       </div>
 
-      {/* 하단: 최소/최대 + 진행바(라벨 없이) */}
       <div className="flex flex-col gap-1.5">
         <div className="flex justify-between text-xs text-[var(--color-gray-500)]">
           <span>최소 {min}명</span>
           <span>최대 {max}명</span>
         </div>
-
-        {/* ProgressBar 컴포넌트에 라벨 숨김 옵션이 없다면, 아래 컨테이너로 감싸 class 기반 숨김도 가능 */}
 
         <ProgressBar current={current} max={max} min={min} height="6px" />
       </div>
