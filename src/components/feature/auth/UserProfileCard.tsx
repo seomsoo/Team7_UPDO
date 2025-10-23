@@ -8,11 +8,10 @@ import Icon from '@/components/ui/Icon';
 
 interface UserProfileCardProps {
   user: IUser;
-  onEdit?: () => void;
   onOpenChange: (value: boolean) => void;
 }
 
-export default function UserProfileCard({ user, onEdit, onOpenChange }: UserProfileCardProps) {
+export default function UserProfileCard({ user, onOpenChange }: UserProfileCardProps) {
   const { email, name, image, companyName } = user;
 
   // default avatar in /public

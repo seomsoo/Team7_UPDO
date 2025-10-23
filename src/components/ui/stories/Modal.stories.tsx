@@ -4,7 +4,6 @@ import { Modal, ConfirmModal } from '../Modal';
 import CreateGroupModal from '@/components/feature/group/CreateGroupModal';
 import EditReviewModal from '@/components/feature/review/EditReviewModal';
 import EditProfileModal from '@/components/feature/profile/EditProfileModal';
-import { render } from '@storybook/testing-library';
 
 const meta: Meta<typeof Modal> = {
   title: 'components/ui/Modal',
@@ -158,7 +157,7 @@ export const EditProfileModalPlayground: EditProfileModalStory = {
           모달
         </button>
 
-        <EditProfileModal {...args} user={user} open={true} onOpenChange={setOpen} />
+        <EditProfileModal {...args} user={user} open={open} onOpenChange={setOpen} />
       </>
     );
   },
