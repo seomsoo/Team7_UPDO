@@ -1,12 +1,10 @@
 import type { StorybookConfig } from '@storybook/nextjs-vite';
-import { resolve } from 'path';
 
 const config: StorybookConfig = {
   stories: [
     '../src/**/*.mdx',
     '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
     '../.storybook/**/**/*.stories.@(js|jsx|ts|tsx)',
-    '!../src/components/feature/auth/**/*.stories.@(ts|tsx|js|jsx|mdx)', // ✅ auth 영역 전체 제외
   ],
   addons: [
     '@chromatic-com/storybook',
@@ -33,31 +31,6 @@ const config: StorybookConfig = {
       'import.meta.env.NEXT_PUBLIC_TEAM_ID': JSON.stringify(
         process.env.NEXT_PUBLIC_TEAM_ID || 'UPDO',
       ),
-    };
-
-    // ✅ client-only 모듈을 외부화하여 번들에서 제외
-    cfg.build = {
-      ...cfg.build,
-      rollupOptions: {
-        ...(cfg.build?.rollupOptions || {}),
-        external: ['client-only'],
-      },
-    };
-
-    // ✅ client-only alias 추가 (Chromatic용)
-    cfg.resolve = {
-      ...(cfg.resolve || {}),
-      alias: {
-        ...(cfg.resolve?.alias || {}),
-        'client-only': resolve(__dirname, './__mocks__/client-only.ts'), // 가짜 모듈로 치환
-      },
-    };
-
-    // ✅ use client 경고 줄이기
-    cfg.esbuild = {
-      ...cfg.esbuild,
-      legalComments: 'none',
-      banner: '',
     };
 
     return cfg;
