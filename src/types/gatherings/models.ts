@@ -1,7 +1,5 @@
 import { Type, Location } from '@/utils/mapping';
-
 export interface IGathering {
-  teamId: string;
   id: number;
   type: Type;
   name: string;
@@ -14,17 +12,9 @@ export interface IGathering {
   createdBy: number;
   canceledAt?: string;
 }
-
 export interface IParticipant {
-  teamId: string;
   userId: number;
   gatheringId: number;
   joinedAt: string;
-  User: {
-    id: number;
-    email: string;
-    name: string;
-    companyName: string;
-    image?: string;
-  };
+  User: { id: number; email: string; name: string; companyName: string; image?: string };
 }
