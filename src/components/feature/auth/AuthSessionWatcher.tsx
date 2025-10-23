@@ -16,7 +16,6 @@ export default function AuthSessionWatcher() {
 
   // 만료 시 → 로그인 페이지로 이동
   useTokenExpiryEffect(() => {
-    console.log('[AuthSessionWatcher] 토큰 만료됨 → /login 으로 이동');
     router.replace('/login');
   });
 

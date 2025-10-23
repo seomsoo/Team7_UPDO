@@ -29,7 +29,7 @@ export default function AuthLayout({
           height={345}
           priority
           // 크기 전환: 모바일 → 태블릿 → 데스크톱
-          className="// mobile // tablet // desktop h-[212px] w-[275px] object-contain sm:h-[240px] sm:w-[340px] md:h-[345px] md:w-[529px]"
+          className="h-[212px] w-[275px] object-contain sm:h-[240px] sm:w-[340px] md:h-[345px] md:w-[529px]"
         />
       </div>
 
@@ -38,7 +38,7 @@ export default function AuthLayout({
 
         <div className="w-full flex-grow">{children}</div>
 
-        <p className="mt- w-full text-left text-sm text-gray-600">
+        <p className="mt-4 w-full text-left text-sm text-gray-600">
           {bottomText}{' '}
           <a href={bottomLinkHref} className="text-purple-600 hover:underline">
             {bottomLinkText}
