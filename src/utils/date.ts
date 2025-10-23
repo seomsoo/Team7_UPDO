@@ -10,6 +10,7 @@ export function formatDateToLocalISO(date: Date): string {
 
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 }
+
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -40,10 +41,10 @@ export const formatDeadline = (isoString: string) => {
   if (date.isToday()) {
     return `오늘 ${date.format('HH시')} 마감`;
   }
-  
+
   const tomorrow = now.add(1, 'day').startOf('day');
   const dateStart = date.startOf('day');
-  
+
   if (dateStart.isSame(tomorrow, 'day')) {
     return `내일 ${date.format('HH시')} 마감`;
   }

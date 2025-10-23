@@ -9,9 +9,10 @@ import Icon from '@/components/ui/Icon';
 interface UserProfileCardProps {
   user: IUser;
   onEdit?: () => void;
+  onOpenChange: (value: boolean) => void;
 }
 
-export default function UserProfileCard({ user, onEdit }: UserProfileCardProps) {
+export default function UserProfileCard({ user, onEdit, onOpenChange }: UserProfileCardProps) {
   const { email, name, image, companyName } = user;
 
   // default avatar in /public
@@ -35,7 +36,7 @@ export default function UserProfileCard({ user, onEdit }: UserProfileCardProps) 
       <button
         className="absolute top-6 right-3 cursor-pointer sm:top-8 md:top-auto"
         aria-label="프로필 수정"
-        onClick={onEdit}
+        onClick={() => onOpenChange(true)}
         type="button">
         <Icon name="edit" />
       </button>
@@ -51,7 +52,7 @@ export default function UserProfileCard({ user, onEdit }: UserProfileCardProps) 
           alt={`${name ?? '사용자'} 프로필 이미지`}
           width={112}
           height={112}
-          className="h-10 w-10 rounded-full object-cover shadow ring-4 ring-white sm:h-11 sm:w-11 md:h-28 md:w-28"
+          className="h-10 w-10 rounded-full object-cover shadow ring-2 ring-gray-100 sm:h-11 sm:w-11 md:h-28 md:w-28"
           onError={() => setAvatarSrc(DEFAULT_AVATAR_SRC)}
           priority
         />

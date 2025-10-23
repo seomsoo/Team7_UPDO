@@ -15,12 +15,14 @@ interface HeaderProfileProps {
 
 export default function HeaderProfile({ user }: HeaderProfileProps) {
   const { isAuthenticated, checkTokenValidity } = useAuthStore();
+
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     checkTokenValidity();
     setMounted(true);
   }, [checkTokenValidity]);
   if (!mounted) return null;
+
   return (
     <Link
       href={isAuthenticated ? '/mypage' : '/login'}

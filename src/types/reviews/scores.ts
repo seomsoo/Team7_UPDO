@@ -1,7 +1,6 @@
 import { Type } from '@/utils/mapping';
 
 export interface IReviewScore {
-  teamId: string;
   gatheringId: number;
   type: Type;
   averageScore: number;

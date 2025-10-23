@@ -31,7 +31,7 @@ export default function EditReviewModal({
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const buttonClassName = 'typo-body-bold h-[48px] rounded-md';
+  const buttonClassName = 'typo-body-bold h-[48px] rounded-md min-w-0 flex-1 basis-0';
 
   async function handleSubmit() {
     if (isSubmitting) return; // submit 요청 중 중복 클릭 들어오면 방지
@@ -77,7 +77,8 @@ export default function EditReviewModal({
         <Modal.Header
           title="리뷰 쓰기"
           onClose={() => onOpenChange(false)}
-          className="mb-11 p-0 sm:mb-13"></Modal.Header>
+          className="mb-11 p-0 sm:mb-13"
+        />
         <Modal.Body className="p-0">
           <ReviewScore
             value={form.score}

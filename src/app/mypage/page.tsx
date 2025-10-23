@@ -15,6 +15,7 @@ import { useAuthStore } from '@/stores/useAuthStore';
 import { authService } from '@/services/auths/authService';
 import { IUser } from '@/types/auths';
 import { IJoinedGathering } from '@/types/gatherings';
+import EditProfileModal from '@/components/feature/profile/EditProfileModal';
 
 const MYPAGETABS: (TabItem & { emptyMsg: string })[] = [
   {
@@ -49,6 +50,7 @@ export default function MyPage() {
 
   const [selectedTab, setSelectedTab] = useState('myMeetings');
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isEditProfileModalOpen, setIsEditprofileModalOpen] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<IUser | null>(null);
@@ -116,6 +118,17 @@ export default function MyPage() {
         />
       )}
 
+      {isEditProfileModalOpen && user && (
+        <EditProfileModal
+          user={user}
+          open={isEditProfileModalOpen}
+          onOpenChange={setIsEditprofileModalOpen}
+          onSaved={next => {
+            setUser(prev => (prev ? ({ ...prev, ...next } as IUser) : prev));
+          }}
+        />
+      )}
+
       <div className="mt-10 flex h-full w-full flex-col gap-6 md:flex-row md:gap-15">
         {/* 좌측(PC) 겸 상단(태블릿, 모바일) */}
         <div className="shrink-0 flex-col md:min-w-[282px]">
@@ -132,7 +145,13 @@ export default function MyPage() {
           <div>
             {loading && <div className="text-gray-500">내 정보를 불러오는 중…</div>}
             {error && !loading && <div className="text-red-600">{error}</div>}
-            {!loading && !error && user && <UserProfileCard user={user} />}
+            {!loading && !error && user && (
+              <UserProfileCard
+                key={`${user.image ?? ''}-${user.companyName ?? ''}`}
+                onOpenChange={setIsEditprofileModalOpen}
+                user={user}
+              />
+            )}
           </div>
         </div>
 
