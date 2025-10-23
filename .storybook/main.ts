@@ -6,6 +6,7 @@ const config: StorybookConfig = {
     '../src/**/*.mdx',
     '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
     '../.storybook/**/**/*.stories.@(js|jsx|ts|tsx)',
+    '!../src/components/feature/auth/**/*.stories.@(ts|tsx|js|jsx|mdx)', // ✅ auth 영역 전체 제외
   ],
   addons: [
     '@chromatic-com/storybook',
