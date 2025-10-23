@@ -60,6 +60,23 @@ describe('🧩 SignupForm — 기본 폼 검증 (유효성 검사)', () => {
 
     await waitFor(() => expect(screen.getByText(/유효한 이메일 주소를 입력/i)).toBeInTheDocument());
   });
+
+  test('비밀번호에 동일 문자가 3번 이상 연속되면 에러 메시지가 표시된다', async () => {
+    render(<SignupForm />);
+
+    // 동일 문자가 3번 이상 포함된 비밀번호 입력
+    fireEvent.change(screen.getByLabelText('이름'), { target: { value: '홍길동' } });
+    fireEvent.change(screen.getByLabelText('직업'), { target: { value: '테스트회사' } });
+    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'repeat@example.com' } });
+    fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'aaabbb1234' } });
+    fireEvent.change(screen.getByLabelText('비밀번호 확인'), { target: { value: 'aaabbb1234' } });
+    fireEvent.click(screen.getByRole('button', { name: '회원가입' }));
+
+    // Zod 스키마의 오류 메시지 문구에 맞게 검증
+    await waitFor(() => {
+      expect(screen.getByText(/같은 문자가 3회 이상 반복될 수 없습니다./i)).toBeInTheDocument();
+    });
+  });
 });
 
 describe('🧩 SignupForm — 서버 통합 시나리오', () => {

@@ -49,6 +49,19 @@ describe('🧩 LoginForm — 폼 유효성 검증', () => {
 
     await waitFor(() => expect(screen.getByText(/유효한 이메일 주소를 입력/i)).toBeInTheDocument());
   });
+
+  test('비밀번호에 동일 문자가 3번 이상 연속되면 에러 메시지가 표시된다', async () => {
+    render(<LoginForm />);
+
+    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'repeat@test.com' } });
+    fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'aaabbb1234' } });
+    fireEvent.click(screen.getByRole('button', { name: '로그인' }));
+
+    // 에러 메시지 출력 확인 (Zod 스키마의 메시지와 일치해야 함)
+    await waitFor(() => {
+      expect(screen.getByText(/같은 문자가 3회 이상 반복될 수 없습니다./i)).toBeInTheDocument();
+    });
+  });
 });
 
 describe('🧩 LoginForm — 서버 상호작용 시나리오', () => {
