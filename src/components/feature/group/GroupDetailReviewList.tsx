@@ -15,14 +15,13 @@ export default function GroupDetailReviewList({ gatheringId }: GroupDetailReview
   const [reviews, setReviews] = useState<IReviewWithRelations[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  const teamId = 'UPDO';
 
   const pageSize = 4;
   const totalPages = Math.ceil(reviews.length / pageSize);
 
   useEffect(() => {
     async function fetchReviews() {
-      if (!gatheringId || !teamId) return;
+      if (!gatheringId) return;
       try {
         setLoading(true);
         const res = await reviewService.getReviews({ gatheringId });
@@ -36,7 +35,7 @@ export default function GroupDetailReviewList({ gatheringId }: GroupDetailReview
     }
 
     fetchReviews();
-  }, [gatheringId, teamId]);
+  }, [gatheringId]);
 
   const list = reviews.slice((page - 1) * pageSize, page * pageSize);
 
