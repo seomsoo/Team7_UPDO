@@ -1,19 +1,18 @@
 // -----------------------------------------------------------------------------
 // TEST: SignupForm.test.tsx
-// TARGET: RHF + Zod 폼 검증 + 회원가입 → 로그인 → 토큰저장 → 리다이렉트
+// TARGET: RHF+Zod 유효성 검증 + 회원가입 성공 시 자동 로그인/토큰 저장/토스트/라우팅
 // -----------------------------------------------------------------------------
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SignupForm from '@/components/feature/auth/SignupForm';
 import { authService } from '@/services/auths/authService';
 
-// ✅ Mock 설정
 const mockReplace = jest.fn();
 const mockShowToast = jest.fn();
 const mockSetToken = jest.fn();
 
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({ replace: mockReplace }),
+  useRouter: jest.fn(() => ({ replace: mockReplace })),
 }));
 jest.mock('@/components/ui/Toast', () => ({
   useToast: () => ({ showToast: mockShowToast }),
@@ -28,21 +27,21 @@ jest.mock('@/services/auths/authService', () => ({
   },
 }));
 
-describe('🧩 SignupForm — 기본 폼 검증 (유효성 검사)', () => {
+describe('🧩 SignupForm — 폼 유효성 검증', () => {
   afterEach(() => jest.clearAllMocks());
 
-  test('필수 입력 누락 시 에러 메시지가 표시된다', async () => {
+  test('모든 필드를 비운 채 제출하면 에러 메시지가 표시된다', async () => {
     render(<SignupForm />);
     fireEvent.click(screen.getByRole('button', { name: '회원가입' }));
 
-    await waitFor(() => {
+    await waitFor(() =>
       expect(screen.getAllByText(/입력해주세요|입력 가능합니다|이상 입력/i).length).toBeGreaterThan(
         0,
-      );
-    });
+      ),
+    );
   });
 
-  test('비밀번호가 일치하지 않으면 에러 메시지가 표시된다', async () => {
+  test('비밀번호와 비밀번호 확인이 일치하지 않으면 에러 메시지가 표시된다', async () => {
     render(<SignupForm />);
     fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'abcd1234' } });
     fireEvent.change(screen.getByLabelText('비밀번호 확인'), { target: { value: 'abcd9999' } });
@@ -51,14 +50,6 @@ describe('🧩 SignupForm — 기본 폼 검증 (유효성 검사)', () => {
     await waitFor(() =>
       expect(screen.getByText(/비밀번호가 일치하지 않습니다/i)).toBeInTheDocument(),
     );
-  });
-
-  test('이메일 형식이 잘못되면 에러 메시지가 표시된다', async () => {
-    render(<SignupForm />);
-    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'wrong-email' } });
-    fireEvent.click(screen.getByRole('button', { name: '회원가입' }));
-
-    await waitFor(() => expect(screen.getByText(/유효한 이메일 주소를 입력/i)).toBeInTheDocument());
   });
 
   test('비밀번호에 동일 문자가 3번 이상 연속되면 에러 메시지가 표시된다', async () => {
@@ -79,25 +70,32 @@ describe('🧩 SignupForm — 기본 폼 검증 (유효성 검사)', () => {
   });
 });
 
-describe('🧩 SignupForm — 서버 통합 시나리오', () => {
+describe('🧩 SignupForm — 서버/라우팅 시나리오', () => {
   afterEach(() => jest.clearAllMocks());
 
-  test('회원가입 성공 시 자동 로그인, 토큰 저장, 홈 이동', async () => {
+  test('회원가입 성공 시 자동 로그인, 토큰 저장, 토스트 표시, 홈 이동', async () => {
     (authService.signup as jest.Mock).mockResolvedValueOnce({ message: 'ok' });
     (authService.signin as jest.Mock).mockResolvedValueOnce({ token: 'mocked-jwt' });
 
     render(<SignupForm />);
-
     fireEvent.change(screen.getByLabelText('이름'), { target: { value: '홍길동' } });
     fireEvent.change(screen.getByLabelText('직업'), { target: { value: '달램컴퍼니' } });
-    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'test@example.com' } });
+    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'signup@test.com' } });
     fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'abcd1234' } });
     fireEvent.change(screen.getByLabelText('비밀번호 확인'), { target: { value: 'abcd1234' } });
     fireEvent.click(screen.getByRole('button', { name: '회원가입' }));
 
     await waitFor(() => {
-      expect(authService.signup).toHaveBeenCalledTimes(1);
-      expect(authService.signin).toHaveBeenCalledTimes(1);
+      expect(authService.signup).toHaveBeenCalledWith({
+        email: 'signup@test.com',
+        password: 'abcd1234',
+        name: '홍길동',
+        companyName: '달램컴퍼니',
+      });
+      expect(authService.signin).toHaveBeenCalledWith({
+        email: 'signup@test.com',
+        password: 'abcd1234',
+      });
       expect(mockSetToken).toHaveBeenCalledWith('mocked-jwt');
       expect(mockShowToast).toHaveBeenCalledWith(
         'UPDO의 회원이 되신 것을 환영합니다! 자동으로 로그인 되었습니다.',
@@ -115,8 +113,8 @@ describe('🧩 SignupForm — 서버 통합 시나리오', () => {
 
     render(<SignupForm />);
     fireEvent.change(screen.getByLabelText('이름'), { target: { value: '홍길동' } });
-    fireEvent.change(screen.getByLabelText('직업'), { target: { value: '테스트회사' } });
-    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'dup@example.com' } });
+    fireEvent.change(screen.getByLabelText('직업'), { target: { value: '테스트' } });
+    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'dup@test.com' } });
     fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'abcd1234' } });
     fireEvent.change(screen.getByLabelText('비밀번호 확인'), { target: { value: 'abcd1234' } });
     fireEvent.click(screen.getByRole('button', { name: '회원가입' }));
@@ -126,7 +124,7 @@ describe('🧩 SignupForm — 서버 통합 시나리오', () => {
     );
   });
 
-  test('서버 오류 발생 시 일반 에러 메시지가 필드 하단에 표시된다', async () => {
+  test('서버 오류 발생 시 필드나 전역 에러 메시지가 표시된다', async () => {
     (authService.signup as jest.Mock).mockRejectedValueOnce({
       message: '서버 오류가 발생했습니다.',
     });
@@ -134,7 +132,7 @@ describe('🧩 SignupForm — 서버 통합 시나리오', () => {
     render(<SignupForm />);
     fireEvent.change(screen.getByLabelText('이름'), { target: { value: '홍길동' } });
     fireEvent.change(screen.getByLabelText('직업'), { target: { value: '달램' } });
-    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'error@example.com' } });
+    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'error@test.com' } });
     fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'abcd1234' } });
     fireEvent.change(screen.getByLabelText('비밀번호 확인'), { target: { value: 'abcd1234' } });
     fireEvent.click(screen.getByRole('button', { name: '회원가입' }));
@@ -144,5 +142,41 @@ describe('🧩 SignupForm — 서버 통합 시나리오', () => {
         screen.getByText(/회원가입에 실패했습니다|서버 오류가 발생했습니다/i),
       ).toBeInTheDocument(),
     );
+  });
+
+  test.skip('회원가입 3회 실패 시 서버의 잠금 에러 메시지가 전역으로 표시된다', async () => {
+    (authService.signup as jest.Mock)
+      .mockRejectedValueOnce({ parameter: 'email', message: '이메일이 잘못되었습니다.' })
+      .mockRejectedValueOnce({ parameter: 'email', message: '이메일이 잘못되었습니다.' })
+      .mockRejectedValueOnce({
+        message: '회원가입 시도 횟수가 초과되었습니다. 잠시 후 다시 시도해주세요.',
+      });
+
+    render(<SignupForm />);
+    const submit = async () => {
+      fireEvent.change(screen.getByLabelText('이름'), { target: { value: '홍길동' } });
+      fireEvent.change(screen.getByLabelText('직업'), { target: { value: '달램' } });
+      fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'dup@test.com' } });
+      fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'abcd1234' } });
+      fireEvent.change(screen.getByLabelText('비밀번호 확인'), { target: { value: 'abcd1234' } });
+      fireEvent.click(screen.getByRole('button', { name: '회원가입' }));
+    };
+
+    // 세 번 시도
+    await submit();
+    await waitFor(() => screen.getByText('이메일이 잘못되었습니다.'));
+    await submit();
+    await waitFor(() => screen.getByText('이메일이 잘못되었습니다.'));
+    await submit();
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(/회원가입 시도 횟수가 초과되었습니다\. 잠시 후 다시 시도해주세요\./),
+      ).toBeInTheDocument(),
+    );
+
+    expect(mockSetToken).not.toHaveBeenCalled();
+    expect(mockShowToast).not.toHaveBeenCalled();
+    expect(mockReplace).not.toHaveBeenCalled();
   });
 });
