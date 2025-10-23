@@ -7,6 +7,7 @@ import Icon from '@/components/ui/Icon';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Modal, ModalProps } from '@/components/ui/Modal/Modal';
+import { useToast } from '@/components/ui/Toast';
 
 import { IUser } from '@/types/auths';
 import { authService } from '@/services/auths/authService';
@@ -17,11 +18,12 @@ export default function EditProfileModal({
   user,
   onSaved,
 }: ModalProps & { user: IUser; onSaved?: (next: Partial<IUser>) => void }) {
+  const toast = useToast();
+
   const { image, name, companyName, email } = user;
   const DEFAULT_AVATAR_SRC = '/images/avatar-default.png';
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const [isSaving, setIsSaving] = useState(false);
   const [previewDataUrl, setPreviewDataUrl] = useState<string | null>(null);
 
@@ -44,6 +46,7 @@ export default function EditProfileModal({
   const handleCancel = () => {
     setPreviewDataUrl(null);
     setSelectedFile(null);
+    setNewCompanyName(companyName || '');
     onOpenChange(false);
   };
 
@@ -51,21 +54,23 @@ export default function EditProfileModal({
     try {
       setIsSaving(true);
 
-      await authService.updateUser({
+      const updatedUser = await authService.updateUser({
         companyName: newCompanyName || undefined,
         image: selectedFile ?? undefined,
       });
 
       onSaved?.({
         companyName: newCompanyName,
-        image: previewDataUrl ?? image ?? undefined,
+        image: updatedUser.image ?? image ?? undefined,
       });
 
+      toast.showToast('프로필 저장에 성공했습니다.', 'success');
       onOpenChange(false);
       setPreviewDataUrl(null);
       setSelectedFile(null);
     } catch (e) {
       console.error(e);
+      toast.showToast('프로필 저장에 실패했습니다. 다시 시도해주세요.', 'error');
     } finally {
       setIsSaving(false);
     }

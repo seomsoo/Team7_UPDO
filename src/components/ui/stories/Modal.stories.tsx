@@ -143,7 +143,6 @@ export const EditProfileModalPlayground: EditProfileModalStory = {
       image: '',
       companyName: '개인',
       email: 'test@test.com',
-      teamId: '',
       id: 1,
       createdAt: '',
       updatedAt: '',

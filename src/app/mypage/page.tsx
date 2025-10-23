@@ -50,7 +50,7 @@ export default function MyPage() {
 
   const [selectedTab, setSelectedTab] = useState('myMeetings');
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const [isEditProfileModalOpen, setIsEditprofileModalOpen] = useState(false);
+  const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<IUser | null>(null);
@@ -122,7 +122,7 @@ export default function MyPage() {
         <EditProfileModal
           user={user}
           open={isEditProfileModalOpen}
-          onOpenChange={setIsEditprofileModalOpen}
+          onOpenChange={setIsEditProfileModalOpen}
           onSaved={next => {
             setUser(prev => (prev ? ({ ...prev, ...next } as IUser) : prev));
           }}
@@ -148,7 +148,7 @@ export default function MyPage() {
             {!loading && !error && user && (
               <UserProfileCard
                 key={`${user.image ?? ''}-${user.companyName ?? ''}`}
-                onOpenChange={setIsEditprofileModalOpen}
+                onOpenChange={setIsEditProfileModalOpen}
                 user={user}
               />
             )}
