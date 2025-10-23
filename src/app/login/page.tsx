@@ -7,7 +7,6 @@
 export const dynamic = 'force-dynamic';
 
 import AuthLayout from '@/components/layout/auth/AuthLayout';
-import LoginForm from '@/components/feature/auth/LoginForm';
 import LoginFormNext from '@/components/feature/auth/LoginForm.Next';
 
 export default function LoginPage() {

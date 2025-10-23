@@ -7,7 +7,6 @@
 export const dynamic = 'force-dynamic';
 
 import AuthLayout from '@/components/layout/auth/AuthLayout';
-import SignupForm from '@/components/feature/auth/SignupForm';
 import SignupFormNext from '@/components/feature/auth/SignupForm.Next';
 
 export default function SignupPage() {
