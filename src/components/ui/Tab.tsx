@@ -112,8 +112,8 @@ const Tab: React.FC<TabProps> = ({ items, value, onChange, fullWidth = true, cla
         role="tablist"
         className={twMerge(
           'relative flex items-center justify-start border-b border-[var(--color-gray-200)]',
-          'scrollbar-hide gap-2 overflow-x-auto px-2 whitespace-nowrap',
-          'md:gap-4 md:px-4 lg:gap-6 lg:px-6',
+          'scrollbar-hide overflow-x-auto whitespace-nowrap',
+          'md:px-4lg:px-6',
           fullWidth && 'w-full',
         )}>
         {items.map((item, i) => {
