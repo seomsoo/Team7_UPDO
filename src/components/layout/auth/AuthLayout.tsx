@@ -38,7 +38,7 @@ export default function AuthLayout({
 
         <div className="w-full flex-grow">{children}</div>
 
-        <p className="mt-4 w-full text-left text-sm text-gray-600">
+        <p className="mt-4 w-full text-center text-sm text-gray-600">
           {bottomText}{' '}
           <a href={bottomLinkHref} className="text-purple-600 hover:underline">
             {bottomLinkText}

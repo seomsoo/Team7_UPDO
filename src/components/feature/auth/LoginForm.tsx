@@ -5,7 +5,6 @@
 //       - 입력 시 Debounce 검증 (불필요한 유효성 검사 최소화)
 //       - 로그인 성공 시: JWT 토큰 저장 + 만료시간 기록 (1시간)
 //       - 로그인 상태는 전역 Zustand 스토어(useAuthStore)로 관리
-//       - 라우팅은 외부 콜백(onLoginSuccess) 주입 방식으로 제어 (Next Router 미의존)
 //       - 입력 중 1초 디바운스 검증
 // -----------------------------------------------------------------------------
 
@@ -13,25 +12,29 @@
 
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDebouncedCallback } from 'use-debounce';
 import { z } from 'zod';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import useDebounce from '@/hooks/useDebounce';
 import { authService } from '@/services/auths/authService';
-import { useAuthStore } from '@/stores/useAuthStore';
 import { LoginFormSchema } from '@/schemas/authsSchema';
-
-type LoginFormProps = {
-  onLoginSuccess?: () => void;
-};
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/ui/Toast';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 export type LoginFormType = z.infer<typeof LoginFormSchema>;
 
 const firstIssueMessage = (err: z.ZodError) =>
   err.issues[0]?.message ?? '입력값이 올바르지 않습니다.';
 
-export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
+export default function LoginForm() {
+  const router = useRouter();
+  const { showToast } = useToast();
+
+  // ✅ Zustand 훅 기반 접근 (리액티브)
+  const { setToken } = useAuthStore();
+
   const {
     register,
     handleSubmit,
@@ -44,10 +47,13 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   });
 
   const [globalError, setGlobalError] = useState<string | null>(null);
-  const debouncedValidate = useDebounce((field: keyof LoginFormType) => {
+
+  // 입력 중 1초 후 검증 (과도한 트리거 방지)
+  const debouncedValidate = useDebouncedCallback((field: keyof LoginFormType) => {
     void trigger(field);
   }, 1000);
 
+  // RHF register에 Debounce 검증 결합
   const registerWithValidation = (name: keyof LoginFormType) => {
     const shape = LoginFormSchema.shape[name];
     const base = register(name, {
@@ -71,6 +77,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
     };
   };
 
+  // 로그인 제출 핸들러
   const onSubmit = handleSubmit(async data => {
     // ✅ 전체 Zod 검증
     const parsed = LoginFormSchema.safeParse(data);
@@ -86,8 +93,10 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
 
     try {
       const response = await authService.signin(parsed.data);
-      useAuthStore.getState().setToken(response.token, 60 * 60 * 1000);
-      onLoginSuccess?.();
+      setToken(response.token);
+
+      showToast('로그인에 성공하였습니다. 환영합니다!', 'success');
+      router.replace('/'); // 성공 시 메인으로 이동
     } catch (err: unknown) {
       if (typeof err === 'object' && err !== null) {
         const e = err as { parameter?: keyof LoginFormType; message?: string };
@@ -112,7 +121,9 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   return (
     <form
       onSubmit={onSubmit}
-      className="flex w-[343px] flex-col gap-5 rounded-xl bg-white p-6 shadow-md sm:w-[568px]"
+      // ✅ self-center 로 부모의 cross-axis 정렬을 무시하고 스스로 중앙 정렬
+      // ✅ w-full + max-w 로 반응형 중앙정렬 안정화
+      className="mx-auto flex w-full max-w-[568px] flex-col gap-5 self-center rounded-xl bg-white p-6 shadow-md"
       noValidate>
       {/* 이메일 입력 */}
       <div className="flex flex-col gap-1">
