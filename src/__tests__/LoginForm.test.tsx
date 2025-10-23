@@ -1,51 +1,97 @@
 // -----------------------------------------------------------------------------
-// NOTE: LoginForm 기능 검증용 Jest 테스트 코드
-//       - RHF + Zod 검증 및 서버 Mock 처리
-//       - 성공 / 이메일 없음 / 비밀번호 오류 / 입력 누락 등 시나리오 포함
+// TEST: LoginForm.test.tsx
+// TARGET: RHF + Zod 검증, Debounce, 서버 통신(Mock), Toast 및 Router 동작 검증
 // -----------------------------------------------------------------------------
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import LoginForm from '@/components/feature/auth/LoginForm';
 import { authService } from '@/services/auths/authService';
 
-// ✅ authService.signin 모듈 Mock
+// ✅ Mock 정의
+const mockReplace = jest.fn();
+const mockShowToast = jest.fn();
+const mockSetToken = jest.fn();
+
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(() => ({ replace: mockReplace })),
+}));
+jest.mock('@/components/ui/Toast', () => ({
+  useToast: () => ({ showToast: mockShowToast }),
+}));
+jest.mock('@/stores/useAuthStore', () => ({
+  useAuthStore: jest.fn(() => ({ setToken: mockSetToken })),
+}));
 jest.mock('@/services/auths/authService', () => ({
   authService: {
     signin: jest.fn(),
   },
 }));
 
-describe('🧪 LoginForm (로그인 폼)', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
+describe('🧩 LoginForm — 폼 유효성 검증', () => {
+  afterEach(() => jest.clearAllMocks());
+
+  test('이메일과 비밀번호를 비운 채 제출하면 에러 메시지가 표시된다', async () => {
+    render(<LoginForm />);
+    fireEvent.click(screen.getByRole('button', { name: '로그인' }));
+
+    await waitFor(() =>
+      expect(screen.getAllByText(/입력해주세요|입력 가능합니다|이상 입력/i).length).toBeGreaterThan(
+        0,
+      ),
+    );
   });
 
-  // ✅ 성공 케이스
-  it('로그인 성공 시 onLoginSuccess 콜백이 호출된다', async () => {
-    (authService.signin as jest.Mock).mockResolvedValueOnce({ token: 'mocked-jwt' });
-    const handleSuccess = jest.fn();
-
-    render(<LoginForm onLoginSuccess={handleSuccess} />);
-
-    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'test@example.com' } });
+  test('잘못된 이메일 형식이면 에러 메시지가 표시된다', async () => {
+    render(<LoginForm />);
+    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'wrongemail' } });
     fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'abcd1234' } });
     fireEvent.click(screen.getByRole('button', { name: '로그인' }));
 
-    await waitFor(() => expect(handleSuccess).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(screen.getByText(/유효한 이메일 주소를 입력/i)).toBeInTheDocument());
   });
 
-  // ❌ 존재하지 않는 이메일
-  it('존재하지 않는 이메일일 경우 에러 메시지를 표시한다', async () => {
+  test('비밀번호에 동일 문자가 3번 이상 연속되면 에러 메시지가 표시된다', async () => {
+    render(<LoginForm />);
+    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'repeat@test.com' } });
+    fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'aaabbb1234' } });
+    fireEvent.click(screen.getByRole('button', { name: '로그인' }));
+
+    await waitFor(() =>
+      expect(screen.getByText(/같은 문자가 3회 이상 반복될 수 없습니다\./i)).toBeInTheDocument(),
+    );
+  });
+});
+
+describe('🧩 LoginForm — 서버 및 라우팅 시나리오', () => {
+  afterEach(() => jest.clearAllMocks());
+
+  test('로그인 성공 시 토큰 저장, 토스트 표시, 홈(/)으로 이동한다', async () => {
+    (authService.signin as jest.Mock).mockResolvedValueOnce({ token: 'mocked-jwt' });
+
+    render(<LoginForm />);
+    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'success@test.com' } });
+    fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'abcd1234' } });
+    fireEvent.click(screen.getByRole('button', { name: '로그인' }));
+
+    await waitFor(() => {
+      expect(authService.signin).toHaveBeenCalledWith({
+        email: 'success@test.com',
+        password: 'abcd1234',
+      });
+      expect(mockSetToken).toHaveBeenCalledWith('mocked-jwt');
+      expect(mockShowToast).toHaveBeenCalledWith('로그인에 성공하였습니다. 환영합니다!', 'success');
+      expect(mockReplace).toHaveBeenCalledWith('/');
+    });
+  });
+
+  test('존재하지 않는 이메일이면 해당 필드 하단에 에러 메시지를 표시한다', async () => {
     (authService.signin as jest.Mock).mockRejectedValueOnce({
       parameter: 'email',
       message: '존재하지 않는 이메일입니다.',
     });
 
     render(<LoginForm />);
-
-    fireEvent.change(screen.getByLabelText('이메일'), {
-      target: { value: 'notfound@example.com' },
-    });
+    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'notfound@test.com' } });
     fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'abcd1234' } });
     fireEvent.click(screen.getByRole('button', { name: '로그인' }));
 
@@ -54,65 +100,68 @@ describe('🧪 LoginForm (로그인 폼)', () => {
     );
   });
 
-  // ❌ 비밀번호 불일치
-  it('비밀번호 규칙이 잘못되면 경고 메시지를 표시한다', async () => {
+  test('비밀번호 오류 시 해당 필드 하단에 에러 메시지를 표시한다', async () => {
     (authService.signin as jest.Mock).mockRejectedValueOnce({
       parameter: 'password',
-      message: '영문, 숫자 조합 필수, 특수문자는 선택사항입니다.',
+      message: '비밀번호가 일치하지 않습니다.',
     });
 
     render(<LoginForm />);
-
-    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'wrongpass' } });
+    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'user@test.com' } });
+    fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'wrongpw12' } });
     fireEvent.click(screen.getByRole('button', { name: '로그인' }));
 
-    // ✅ 실제 DOM에는 이 문구가 렌더링됨
-    await waitFor(() => expect(screen.getByText(/영문, 숫자 조합 필수/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText('비밀번호가 일치하지 않습니다.')).toBeInTheDocument(),
+    );
   });
 
-  // ❌ 필수 입력 누락
-  it('필수 입력이 누락되면 제출되지 않는다', async () => {
-    render(<LoginForm />);
-
-    fireEvent.click(screen.getByRole('button', { name: '로그인' }));
-
-    await waitFor(() => {
-      expect(
-        screen.getAllByText(/입력해주세요|입력 가능합니다|이상 입력/i).length,
-      ).toBeGreaterThanOrEqual(1);
-    });
-  });
-
-  // ❌ 서버 오류
-  test.skip('서버 오류 발생 시 사용자에게 에러 메시지를 표시한다', async () => {
+  test('서버 오류 발생 시 전역 에러 메시지가 표시된다', async () => {
     (authService.signin as jest.Mock).mockRejectedValueOnce({
       message: '서버 오류가 발생했습니다.',
     });
 
     render(<LoginForm />);
-
-    fireEvent.change(screen.getByLabelText('이메일'), {
-      target: { value: 'error@example.com' },
-    });
-    fireEvent.change(screen.getByLabelText('비밀번호'), {
-      target: { value: 'abcd1234' },
-    });
+    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'error@test.com' } });
+    fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'abcd1234' } });
     fireEvent.click(screen.getByRole('button', { name: '로그인' }));
 
-    // ✅ aria 속성을 이용해 오류 표시가 감지되는지 확인
-    await waitFor(() => {
-      const passwordInput = screen.getByLabelText('비밀번호');
-      expect(passwordInput).toHaveAttribute('aria-invalid', 'true');
-    });
+    expect(await screen.findByText(/서버 오류가 발생했습니다/i)).toBeInTheDocument();
 
-    // ✅ 약간의 지연을 허용해서 RHF의 상태 업데이트 기다리기
-    await waitFor(
-      () => {
-        const alert = screen.getByRole('alert');
-        expect(alert).toHaveTextContent(/서버\s*오류/i);
-      },
-      { timeout: 1500 }, // ← RHF 비동기 렌더링 대기 (중요)
+    expect(mockShowToast).not.toHaveBeenCalled();
+    expect(mockReplace).not.toHaveBeenCalled();
+  });
+
+  test.skip('비밀번호를 3회 연속 잘못 입력하면 계정이 잠기고 전역 에러 메시지가 표시된다', async () => {
+    (authService.signin as jest.Mock)
+      .mockRejectedValueOnce({ parameter: 'password', message: '비밀번호가 일치하지 않습니다.' })
+      .mockRejectedValueOnce({ parameter: 'password', message: '비밀번호가 일치하지 않습니다.' })
+      .mockRejectedValueOnce({
+        message: '로그인 시도 횟수가 초과되었습니다. 계정이 잠겼습니다.',
+      });
+
+    render(<LoginForm />);
+
+    const submit = async (pw: string) => {
+      fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'lock@test.com' } });
+      fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: pw } });
+      fireEvent.click(screen.getByRole('button', { name: '로그인' }));
+    };
+
+    await submit('wrong1');
+    await waitFor(() => screen.getByText('비밀번호가 일치하지 않습니다.'));
+    await submit('wrong2');
+    await waitFor(() => screen.getByText('비밀번호가 일치하지 않습니다.'));
+    await submit('wrong3');
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(/로그인 시도 횟수가 초과되었습니다\. 계정이 잠겼습니다\./),
+      ).toBeInTheDocument(),
     );
+
+    expect(mockSetToken).not.toHaveBeenCalled();
+    expect(mockShowToast).not.toHaveBeenCalled();
+    expect(mockReplace).not.toHaveBeenCalled();
   });
 });

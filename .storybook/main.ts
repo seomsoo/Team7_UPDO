@@ -32,6 +32,7 @@ const config: StorybookConfig = {
         process.env.NEXT_PUBLIC_TEAM_ID || 'UPDO',
       ),
     };
+
     return cfg;
   },
 };

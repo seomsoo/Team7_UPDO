@@ -11,7 +11,13 @@ export const LoginFormSchema = z.object({
     .string()
     .min(8, { message: '8글자 이상 입력해주세요.' })
     .max(20, { message: '20자 이하로 입력해주세요.' })
-    .regex(passwordRegex, '영문, 숫자 조합 필수, 특수문자는 선택사항입니다.'),
+    .regex(passwordRegex, '영문, 숫자 조합 필수, 특수문자는 선택사항입니다.')
+    .refine(val => !/(.)\1\1/.test(val), {
+      message: '같은 문자가 3회 이상 반복될 수 없습니다.',
+    })
+    .refine(val => !/\s/.test(val), {
+      message: '공백은 포함할 수 없습니다.',
+    }),
 });
 
 export type LoginFormType = z.infer<typeof LoginFormSchema>;
@@ -37,7 +43,13 @@ export const JoinFormSchema = z
       .string()
       .min(8, { message: '8글자 이상 입력해주세요.' })
       .max(20, { message: '20자 이하로 입력해주세요.' })
-      .regex(passwordRegex, '영문, 숫자 조합 필수, 특수문자는 선택사항입니다.'),
+      .regex(passwordRegex, '영문, 숫자 조합 필수, 특수문자는 선택사항입니다.')
+      .refine(val => !/(.)\1\1/.test(val), {
+        message: '같은 문자가 3회 이상 반복될 수 없습니다.',
+      })
+      .refine(val => !/\s/.test(val), {
+        message: '공백은 포함할 수 없습니다.',
+      }),
 
     passwordConfirm: z.string(),
   })

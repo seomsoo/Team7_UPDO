@@ -4,30 +4,36 @@
 //       - RHF + Zod 유효성 검사 통합
 //       - 입력 중 과도한 검증 방지를 위한 디바운스 적용
 //       - 라우팅 의존성 제거(성공 시 동작을 onSignupSuccess 콜백으로 외부 주입)
-//       - Storybook(Vite) 환경에서도 Next Router 없이 안전하게 렌더링 가능
+//       - Storybook(Vite) 환경에서도 Next Router 없이 안전하게 렌더링
+// NOTE: 반응형 폼 사이즈 명세 (회원가입)
+//       - 모바일: 343×668
+//       - 태블릿/데스크톱: 568×802
+//       - AuthLayout이 외곽 박스를 담당하므로 bg/rounded/shadow 없음
 // -----------------------------------------------------------------------------
 
 'use client';
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { useDebouncedCallback } from 'use-debounce';
 import { z } from 'zod';
 import { JoinFormSchema } from '@/schemas/authsSchema';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
-import useDebounce from '@/hooks/useDebounce';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { authService } from '@/services/auths/authService';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/ui/Toast';
+import { useAuthStore } from '@/stores/useAuthStore';
 
-// Zod 스키마로부터 TS 타입 자동 생성
 export type JoinFormType = z.infer<typeof JoinFormSchema>;
 
-// 외부에서 라우팅 등 성공 후 동작을 주입받기 위한 prop
-type SignupFormProps = {
-  onSignupSuccess?: (data?: JoinFormType) => void; // 예: Next.js 환경에서 router.replace('/login')
-};
+export default function SignupForm() {
+  const router = useRouter();
+  const { showToast } = useToast();
 
-const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
+  const { setToken } = useAuthStore();
+
   const {
     register, // input에 연결(값/이벤트 바인딩)
     handleSubmit, // 제출 시 검증+핸들 실행
@@ -57,12 +63,12 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
         ),
       };
     },
-    mode: 'onBlur', // blur 시 1차 검증
+    mode: 'onTouched', // ✅ 사용자가 터치한 뒤에만 검증
     reValidateMode: 'onChange', // 값 변경 시 재검증
   });
 
   // 입력 중 과도한 trigger 호출 억제: 사용자가 멈춘 뒤 1000ms 후 검증
-  const debouncedValidate = useDebounce((field: keyof JoinFormType) => {
+  const debouncedValidate = useDebouncedCallback((field: keyof JoinFormType) => {
     void trigger(field);
   }, 1000);
 
@@ -85,7 +91,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
   // 제출 핸들러: 서버에 회원가입 요청 → 성공 시 onSignupSuccess 콜백 실행
   const onSubmit = handleSubmit(async data => {
     try {
-      // 서버에 회원가입 요청
+      // 1️⃣ 서버에 회원가입 요청
       await authService.signup({
         email: data.email,
         password: data.password,
@@ -93,8 +99,16 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
         companyName: data.companyName,
       });
 
-      // 라우팅/토스트 등 성공 후 동작은 외부에서 주입받아 실행
-      onSignupSuccess?.(data);
+      // 2️⃣ 회원가입 성공 → 자동 로그인
+      const response = await authService.signin({
+        email: data.email,
+        password: data.password,
+      });
+      setToken(response.token);
+
+      // 3️⃣ 토스트 + 리다이렉트
+      showToast('UPDO의 회원이 되신 것을 환영합니다! 자동으로 로그인 되었습니다.', 'success');
+      router.replace('/');
     } catch (err: unknown) {
       // 서버 응답 예: { status, code, message, parameter }
       // parameter가 있으면 해당 필드 하단에 에러 메시지를 표시
@@ -110,118 +124,102 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignupSuccess }) => {
   });
 
   return (
-    <form
-      onSubmit={onSubmit}
-      // 스타일: 기능 우선형. 팀 공용 디자인 토큰/유틸이 확정되면 교체
-      className="flex w-full max-w-[400px] flex-col gap-5 rounded-xl bg-white p-6 shadow-md"
-      noValidate // 브라우저 기본 검증 메시지 비활성화(RHF/Zod만 사용)
-    >
-      {/* //////////////////////////////////////////////////////////////////////////////
-          이름
-      ////////////////////////////////////////////////////////////////////////////// */}
-      <div className="flex flex-col gap-1">
-        {/* // 접근성: label(htmlFor) ↔ input(id) 연결 */}
-        <label htmlFor="name" className="pl-1 text-sm font-medium text-gray-700">
+    <form onSubmit={onSubmit} className="flex w-full flex-col items-start gap-4" noValidate>
+      {/* 이름 */}
+      <div className="flex w-full flex-col gap-1">
+        <label
+          htmlFor="name"
+          className="w-fit pl-[2px] text-left text-sm font-medium text-gray-700">
           이름
         </label>
         <Input
           id="name"
-          inputSize="lg" // 팀 공용 Input 크기 규격
+          inputSize="lg"
           placeholder="이름을 입력하세요"
           {...registerWithValidation('name')}
-          errorMessage={errors.name?.message} // 에러 문구는 공용 prop명 사용
-          disabled={isSubmitting} // 제출 중에는 입력 잠금(선택)
+          errorMessage={errors.name?.message}
+          disabled={isSubmitting}
         />
       </div>
 
-      {/* //////////////////////////////////////////////////////////////////////////////
-          회사명
-      ////////////////////////////////////////////////////////////////////////////// */}
-      <div className="flex flex-col gap-1">
-        <label htmlFor="companyName" className="pl-1 text-sm font-medium text-gray-700">
-          회사명
+      {/* 직업 */}
+      <div className="flex w-full flex-col gap-1">
+        <label
+          htmlFor="companyName"
+          className="w-fit pl-[2px] text-left text-sm font-medium text-gray-700">
+          직업
         </label>
         <Input
           id="companyName"
           inputSize="lg"
-          placeholder="회사명을 입력하세요"
+          placeholder="직업을 입력하세요"
           {...registerWithValidation('companyName')}
           errorMessage={errors.companyName?.message}
           disabled={isSubmitting}
         />
       </div>
 
-      {/* //////////////////////////////////////////////////////////////////////////////
-          이메일
-      ////////////////////////////////////////////////////////////////////////////// */}
-      <div className="flex flex-col gap-1">
-        <label htmlFor="email" className="pl-1 text-sm font-medium text-gray-700">
+      {/* 이메일 */}
+      <div className="flex w-full flex-col gap-1">
+        <label
+          htmlFor="email"
+          className="w-fit pl-[2px] text-left text-sm font-medium text-gray-700">
           이메일
         </label>
         <Input
           id="email"
+          type="email"
           inputSize="lg"
-          type="email" // HTML 표준 타입
           placeholder="이메일 주소를 입력하세요"
           {...registerWithValidation('email')}
           errorMessage={errors.email?.message}
           disabled={isSubmitting}
-          autoComplete="email" // 브라우저 자동완성 힌트
         />
       </div>
 
-      {/* //////////////////////////////////////////////////////////////////////////////
-          비밀번호
-      ////////////////////////////////////////////////////////////////////////////// */}
-      <div className="flex flex-col gap-1">
-        <label htmlFor="password" className="pl-1 text-sm font-medium text-gray-700">
+      {/* 비밀번호 */}
+      <div className="flex w-full flex-col gap-1">
+        <label
+          htmlFor="password"
+          className="w-fit pl-[2px] text-left text-sm font-medium text-gray-700">
           비밀번호
         </label>
         <Input
           id="password"
-          inputSize="lg"
           type="password"
+          inputSize="lg"
           placeholder="비밀번호를 입력하세요"
           {...registerWithValidation('password')}
           errorMessage={errors.password?.message}
           disabled={isSubmitting}
-          autoComplete="new-password"
         />
       </div>
 
-      {/* //////////////////////////////////////////////////////////////////////////////
-          비밀번호 확인
-      ////////////////////////////////////////////////////////////////////////////// */}
-      <div className="flex flex-col gap-1">
-        <label htmlFor="passwordConfirm" className="pl-1 text-sm font-medium text-gray-700">
+      {/* 비밀번호 확인 */}
+      <div className="flex w-full flex-col gap-1">
+        <label
+          htmlFor="passwordConfirm"
+          className="w-fit pl-[2px] text-left text-sm font-medium text-gray-700">
           비밀번호 확인
         </label>
         <Input
           id="passwordConfirm"
-          inputSize="lg"
           type="password"
+          inputSize="lg"
           placeholder="비밀번호를 다시 입력하세요"
           {...registerWithValidation('passwordConfirm')}
           errorMessage={errors.passwordConfirm?.message}
           disabled={isSubmitting}
-          autoComplete="new-password"
         />
       </div>
 
-      {/* //////////////////////////////////////////////////////////////////////////////
-          제출 버튼
-      ////////////////////////////////////////////////////////////////////////////// */}
       <Button
         type="submit"
         variant="primary"
         disabled={isSubmitting}
-        className="mt-4 h-[48px] w-full text-base font-semibold"
-        aria-label="회원가입">
-        {/* // 제출 중이면 스피너, 아니면 텍스트 */}
+        className="mt-6 h-[48px] w-full text-base font-semibold">
         {isSubmitting ? <LoadingSpinner size="xs" color="white" /> : '회원가입'}
       </Button>
     </form>
   );
-};
-
-export default SignupForm;
+}
