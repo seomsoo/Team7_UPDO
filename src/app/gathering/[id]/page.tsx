@@ -5,9 +5,9 @@ import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import GroupDetailCard from '@/components/feature/group/GroupDetailCard';
-import GroupDetailParticipation from '@/components/feature/group/GroupDetailParticipationCard';
-import GroupDetailReviewList from '@/components/feature/group/GroupDetailReviewList';
+import GroupDetailCard from '@/components/feature/gathering/detail/GroupDetailCard';
+import GroupDetailParticipation from '@/components/feature/gathering/detail/GroupDetailParticipationCard';
+import GroupDetailReviewList from '@/components/feature/gathering/detail/GroupDetailReviewList';
 
 import { useToast } from '@/components/ui/Toast';
 import { useAuthStore } from '@/stores/useAuthStore';
