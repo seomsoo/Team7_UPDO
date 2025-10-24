@@ -125,6 +125,7 @@ export const mapGatheringToUI = (data: IGathering, userId: number | null) => ({
   dateText: formatDate(data.dateTime),
   timeText: formatTime(data.dateTime),
   deadlineText: formatDeadline(data.registrationEnd ?? data.dateTime),
+  registrationEnd: data.registrationEnd,
   isHost: userId ? data.createdBy === userId : false,
   participantCount: data.participantCount,
   capacity: data.capacity,
