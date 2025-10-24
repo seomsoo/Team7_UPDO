@@ -1,44 +1,27 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useState } from 'react';
 import { cn } from '@/utils/cn';
 import ReviewCard from './GroupDetailReview';
 import { Pagination } from '@/components/ui/Pagination';
-import { reviewService } from '@/services/reviews/reviewService';
-import Image from 'next/image';
-import { IReviewWithRelations } from '@/types/reviews';
+import { useReviewsQuery } from '@/hooks/useReviewsQuery';
+
 interface GroupDetailReviewListProps {
   gatheringId: number;
 }
 
 export default function GroupDetailReviewList({ gatheringId }: GroupDetailReviewListProps) {
-  const [reviews, setReviews] = useState<IReviewWithRelations[]>([]);
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading, isError } = useReviewsQuery(gatheringId, page);
+  const reviews = data?.data ?? [];
+  const totalPages = data?.totalPages ?? 1;
 
-  const pageSize = 4;
-  const totalPages = Math.ceil(reviews.length / pageSize);
+  if (isLoading) {
+    return <div className="flex h-48 items-center justify-center text-gray-500">로딩 중...</div>;
+  }
 
-  useEffect(() => {
-    async function fetchReviews() {
-      if (!gatheringId) return;
-      try {
-        setLoading(true);
-        const res = await reviewService.getReviews({ gatheringId });
-        setReviews(res.data || []);
-      } catch (err) {
-        console.error('리뷰 불러오기 실패:', err);
-        setReviews([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchReviews();
-  }, [gatheringId]);
-
-  const list = reviews.slice((page - 1) * pageSize, page * pageSize);
-
+  // 에러 시 빈 리스트로 fallback
   return (
     <section>
       <h3 className="md:typo-title text-lg font-semibold text-[var(--color-gray-900)]">
@@ -49,9 +32,7 @@ export default function GroupDetailReviewList({ gatheringId }: GroupDetailReview
         className={cn(
           'bg-surface rounded-md px-5 pt-[2px] pb-8 sm:mt-4 sm:rounded-md sm:px-10 md:mt-6 md:rounded-2xl md:px-12 md:pb-10',
         )}>
-        {loading ? (
-          <div className="flex h-48 items-center justify-center text-gray-500">로딩 중...</div>
-        ) : list.length === 0 ? (
+        {reviews.length === 0 || isError ? (
           <div className="flex flex-col items-center justify-center gap-3 py-12">
             <Image
               src="/images/empty.png"
@@ -60,11 +41,13 @@ export default function GroupDetailReviewList({ gatheringId }: GroupDetailReview
               height={115}
               className="opacity-70"
             />
-            <span className="text-sm text-gray-400 md:text-base">아직 작성된 리뷰가 없어요.</span>
+            <span className="text-sm text-gray-400 md:text-base">
+              {isError ? '리뷰를 불러올 수 없어요.' : '아직 작성된 리뷰가 없어요.'}
+            </span>
           </div>
         ) : (
           <ul className="divide-y divide-gray-100">
-            {list.map(item => (
+            {reviews.map(item => (
               <ReviewCard key={item.id} {...item} />
             ))}
           </ul>
