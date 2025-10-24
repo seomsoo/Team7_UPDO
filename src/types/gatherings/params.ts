@@ -3,11 +3,13 @@ import { Type, Location } from '@/utils/mapping';
 
 // GET /gatherings/{id}
 export interface GetGatheringDetailParams {
+  teamId: string;
   id: number;
 }
 
 // GET /gatherings/{id}/participants
 export interface GetParticipantsParams {
+  teamId: string;
   id: number;
   limit?: number;
   offset?: number;
@@ -17,16 +19,19 @@ export interface GetParticipantsParams {
 
 // PUT /gatherings/{id}/cancel
 export interface CancelGatheringParams {
+  teamId: string;
   id: number;
 }
 
 // POST /gatherings/{id}/join
 export interface JoinGatheringParams {
+  teamId: string;
   id: number;
 }
 
 // DELETE /gatherings/{id}/leave
 export interface LeaveGatheringParams {
+  teamId: string;
   id: number;
 }
 
