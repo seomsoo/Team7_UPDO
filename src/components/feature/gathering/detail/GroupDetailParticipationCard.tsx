@@ -49,7 +49,7 @@ const GroupDetailParticipation = ({
                 style={{ zIndex: i }}>
                 <Image
                   src={p.image}
-                  alt="participant"
+                  alt=""
                   width={29}
                   height={29}
                   className="aspect-square rounded-full border border-[var(--surface-card)] object-cover"
