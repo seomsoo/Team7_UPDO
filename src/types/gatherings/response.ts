@@ -14,9 +14,9 @@ export type JoinGatheringResponse = MessageResponse;
 export type LeaveGatheringResponse = MessageResponse;
 
 export interface IJoinedGathering extends IGathering {
-  joinedAt: string;
-  isCompleted: boolean;
-  isReviewed: boolean;
+  joinedAt?: string;
+  isCompleted?: boolean;
+  isReviewed?: boolean;
 }
 
 export type GetJoinedGatheringsResponse = IJoinedGathering[];
