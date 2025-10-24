@@ -20,6 +20,9 @@ type CreateGroupModalFormProps = {
   submitErrors?: SubmitErrors | null;
 };
 
+// 이미지 옵셔널
+// 날짜 KST -> Z 바꾸는거
+
 export default function CreateGroupModalForm({
   form,
   setForm,

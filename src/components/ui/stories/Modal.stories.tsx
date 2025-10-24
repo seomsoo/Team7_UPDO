@@ -2,8 +2,8 @@ import React, { useRef, useState } from 'react';
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Modal, ConfirmModal } from '../Modal';
 import CreateGroupModal from '@/components/feature/group/CreateGroupModal';
-import EditReviewModal from '@/components/feature/review/EditReviewModal';
-import EditProfileModal from '@/components/feature/profile/EditProfileModal';
+import EditReviewModal from '@/components/feature/review/WriteReviewModal';
+import EditProfileModal from '@/components/feature/my/EditProfileModal';
 
 const meta: Meta<typeof Modal> = {
   title: 'components/ui/Modal',

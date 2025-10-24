@@ -2,21 +2,27 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 
 import Icon from '@/components/ui/Icon';
 import Tab, { TabItem } from '@/components/ui/Tab';
 import { ConfirmModal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
+import Category, { CategoryItem } from '@/components/ui/Category';
 
-import UserProfileCard from '@/components/feature/auth/UserProfileCard';
+import UserProfileCard from '@/components/feature/my/UserProfileCard';
+import EditProfileModal from '@/components/feature/my/EditProfileModal';
+import MyGroupCardList from '@/components/feature/my/MyGroupCardList';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { authService } from '@/services/auths/authService';
 import { IUser } from '@/types/auths';
-import { IJoinedGathering } from '@/types/gatherings';
-import EditProfileModal from '@/components/feature/profile/EditProfileModal';
+import {
+  getJoinedGatherings,
+  getGatheringInfiniteList,
+} from '@/services/gatherings/anonGatheringService';
 
+export type TabVariant = 'myMeetings' | 'myReviews' | 'created';
 const MYPAGETABS: (TabItem & { emptyMsg: string })[] = [
   {
     value: 'myMeetings',
@@ -47,19 +53,22 @@ export default function MyPage() {
 
   const router = useRouter();
   const toast = useToast();
+  const queryClient = useQueryClient();
 
+  const [user, setUser] = useState<IUser | null>(null);
   const [selectedTab, setSelectedTab] = useState('myMeetings');
+  const [reviewFilter, setReviewFilter] = useState<'writable' | 'written'>('writable');
+
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState<IUser | null>(null);
-  const [userGatherings, setUserGatherings] = useState<IJoinedGathering[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handlerLogout = () => {
+  const handleLogout = () => {
     try {
       logout();
+      queryClient.clear();
       toast.showToast('로그아웃에 성공하였습니다.', 'success');
       setIsLogoutModalOpen(false);
       router.push('/');
@@ -73,7 +82,10 @@ export default function MyPage() {
   useEffect(() => {
     const valid = checkTokenValidity();
     if (!valid) {
-      setUser(null);
+      handleLogout();
+      // setUser(null);
+      // toast.showToast('로그아웃에 성공하였습니다.', 'success');
+      // router.push('/');
       return;
     }
 
@@ -101,23 +113,54 @@ export default function MyPage() {
     fetchUser();
   }, [token, checkTokenValidity, logout]);
 
-  // 사용자의 모임 가져오기
-  useEffect(() => {
-    // const payload = {};
-    setUserGatherings(null);
-  }, [user]);
+  // selectedTab에 따라 다른 group 데이터 요청하기
+  const getPageForTab = (tab: string) => {
+    switch (tab) {
+      case 'myMeetings':
+        return (page: number) =>
+          getJoinedGatherings(page, { sortBy: 'dateTime', sortOrder: 'asc' });
+
+      case 'myReviews':
+        return (page: number) =>
+          getJoinedGatherings(page, {
+            reviewed: reviewFilter === 'written',
+            sortBy: 'dateTime',
+            sortOrder: 'asc',
+          });
+
+      case 'created':
+        return (page: number) =>
+          getGatheringInfiniteList(page, {
+            createdBy: user?.id as number,
+            sortBy: 'dateTime',
+            sortOrder: 'asc',
+          });
+
+      default:
+        return async (_page: number) => ({ data: [], nextPage: undefined });
+    }
+  };
+
+  const infiniteQueryKey = [
+    'gatherings',
+    selectedTab,
+    selectedTab === 'myReviews' ? reviewFilter : '',
+    selectedTab === 'created' ? (user?.id ?? '') : '',
+  ];
 
   return (
     <>
+      {/* 로그아웃 모달 */}
       {isLogoutModalOpen && (
         <ConfirmModal
           open={isLogoutModalOpen}
           onOpenChange={setIsLogoutModalOpen}
           content="로그아웃 하시겠습니까?"
-          onConfirm={handlerLogout}
+          onConfirm={handleLogout}
         />
       )}
 
+      {/* 프로필 수정 모달 */}
       {isEditProfileModalOpen && user && (
         <EditProfileModal
           user={user}
@@ -158,16 +201,32 @@ export default function MyPage() {
         {/* 우측(PC) 겸 하단(태블릿, 모바일) */}
         <div className="flex min-h-0 w-full flex-1 flex-col">
           <Tab items={MYPAGETABS} value={selectedTab} onChange={setSelectedTab} />
-          {userGatherings && userGatherings.length > 0 ? (
-            // 데이터가 있으면, CardList
-            <div></div>
-          ) : (
-            // 데이터가 없으면, 빈화면
-            <div className="flex min-h-100 flex-col items-center justify-center">
-              <Image src="/images/empty.png" alt="모임 빈화면 이미지" width={171} height={115} />
-              <span className="card-title text-gray-400">{TAB_EMPTY_MSG[selectedTab]}</span>
-            </div>
+          {selectedTab === 'myReviews' && (
+            <Category
+              mainCategory={'리뷰'}
+              items={[
+                { id: 'writable', label: '작성 가능한 리뷰', apiType: 'writable' },
+                { id: 'written', label: '작성한 리뷰', apiType: 'written' },
+              ]}
+              activeId={reviewFilter}
+              defaultActiveId="writable"
+              onChange={id => setReviewFilter(id as 'writable' | 'written')}
+              className="mt-4 mb-3"
+              ariaLabel="리뷰 필터"
+            />
           )}
+          <MyGroupCardList
+            emptyMsg={TAB_EMPTY_MSG[selectedTab]}
+            queryKey={infiniteQueryKey}
+            getPage={getPageForTab(selectedTab)}
+            variant={selectedTab as TabVariant}
+            reviewFilter={reviewFilter} // variant가 MyReview일 때, Tab 분기점
+            enabled={
+              selectedTab === 'created'
+                ? !!token && checkTokenValidity() && !!user
+                : !!token && checkTokenValidity()
+            }
+          />
         </div>
       </div>
     </>

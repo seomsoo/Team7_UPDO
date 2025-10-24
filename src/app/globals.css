@@ -14,7 +14,7 @@ html.scroll-hidden {
 }
 
 html::-webkit-scrollbar {
-  width: 12px;
+  width: 0px;
   height: 12px;
 }
 

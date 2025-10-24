@@ -1,0 +1,190 @@
+import { useState } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
+import Icon from '@/components/ui/Icon';
+import { Button } from '@/components/ui/Button';
+import SaveButton from '@/components/ui/SaveButton';
+import IconText from '@/components/ui/IconText';
+
+import WriteReviewModal from '../review/WriteReviewModal';
+
+import { TabVariant } from '@/app/mypage/page';
+import { IJoinedGathering } from '@/types/gatherings';
+import { IGathering } from '@/types/gatherings';
+
+type Item = IJoinedGathering | IGathering;
+
+interface MyGroupCardProps {
+  variant: TabVariant;
+  item: Item;
+  currentUserId?: string | number | null;
+}
+
+// {
+//  v    "id": 3391,
+//  v   "type": "WORKATION",
+//  v   "name": "토이프로젝트 ㄱ?",
+//  v   "dateTime": "2025-11-03T18:15:52.821Z",
+//  v   "registrationEnd": "2025-11-02T19:00:52.821Z",
+//  v   "location": "을지로3가",
+//  v   "participantCount": 1,
+//  v   "capacity": 10,
+//  v   "image": "https://sprint-fe-project.s3.ap-northeast-2.amazonaws.com/together-dallaem/1761146564939_189c1d72e60926c206545d726cbf0eed.jpg",
+//     "createdBy": 2345, [isCreated]
+//     "canceledAt": null,
+//     "isCompleted": false,
+//     "isReviewed": false
+// }
+
+export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
+  const {
+    name,
+    id,
+    type,
+    dateTime,
+    registrationEnd,
+    location,
+    participantCount: participantCnt,
+    capacity,
+    image,
+  } = item;
+  const isMyMeetings = variant === 'myMeetings'; // 나의 모임 탭
+  const isMyReviews = variant === 'myReviews'; // 나의 리뷰 탭
+  const isCreated = variant === 'created'; // 내가 만든 모임 탭
+
+  const inMyContext = isMyMeetings || isMyReviews; // '나의 모임', '나의 리뷰' 탭
+
+  const isCompleted = (item as IJoinedGathering).isCompleted;
+  const isReviewed = (item as IJoinedGathering).isReviewed;
+
+  const canCancelJoin = (isMyMeetings || isMyReviews) && !isCompleted;
+  const showReviewCTA = inMyContext && isCompleted;
+  const canWriteReview = showReviewCTA && !isReviewed;
+  const hasWrittenReview = showReviewCTA && isReviewed;
+
+  const [isSaved, setIsSaved] = useState<boolean>(false);
+
+  const [isWritereviewModalOpen, setIsWritereviewModalOpen] = useState(false);
+
+  const buttonClassname = 'h-[44px] w-[132px] sm:h-[48px] sm:w-[120px] md:h-[48px] md:w-[156px]';
+
+  const ApiRequestProps = {
+    gatheringId: id,
+  };
+
+  const router = useRouter();
+  return (
+    <div
+      key={id}
+      onClick={e => {
+        const target = e.target as HTMLElement;
+        if (target.closest('button') || target.closest('[role="img"]')) return;
+        router.push(`/gathering/${id}`);
+      }}
+      className="relative flex h-[390px] w-full cursor-pointer flex-col gap-4 rounded-lg bg-white hover:shadow-md sm:h-[236px] sm:flex-row sm:p-6 md:gap-6">
+      {/* 리뷰 작성 모달 */}
+      {isWritereviewModalOpen && (
+        <WriteReviewModal
+          open={isWritereviewModalOpen}
+          onOpenChange={setIsWritereviewModalOpen}
+          ApiRequestProps={ApiRequestProps}
+        />
+      )}
+
+      {/* 찜하기 버튼 */}
+      {inMyContext && (
+        <div className="absolute top-5 right-5">
+          <SaveButton isSaved={isSaved} onToggle={() => setIsSaved(prev => !prev)} size={48} />
+        </div>
+      )}
+
+      {/* 사진 */}
+      <div className="relative h-[156px] w-full overflow-hidden rounded-t-lg sm:h-[188px] sm:w-[188px] sm:rounded-xl">
+        <Image
+          src={image ?? '/images/empty.png'}
+          alt={name ? `${name} 이미지` : '모임 사진'}
+          fill
+          sizes="(min-width:1280px) 188px, (min-width:650px) 188px, 100vw"
+          className="object-cover"
+          priority={false}
+        />
+      </div>
+
+      {/* 사진 제외 컨텐츠 */}
+      <div className="flex h-full min-w-0 flex-1 flex-col justify-between px-4 pb-5 sm:p-0">
+        {/* 나의 모임 탭 (IconText), 제목 */}
+        <div>
+          {isMyMeetings && (
+            <div className="mb-4 flex items-center gap-2">
+              {isCompleted ? (
+                <IconText
+                  tone="fill"
+                  className="typo-body-sm h-8 bg-gray-50 py-[6px] text-gray-500">
+                  이용 완료
+                </IconText>
+              ) : (
+                <IconText
+                  tone="fill"
+                  className="typo-body-sm h-8 bg-purple-50 py-[6px] text-purple-600">
+                  이용 예정
+                </IconText>
+              )}
+
+              {!isCompleted &&
+                (participantCnt >= 5 ? (
+                  <IconText
+                    tone="outline"
+                    icon="check"
+                    className="typo-body-sm h-8 border-purple-400 py-[6px] pr-2 pl-1 text-purple-600">
+                    개설 확정
+                  </IconText>
+                ) : (
+                  <IconText
+                    tone="outline"
+                    className="typo-body-sm h-8 border-gray-500 py-[6px] text-gray-500">
+                    개설 대기
+                  </IconText>
+                ))}
+            </div>
+          )}
+
+          {/* 제목 */}
+          <div className="h5Semibold mt-4 truncate text-gray-800 sm:mt-2">{name}</div>
+        </div>
+
+        {/* 참여 인원, 위치/날짜/시간, 버튼 */}
+        <div className="flex w-full flex-col items-end justify-between sm:flex-row sm:items-center">
+          {/* 참여 인원, 위치/날짜/시간 */}
+          <div className="tag flex w-full flex-col gap-[6px] sm:gap-[10px]">
+            <div className="flex h-4 items-center gap-1">
+              <Icon name="person" size={16} />
+              <div>
+                {participantCnt}/{capacity}
+              </div>
+            </div>
+
+            <div>위치/날짜/시간</div>
+          </div>
+
+          {/* 버튼 */}
+          {canCancelJoin && <Button className={buttonClassname}>참여 취소하기</Button>}
+          {canWriteReview && (
+            <Button
+              className={buttonClassname}
+              onClick={() => {
+                setIsWritereviewModalOpen(true);
+              }}>
+              리뷰 작성하기
+            </Button>
+          )}
+          {hasWrittenReview && (
+            <Button className={buttonClassname} disabled aria-disabled="true">
+              리뷰 작성완료
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

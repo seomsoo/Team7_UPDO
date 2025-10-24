@@ -20,14 +20,14 @@ interface ApiRequestProps {
   gatheringId: number;
 }
 
-export default function EditReviewModal({
+export default function WriteReviewModal({
   open,
   onOpenChange,
   ApiRequestProps,
 }: ModalProps & { ApiRequestProps: ApiRequestProps }) {
   const [form, setForm] = useState({
     score: 0,
-    content: '',
+    comment: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,7 +65,7 @@ export default function EditReviewModal({
     }
   }
 
-  const isFormComplete = !!form.score && !!form.content;
+  const isFormComplete = !!form.score && !!form.comment;
 
   return (
     <>
@@ -97,11 +97,11 @@ export default function EditReviewModal({
             <Input
               multiline
               placeholder="남겨주신 리뷰는 프로그램 운영 및 다른 회원 분들께 큰 도움이 됩니다."
-              value={form.content}
+              value={form.comment}
               onChange={e => {
                 setForm(s => ({
                   ...s,
-                  content: e.target.value,
+                  comment: e.target.value,
                 }));
               }}
             />

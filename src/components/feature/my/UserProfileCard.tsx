@@ -27,7 +27,7 @@ export default function UserProfileCard({ user, onOpenChange }: UserProfileCardP
   return (
     <div
       className={cn(
-        'relative flex w-full rounded-2xl shadow-xl sm:rounded-3xl md:flex-col',
+        'relative flex w-full overflow-hidden rounded-2xl shadow-xl sm:rounded-3xl md:flex-col',
         cardPadding,
         backgroundBorder,
       )}>
