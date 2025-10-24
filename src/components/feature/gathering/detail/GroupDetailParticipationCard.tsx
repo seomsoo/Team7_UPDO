@@ -45,20 +45,20 @@ const GroupDetailParticipation = ({
             {last4.map((p, i) => (
               <div
                 key={p.id}
-                className={cn('relative shrink-0', i !== 0 && '-ml-[15px]')}
+                className={cn('relative shrink-0', i !== 0 && '-ml-[10px]')}
                 style={{ zIndex: i }}>
                 <Image
                   src={p.image}
-                  alt="participant"
+                  alt=""
                   width={29}
                   height={29}
-                  className="rounded-full border border-[var(--surface-card)] object-cover"
+                  className="aspect-square rounded-full border border-[var(--surface-card)] object-cover"
                 />
               </div>
             ))}
 
             {remain > 0 && (
-              <div className="caption-bold relative z-[5] -ml-[15px] flex h-[29px] w-[29px] shrink-0 items-center justify-center rounded-full bg-white font-medium text-[var(--color-gray-500)]">
+              <div className="caption-bold relative z-[5] -ml-[10px] flex h-[29px] w-[29px] shrink-0 items-center justify-center rounded-full bg-white font-medium text-[var(--color-gray-500)]">
                 +{remain}
               </div>
             )}

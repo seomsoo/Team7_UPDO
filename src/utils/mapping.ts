@@ -1,6 +1,7 @@
 import { tags, locations, TAG_OPTIONS, SORT_OPTIONS } from '@/constants/tags';
 import { tabs, types, TAB_OPTIONS } from '@/constants/tabs';
-import { formatDateToLocalISO } from './date';
+import { formatDate, formatDateToLocalISO, formatDeadline, formatTime } from './date';
+import { IGathering } from '@/types/gatherings';
 
 export type FilterState = {
   main: '성장' | '네트워킹';
@@ -116,3 +117,20 @@ export function toGetGatheringsParams(
     }).filter(([, value]) => value !== undefined && value !== null),
   ) as Record<string, string | number | boolean>;
 }
+
+// IGathering → UI 변환 유틸
+export const mapGatheringToUI = (data: IGathering, userId: number | null) => ({
+  id: data.id,
+  name: data.name,
+  dateText: formatDate(data.dateTime),
+  timeText: formatTime(data.dateTime),
+  deadlineText: formatDeadline(data.registrationEnd ?? data.dateTime),
+  registrationEnd: data.registrationEnd,
+  isHost: userId ? data.createdBy === userId : false,
+  participantCount: data.participantCount,
+  capacity: data.capacity,
+  minParticipants: 5,
+  image: data.image || '/images/find_banner.png',
+  location: data.location,
+  type: data.type,
+});

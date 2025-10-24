@@ -8,18 +8,21 @@ import SaveButton from '@/components/ui/SaveButton';
 import Icon from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { isClosed } from '@/utils/date';
+import { LocationToTag } from '@/utils/mapping';
+import { TAG_OPTIONS } from '@/constants/tags';
 
 interface HeaderData {
   id: number;
   name: string;
-  topic: Topic;
-  deadlineText: string; // UI 표시용
+  deadlineText: string;
   dateText: string;
   timeText: string;
-  registrationEnd?: string | null; // 실제 날짜 비교용
+  registrationEnd?: string | null;
+  location: string;
+  type: string;
 }
 
-interface GroupDetailHeaderProps {
+interface GroupDetailCardProps {
   data: HeaderData;
   isHost?: boolean;
   joined?: boolean;
@@ -32,7 +35,7 @@ interface GroupDetailHeaderProps {
   isCanceling?: boolean;
 }
 
-export default function GroupDetailHeader({
+export default function GroupDetailCard({
   data,
   isHost = false,
   joined = false,
@@ -43,11 +46,12 @@ export default function GroupDetailHeader({
   isJoining = false,
   isLeaving = false,
   isCanceling = false,
-}: GroupDetailHeaderProps) {
-  const { name, deadlineText, dateText, timeText, topic, registrationEnd } = data;
+}: GroupDetailCardProps) {
+  const { name, deadlineText, dateText, timeText, registrationEnd, location } = data;
   const [isSaved, setIsSaved] = useState(false);
+  const topic = LocationToTag(location) as 'growth' | 'learn' | 'challenge' | 'connect' | 'default';
+  const category = TAG_OPTIONS.find(option => option.value === topic)?.label ?? '';
 
-  // 마감 여부 판단 (registrationEnd 기준)
   const closed = isClosed(registrationEnd ?? undefined);
 
   return (
@@ -100,7 +104,7 @@ export default function GroupDetailHeader({
       <div>
         <h1 className="typo-title text-[var(--color-gray-900)]">{name}</h1>
         <div className="mt-3">
-          <Tag label={`${topic === 'growth' ? '성장' : topic}`} topic={topic} />
+          <Tag label={category} topic={topic} />
         </div>
       </div>
 

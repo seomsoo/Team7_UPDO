@@ -5,17 +5,17 @@ import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import GroupDetailHeader from '@/components/feature/group/GroupDetailCard';
-import GroupDetailParticipation from '@/components/feature/group/GroupDetailParticipationCard';
-import GroupDetailReviewList from '@/components/feature/group/GroupDetailReviewList';
+import GroupDetailCard from '@/components/feature/gathering/detail/GroupDetailCard';
+import GroupDetailParticipation from '@/components/feature/gathering/detail/GroupDetailParticipationCard';
+import GroupDetailReviewList from '@/components/feature/gathering/detail/GroupDetailReviewList';
 
 import { useToast } from '@/components/ui/Toast';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { authService } from '@/services/auths/authService';
 import { gatheringService } from '@/services/gatherings/gatheringService';
-import { mapGatheringToUI } from '@/utils/mapgatheringToUI';
 import { copyToClipboard } from '@/utils/clipboard';
 import { IParticipant } from '@/types/gatherings';
+import { mapGatheringToUI } from '@/utils/mapping';
 
 export default function GroupDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -54,6 +54,7 @@ export default function GroupDetailPage() {
       const res = await gatheringService.getGatheringDetail(Number(id));
       return res;
     },
+    enabled: !!id,
     staleTime: 1000 * 60 * 3,
   });
 
@@ -66,7 +67,7 @@ export default function GroupDetailPage() {
     enabled: !!id,
   });
 
-  // 참가자 목록에서 내가 있는지 확인
+  // 참가 여부 확인
   useEffect(() => {
     if (!participantsData || !userId) return;
     const found = participantsData.some((p: IParticipant) => p.User.id === userId);
@@ -116,7 +117,6 @@ export default function GroupDetailPage() {
 
       // 삭제 후: 관련 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ['gatherings'] });
-
       setTimeout(() => router.replace('/gathering'), 1000);
     } catch {
       showToast('모임이 삭제되지 않았습니다.', 'error');
@@ -144,8 +144,8 @@ export default function GroupDetailPage() {
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2">
         <div className="relative h-60 w-full overflow-hidden rounded-md bg-amber-50 shadow-sm sm:h-auto sm:rounded-md md:rounded-2xl">
           <Image
-            src={uiData?.image ?? '/images/spot.jpg'}
-            alt={uiData?.name ?? ''}
+            src={uiData?.image ?? '/images/find_banner.png'}
+            alt={'모임 대표이미지'}
             fill
             className="object-cover"
           />
@@ -153,16 +153,8 @@ export default function GroupDetailPage() {
 
         {/* 상세 헤더 */}
         <div className="flex flex-col justify-between gap-4">
-          <GroupDetailHeader
-            data={{
-              id: uiData.id,
-              name: uiData.name,
-              topic: uiData.topic,
-              deadlineText: uiData.deadlineText,
-              dateText: uiData.dateText,
-              timeText: uiData.timeText,
-              registrationEnd: gathering?.registrationEnd || gathering?.dateTime,
-            }}
+          <GroupDetailCard
+            data={uiData}
             isHost={uiData.isHost}
             joined={joined}
             onJoin={handleJoin}
@@ -175,9 +167,9 @@ export default function GroupDetailPage() {
           />
 
           <GroupDetailParticipation
-            current={participantsData ? participantsData.length : (uiData?.participantCount ?? 0)}
-            max={uiData?.capacity ?? 0}
-            min={uiData?.minParticipants ?? 0}
+            current={participantsData ? participantsData.length : uiData.participantCount}
+            max={uiData.capacity}
+            min={uiData.minParticipants}
             participants={
               participantsData?.map((p: IParticipant) => ({
                 id: p.User.id,
