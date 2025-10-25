@@ -158,12 +158,11 @@ const ReviewScore: React.FC<ReviewScoreProps> = ({
       {label && <p className="typo-lg indent-1 font-medium text-gray-800">{label}</p>}
 
       <div
-        className="flex items-center"
+        className="inline-flex items-center"
         role="radiogroup"
         aria-label="평점 선택"
         style={{
           height: HEART_SIZE,
-          width: HEART_SIZE * 5 + 5 * 4, // 아이콘 * 5 + gap 4px
         }}>
         {hearts}
       </div>
