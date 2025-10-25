@@ -7,6 +7,7 @@ import { useInfiniteQuery, type InfiniteData } from '@tanstack/react-query';
 import { useMounted } from '@/hooks/useMounted';
 
 import ReviewCard from './ReviewCard';
+import ReviewCardSkeleton from '@/components/ui/Skeleton/ReviewCardSkeleton';
 
 import { cn } from '@/utils/cn';
 import anonReviewService from '@/services/reviews/anonReviewService';
@@ -21,6 +22,11 @@ interface ReviewCardListProps {
 type Page = { data: IReviewWithRelations[]; nextPage?: number };
 
 export default function ReviewCardList({ variants, userId, emptyMsg }: ReviewCardListProps) {
+  const containerClassname = cn(
+    'mx-auto flex w-full flex-col items-center gap-4 rounded-xl bg-white p-6 sm:rounded-2xl md:gap-6',
+    variants === 'my' ? 'mt-4 sm:mt-8 md:mt-9' : 'mt-6',
+    variants === 'my' ? 'md:px-8' : 'md:p-8',
+  );
   const mounted = useMounted();
 
   const { ref, inView } = useInView({ threshold: 0, rootMargin: '100px 0px' });
@@ -52,9 +58,11 @@ export default function ReviewCardList({ variants, userId, emptyMsg }: ReviewCar
 
   if (isLoading) {
     return (
-      <div className="mx-auto flex w-full flex-col items-center gap-6 md:grid md:grid-cols-2">
+      <div className={containerClassname}>
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-[180px] w-full animate-pulse rounded-lg bg-gray-100" />
+          <div key={i} className="w-full">
+            <ReviewCardSkeleton variant={variants} />
+          </div>
         ))}
       </div>
     );
@@ -84,12 +92,7 @@ export default function ReviewCardList({ variants, userId, emptyMsg }: ReviewCar
 
   return (
     <div>
-      <div
-        className={cn(
-          'mx-auto flex w-full flex-col items-center gap-4 rounded-xl bg-white p-6 sm:rounded-2xl md:gap-6',
-          variants === 'my' ? 'mt-4 sm:mt-8 md:mt-9' : 'mt-6',
-          variants === 'my' ? 'md:px-8' : 'md:p-8',
-        )}>
+      <div className={containerClassname}>
         {list.map(review => (
           <div key={review.id} className="w-full">
             <ReviewCard variant={variants} item={review} />

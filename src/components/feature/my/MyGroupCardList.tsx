@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
+import MyGroupCardSkeleton from '@/components/ui/Skeleton/MyGroupCardSkeleton';
 import MyGroupCard from './MyGroupCard';
 
 import { TabVariant } from '@/app/mypage/page';
@@ -67,9 +68,9 @@ export default function MyGroupCardList({
 
   if (isLoading) {
     return (
-      <div className="mx-auto flex w-full flex-col items-center gap-6 md:grid md:grid-cols-2">
+      <div className="mx-auto mt-6 flex w-full flex-col items-center gap-6">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-[180px] w-full animate-pulse rounded-lg bg-gray-100" />
+          <MyGroupCardSkeleton key={i} />
         ))}
       </div>
     );
