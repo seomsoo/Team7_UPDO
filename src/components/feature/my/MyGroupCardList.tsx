@@ -11,6 +11,7 @@ import MyGroupCard from './MyGroupCard';
 import { TabVariant } from '@/app/mypage/page';
 import type { IJoinedGathering } from '@/types/gatherings';
 import { useMounted } from '@/hooks/useMounted';
+import { isClosed } from '@/utils/date';
 
 interface MyGroupCardListProps {
   emptyMsg: string;
@@ -54,11 +55,10 @@ export default function MyGroupCardList({
 
   const list: IJoinedGathering[] = data?.pages?.flatMap(p => p.data) ?? [];
 
-  const now = new Date();
   const filtered =
     variant === 'myReviews' && reviewFilter
       ? list.filter(item => {
-          const completed = (item.isCompleted ?? false) || new Date(item.dateTime) < now;
+          const completed = (item.isCompleted ?? false) || isClosed(item.dateTime);
           const reviewed = !!item.isReviewed;
           if (reviewFilter === 'writable') return completed && !reviewed;
           if (reviewFilter === 'written') return completed && reviewed;

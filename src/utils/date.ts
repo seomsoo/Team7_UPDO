@@ -61,3 +61,10 @@ export const isClosed = (isoString?: string) => {
 export const formatReviewDate = (isoString: string) => {
   return dayjs.utc(isoString).tz('Asia/Seoul').format('YYYY.MM.DD');
 };
+
+// UTC -> KST
+export const toUTCFromKST = (val: string | Date) => {
+  const src = typeof val === 'string' ? val : formatDateToLocalISO(val);
+  // Interpret the input as Asia/Seoul local time, then convert to UTC
+  return dayjs.tz(src, 'Asia/Seoul').utc().format('YYYY-MM-DDTHH:mm:ss[Z]');
+};
