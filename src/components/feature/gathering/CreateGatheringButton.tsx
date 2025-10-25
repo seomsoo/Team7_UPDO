@@ -1,6 +1,10 @@
 'use client';
 
+<<<<<<< HEAD
 import { useEffect, useState } from 'react';
+=======
+import { useState } from 'react';
+>>>>>>> aa1484a (✨ [FEAT] #160 CreateGatheringButton 컴포넌트 추가 및 모임 생성 기능 구현)
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { IconButton } from '@/components/ui/IconButton';
@@ -9,17 +13,23 @@ import { ConfirmModal } from '@/components/ui/Modal';
 
 export default function CreateGatheringButton() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+<<<<<<< HEAD
   const [isScrolled, setIsScrolled] = useState(false);
+=======
+>>>>>>> aa1484a (✨ [FEAT] #160 CreateGatheringButton 컴포넌트 추가 및 모임 생성 기능 구현)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const { isAuthenticated } = useAuthStore();
   const router = useRouter();
 
+<<<<<<< HEAD
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 120);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+=======
+>>>>>>> aa1484a (✨ [FEAT] #160 CreateGatheringButton 컴포넌트 추가 및 모임 생성 기능 구현)
   const handleClick = () => {
     if (isAuthenticated) {
       setIsCreateModalOpen(true);
