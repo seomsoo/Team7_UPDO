@@ -1,5 +1,7 @@
-import { useState } from 'react';
+'use client';
+
 import Image from 'next/image';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import Icon from '@/components/ui/Icon';
@@ -13,6 +15,9 @@ import { TabVariant } from '@/app/mypage/page';
 import { IJoinedGathering } from '@/types/gatherings';
 import { IGathering } from '@/types/gatherings';
 
+import { LocationToTag, tagEngToKr } from '@/utils/mapping';
+import { formatDate, formatTime } from '@/utils/date';
+
 type Item = IJoinedGathering | IGathering;
 
 interface MyGroupCardProps {
@@ -21,37 +26,16 @@ interface MyGroupCardProps {
   currentUserId?: string | number | null;
 }
 
-// {
-//  v    "id": 3391,
-//  v   "type": "WORKATION",
-//  v   "name": "토이프로젝트 ㄱ?",
-//  v   "dateTime": "2025-11-03T18:15:52.821Z",
-//  v   "registrationEnd": "2025-11-02T19:00:52.821Z",
-//  v   "location": "을지로3가",
-//  v   "participantCount": 1,
-//  v   "capacity": 10,
-//  v   "image": "https://sprint-fe-project.s3.ap-northeast-2.amazonaws.com/together-dallaem/1761146564939_189c1d72e60926c206545d726cbf0eed.jpg",
-//     "createdBy": 2345, [isCreated]
-//     "canceledAt": null,
-//     "isCompleted": false,
-//     "isReviewed": false
-// }
-
 export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
-  const {
-    name,
-    id,
-    type,
-    dateTime,
-    registrationEnd,
-    location,
-    participantCount: participantCnt,
-    capacity,
-    image,
-  } = item;
+  const { name, id, dateTime, location, participantCount: participantCnt, capacity, image } = item;
+
+  // 데이터 포맷팅
+  const tag = tagEngToKr(LocationToTag(location));
+  const formattedDate = formatDate(dateTime);
+  const formattedTime = formatTime(dateTime);
+
   const isMyMeetings = variant === 'myMeetings'; // 나의 모임 탭
   const isMyReviews = variant === 'myReviews'; // 나의 리뷰 탭
-  const isCreated = variant === 'created'; // 내가 만든 모임 탭
 
   const inMyContext = isMyMeetings || isMyReviews; // '나의 모임', '나의 리뷰' 탭
 
@@ -75,14 +59,7 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
 
   const router = useRouter();
   return (
-    <div
-      key={id}
-      onClick={e => {
-        const target = e.target as HTMLElement;
-        if (target.closest('button') || target.closest('[role="img"]')) return;
-        router.push(`/gathering/${id}`);
-      }}
-      className="relative flex h-[390px] w-full cursor-pointer flex-col gap-4 rounded-lg bg-white hover:shadow-md sm:h-[236px] sm:flex-row sm:p-6 md:gap-6">
+    <>
       {/* 리뷰 작성 모달 */}
       {isWritereviewModalOpen && (
         <WriteReviewModal
@@ -92,99 +69,159 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
         />
       )}
 
-      {/* 찜하기 버튼 */}
-      {inMyContext && (
-        <div className="absolute top-5 right-5">
-          <SaveButton isSaved={isSaved} onToggle={() => setIsSaved(prev => !prev)} size={48} />
+      <div
+        key={id}
+        role="link"
+        tabIndex={0}
+        aria-label={`${name ?? '모임'} 상세로 이동`}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            router.push(`/gathering/${id}`);
+          }
+        }}
+        onClick={e => {
+          const target = e.target as HTMLElement;
+          if (
+            target.closest('button, a, [role="button"], [role="link"], img, [data-no-nav="true"]')
+          )
+            return;
+          router.push(`/gathering/${id}`);
+        }}
+        className="relative flex h-[390px] w-full cursor-pointer flex-col gap-4 rounded-lg bg-white hover:shadow-md sm:h-[236px] sm:flex-row sm:p-6 md:gap-6">
+        {/* 찜하기 버튼 */}
+        {inMyContext && (
+          <div className="absolute top-5 right-5">
+            <SaveButton isSaved={isSaved} onToggle={() => setIsSaved(prev => !prev)} size={48} />
+          </div>
+        )}
+
+        {/* 사진 */}
+        <div className="relative h-[156px] w-full overflow-hidden rounded-t-lg sm:h-[188px] sm:w-[188px] sm:rounded-xl">
+          <Image
+            src={image ?? '/images/empty.png'}
+            alt={name ? `${name} 이미지` : '모임 사진'}
+            fill
+            sizes="(min-width:1280px) 188px, (min-width:650px) 188px, 100vw"
+            className="object-cover"
+            priority={false}
+          />
         </div>
-      )}
 
-      {/* 사진 */}
-      <div className="relative h-[156px] w-full overflow-hidden rounded-t-lg sm:h-[188px] sm:w-[188px] sm:rounded-xl">
-        <Image
-          src={image ?? '/images/empty.png'}
-          alt={name ? `${name} 이미지` : '모임 사진'}
-          fill
-          sizes="(min-width:1280px) 188px, (min-width:650px) 188px, 100vw"
-          className="object-cover"
-          priority={false}
-        />
-      </div>
-
-      {/* 사진 제외 컨텐츠 */}
-      <div className="flex h-full min-w-0 flex-1 flex-col justify-between px-4 pb-5 sm:p-0">
-        {/* 나의 모임 탭 (IconText), 제목 */}
-        <div>
-          {isMyMeetings && (
-            <div className="mb-4 flex items-center gap-2">
-              {isCompleted ? (
-                <IconText
-                  tone="fill"
-                  className="typo-body-sm h-8 bg-gray-50 py-[6px] text-gray-500">
-                  이용 완료
-                </IconText>
-              ) : (
-                <IconText
-                  tone="fill"
-                  className="typo-body-sm h-8 bg-purple-50 py-[6px] text-purple-600">
-                  이용 예정
-                </IconText>
-              )}
-
-              {!isCompleted &&
-                (participantCnt >= 5 ? (
+        {/* 사진 제외 컨텐츠 */}
+        <div className="flex h-full min-w-0 flex-1 flex-col justify-between px-4 pb-5 sm:p-0">
+          {/* 나의 모임 탭 (IconText), 제목 */}
+          <div>
+            {isMyMeetings && (
+              <div className="mb-4 flex items-center gap-2">
+                {isCompleted ? (
                   <IconText
-                    tone="outline"
-                    icon="check"
-                    className="typo-body-sm h-8 border-purple-400 py-[6px] pr-2 pl-1 text-purple-600">
-                    개설 확정
+                    tone="fill"
+                    className="typo-body-sm h-8 bg-gray-50 py-[6px] text-gray-500">
+                    이용 완료
                   </IconText>
                 ) : (
                   <IconText
-                    tone="outline"
-                    className="typo-body-sm h-8 border-gray-500 py-[6px] text-gray-500">
-                    개설 대기
+                    tone="fill"
+                    className="typo-body-sm h-8 bg-purple-50 py-[6px] text-purple-600">
+                    이용 예정
                   </IconText>
-                ))}
-            </div>
-          )}
+                )}
 
-          {/* 제목 */}
-          <div className="h5Semibold mt-4 truncate text-gray-800 sm:mt-2">{name}</div>
-        </div>
-
-        {/* 참여 인원, 위치/날짜/시간, 버튼 */}
-        <div className="flex w-full flex-col items-end justify-between sm:flex-row sm:items-center">
-          {/* 참여 인원, 위치/날짜/시간 */}
-          <div className="tag flex w-full flex-col gap-[6px] sm:gap-[10px]">
-            <div className="flex h-4 items-center gap-1">
-              <Icon name="person" size={16} />
-              <div>
-                {participantCnt}/{capacity}
+                {!isCompleted &&
+                  (participantCnt >= 5 ? (
+                    <IconText
+                      tone="outline"
+                      icon="check"
+                      className="typo-body-sm h-8 border-purple-400 py-[6px] pr-2 pl-1 text-purple-600">
+                      개설 확정
+                    </IconText>
+                  ) : (
+                    <IconText
+                      tone="outline"
+                      className="typo-body-sm h-8 border-gray-500 py-[6px] text-gray-500">
+                      개설 대기
+                    </IconText>
+                  ))}
               </div>
-            </div>
+            )}
 
-            <div>위치/날짜/시간</div>
+            {/* 제목 */}
+            <div className="h5Semibold mt-4 truncate text-gray-800 sm:mt-2">{name}</div>
           </div>
 
-          {/* 버튼 */}
-          {canCancelJoin && <Button className={buttonClassname}>참여 취소하기</Button>}
-          {canWriteReview && (
-            <Button
-              className={buttonClassname}
-              onClick={() => {
-                setIsWritereviewModalOpen(true);
-              }}>
-              리뷰 작성하기
-            </Button>
-          )}
-          {hasWrittenReview && (
-            <Button className={buttonClassname} disabled aria-disabled="true">
-              리뷰 작성완료
-            </Button>
-          )}
+          {/* 참여 인원, 위치/날짜/시간, 버튼 */}
+          <div className="flex w-full flex-col items-end justify-between sm:flex-row sm:items-center">
+            {/* 참여 인원, 위치/날짜/시간 */}
+            <div className="tag flex w-full flex-col gap-[6px] sm:gap-[10px]">
+              <div className="flex h-4 items-center gap-1">
+                <Icon name="person" size={16} />
+                <div>
+                  {participantCnt}/{capacity}
+                </div>
+              </div>
+
+              {/* tag, formattedDate, formattedTime  */}
+              <section className="flex flex-nowrap items-center gap-2">
+                {dateTime && (
+                  <>
+                    <span>
+                      <IconText
+                        tone="outline"
+                        size="sm"
+                        radius="rounded"
+                        density="tight"
+                        typo="tag"
+                        className="text-gray-500">
+                        # {tag}
+                      </IconText>
+                    </span>
+                    <span>
+                      <IconText
+                        tone="outline"
+                        size="sm"
+                        radius="rounded"
+                        density="tight"
+                        typo="tag"
+                        className="text-gray-500">
+                        {formattedDate}
+                      </IconText>
+                    </span>
+                    <span>
+                      <IconText
+                        icon="alarm"
+                        tone="topicSolid"
+                        size="sm"
+                        radius="rounded"
+                        density="tight"
+                        typo="captionBold">
+                        {formattedTime}
+                      </IconText>
+                    </span>
+                  </>
+                )}
+              </section>
+            </div>
+
+            {/* 버튼 */}
+            {canCancelJoin && <Button className={buttonClassname}>참여 취소하기</Button>}
+            {canWriteReview && (
+              <Button
+                className={buttonClassname}
+                onClick={() => {
+                  setIsWritereviewModalOpen(true);
+                }}>
+                리뷰 작성하기
+              </Button>
+            )}
+            {hasWrittenReview && (
+              <Button className={buttonClassname} disabled aria-disabled="true">
+                리뷰 작성완료
+              </Button>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

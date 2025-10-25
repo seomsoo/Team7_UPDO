@@ -21,6 +21,7 @@ import {
   getJoinedGatherings,
   getGatheringInfiniteList,
 } from '@/services/gatherings/anonGatheringService';
+import ReviewCardList from '@/components/feature/review/ReviewCardList';
 
 export type TabVariant = 'myMeetings' | 'myReviews' | 'created';
 const MYPAGETABS: (TabItem & { emptyMsg: string })[] = [
@@ -201,32 +202,48 @@ export default function MyPage() {
         {/* 우측(PC) 겸 하단(태블릿, 모바일) */}
         <div className="flex min-h-0 w-full flex-1 flex-col">
           <Tab items={MYPAGETABS} value={selectedTab} onChange={setSelectedTab} />
-          {selectedTab === 'myReviews' && (
-            <Category
-              mainCategory={'리뷰'}
-              items={[
-                { id: 'writable', label: '작성 가능한 리뷰', apiType: 'writable' },
-                { id: 'written', label: '작성한 리뷰', apiType: 'written' },
-              ]}
-              activeId={reviewFilter}
-              defaultActiveId="writable"
-              onChange={id => setReviewFilter(id as 'writable' | 'written')}
-              className="mt-4 mb-3"
-              ariaLabel="리뷰 필터"
-            />
+          {selectedTab === 'myReviews' ? (
+            <>
+              <Category
+                mainCategory={'리뷰'}
+                items={[
+                  { id: 'writable', label: '작성 가능한 리뷰', apiType: 'writable' },
+                  { id: 'written', label: '작성한 리뷰', apiType: 'written' },
+                ]}
+                activeId={reviewFilter}
+                defaultActiveId="writable"
+                onChange={id => setReviewFilter(id as 'writable' | 'written')}
+                className="mt-4 mb-3"
+                ariaLabel="리뷰 필터"
+              />
+
+              {reviewFilter === 'writable' ? (
+                <MyGroupCardList
+                  emptyMsg={TAB_EMPTY_MSG[selectedTab]}
+                  queryKey={infiniteQueryKey}
+                  getPage={getPageForTab(selectedTab)}
+                  variant={selectedTab as TabVariant}
+                  reviewFilter={reviewFilter}
+                />
+              ) : (
+                <ReviewCardList
+                  variants="my"
+                  userId={user?.id}
+                  emptyMsg="작성한 리뷰가 없습니다."
+                />
+              )}
+            </>
+          ) : (
+            (selectedTab === 'myMeetings' || selectedTab === 'created') && (
+              <MyGroupCardList
+                emptyMsg={TAB_EMPTY_MSG[selectedTab]}
+                queryKey={infiniteQueryKey}
+                getPage={getPageForTab(selectedTab)}
+                variant={selectedTab as TabVariant}
+                enabled={selectedTab !== 'created' || !!user?.id}
+              />
+            )
           )}
-          <MyGroupCardList
-            emptyMsg={TAB_EMPTY_MSG[selectedTab]}
-            queryKey={infiniteQueryKey}
-            getPage={getPageForTab(selectedTab)}
-            variant={selectedTab as TabVariant}
-            reviewFilter={reviewFilter} // variant가 MyReview일 때, Tab 분기점
-            enabled={
-              selectedTab === 'created'
-                ? !!token && checkTokenValidity() && !!user
-                : !!token && checkTokenValidity()
-            }
-          />
         </div>
       </div>
     </>

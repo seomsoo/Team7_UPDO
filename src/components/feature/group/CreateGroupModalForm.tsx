@@ -20,8 +20,9 @@ type CreateGroupModalFormProps = {
   submitErrors?: SubmitErrors | null;
 };
 
-// 이미지 옵셔널
+// 이미지 옵셔널 + 이미지 svg/gif 막고 '이미지 첨부해주세요. ex)png, wepb, jpg, jpeg' input place
 // 날짜 KST -> Z 바꾸는거
+// 태블릿 : w-full -> 가운데 뜨도록
 
 export default function CreateGroupModalForm({
   form,
