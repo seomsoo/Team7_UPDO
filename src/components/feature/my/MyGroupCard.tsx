@@ -1,5 +1,7 @@
-import { useState } from 'react';
+'use client';
+
 import Image from 'next/image';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import Icon from '@/components/ui/Icon';
@@ -14,7 +16,6 @@ import { IJoinedGathering } from '@/types/gatherings';
 import { IGathering } from '@/types/gatherings';
 
 import { LocationToTag, tagEngToKr } from '@/utils/mapping';
-import { TypeToTab } from '@/utils/mapping';
 import { formatDate, formatTime } from '@/utils/date';
 
 type Item = IJoinedGathering | IGathering;
@@ -24,22 +25,6 @@ interface MyGroupCardProps {
   item: Item;
   currentUserId?: string | number | null;
 }
-
-// {
-//  v    "id": 3391,
-//  v   "type": "WORKATION",
-//  v   "name": "토이프로젝트 ㄱ?",
-//  v   "dateTime": "2025-11-03T18:15:52.821Z",
-//  v   "registrationEnd": "2025-11-02T19:00:52.821Z",
-//  v   "location": "을지로3가",
-//  v   "participantCount": 1,
-//  v   "capacity": 10,
-//  v   "image": "https://sprint-fe-project.s3.ap-northeast-2.amazonaws.com/together-dallaem/1761146564939_189c1d72e60926c206545d726cbf0eed.jpg",
-//     "createdBy": 2345, [isCreated]
-//     "canceledAt": null,
-//     "isCompleted": false,
-//     "isReviewed": false
-// }
 
 export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
   const { name, id, dateTime, location, participantCount: participantCnt, capacity, image } = item;
@@ -51,7 +36,6 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
 
   const isMyMeetings = variant === 'myMeetings'; // 나의 모임 탭
   const isMyReviews = variant === 'myReviews'; // 나의 리뷰 탭
-  const isCreated = variant === 'created'; // 내가 만든 모임 탭
 
   const inMyContext = isMyMeetings || isMyReviews; // '나의 모임', '나의 리뷰' 탭
 
@@ -87,9 +71,21 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
 
       <div
         key={id}
+        role="link"
+        tabIndex={0}
+        aria-label={`${name ?? '모임'} 상세로 이동`}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            router.push(`/gathering/${id}`);
+          }
+        }}
         onClick={e => {
           const target = e.target as HTMLElement;
-          if (target.closest('button') || target.closest('[role="img"]')) return;
+          if (
+            target.closest('button, a, [role="button"], [role="link"], img, [data-no-nav="true"]')
+          )
+            return;
           router.push(`/gathering/${id}`);
         }}
         className="relative flex h-[390px] w-full cursor-pointer flex-col gap-4 rounded-lg bg-white hover:shadow-md sm:h-[236px] sm:flex-row sm:p-6 md:gap-6">

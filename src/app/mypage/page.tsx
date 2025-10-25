@@ -240,6 +240,7 @@ export default function MyPage() {
                 queryKey={infiniteQueryKey}
                 getPage={getPageForTab(selectedTab)}
                 variant={selectedTab as TabVariant}
+                enabled={selectedTab !== 'created' || !!user?.id}
               />
             )
           )}
