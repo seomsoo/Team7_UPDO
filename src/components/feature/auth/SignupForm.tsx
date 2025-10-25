@@ -150,6 +150,7 @@ export default function SignupForm() {
           직업
         </label>
         <Input
+          id="companyName"
           inputSize="lg"
           placeholder="직업을 입력하세요"
           {...registerWithValidation('companyName')}
