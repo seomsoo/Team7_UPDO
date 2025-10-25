@@ -28,10 +28,10 @@ export const topicBgSoft = cva('', {
 export const topicBgSolid = cva('', {
   variants: {
     topic: {
-      growth: 'bg-[var(--color-mint-500)]',
-      learn: 'bg-[var(--color-yellow-500)]',
-      challenge: 'bg-[var(--color-pink-500)]',
-      connect: 'bg-[var(--color-blue-500)]',
+      growth: 'bg-[var(--color-mint-600)]',
+      learn: 'bg-[var(--color-yellow-600)]',
+      challenge: 'bg-[var(--color-pink-600)]',
+      connect: 'bg-[var(--color-blue-600)]',
       default: 'bg-[var(--color-purple-500)]',
     },
   },

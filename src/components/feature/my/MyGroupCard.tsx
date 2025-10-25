@@ -82,10 +82,7 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
         }}
         onClick={e => {
           const target = e.target as HTMLElement;
-          if (
-            target.closest('button, a, [role="button"], [role="link"], img, [data-no-nav="true"]')
-          )
-            return;
+          if (target.closest('button, [role="button"], [data-no-nav="true"]')) return;
           router.push(`/gathering/${id}`);
         }}
         className="relative flex h-[390px] w-full cursor-pointer flex-col gap-4 rounded-lg bg-white hover:shadow-md sm:h-[236px] sm:flex-row sm:p-6 md:gap-6">

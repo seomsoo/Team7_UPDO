@@ -11,7 +11,7 @@ import CreateGroupModalForm from './CreateGroupModalForm';
 import { Option } from '@/constants/tags';
 import { TabOption } from '@/constants/tabs';
 import { Type, Location, TabToType, TagToLocation } from '@/utils/mapping';
-import { formatDateToLocalISO } from '@/utils/date';
+import { toUTCFromKST } from '@/utils/date';
 
 import { CreateGatheringFormSchema } from '@/schemas/gatheringsSchema';
 import { createGathering } from '@/services/gatherings/gatheringService';
@@ -51,8 +51,8 @@ export default function CreateGroupModal({ open, onOpenChange }: ModalProps) {
       name: form.name.trim(),
       type: form.tab && TabToType(form.tab),
       location: form.tag && TagToLocation(form.tag),
-      dateTime: form.date && formatDateToLocalISO(new Date(form.date)),
-      registrationEnd: form.registrationEnd && formatDateToLocalISO(new Date(form.registrationEnd)),
+      dateTime: form.date && toUTCFromKST(form.date),
+      registrationEnd: form.registrationEnd && toUTCFromKST(form.registrationEnd),
       capacity: form.capacity ? Number(form.capacity) : 0,
       image: form.image,
     };
@@ -92,22 +92,17 @@ export default function CreateGroupModal({ open, onOpenChange }: ModalProps) {
   };
 
   const isFormComplete =
-    !!form.name &&
-    !!form.tag &&
-    !!form.date &&
-    !!form.registrationEnd &&
-    !!form.capacity &&
-    !!form.image;
+    !!form.name && !!form.tag && !!form.date && !!form.registrationEnd && !!form.capacity;
 
   return (
     <Modal
       id="create-group-modal"
       open={open}
       onOpenChange={onOpenChange}
-      className="p-4 pb-12 md:rounded-2xl md:p-12"
-      ResponsiveClassName="w-full h-[876px] md:w-[570px]">
+      className="p-4 pb-12 sm:rounded-xl md:rounded-2xl md:p-12"
+      ResponsiveClassName="w-full h-[876px] sm:w-[570px]">
       <Modal.Header title="모임 만들기" onClose={() => onOpenChange(false)} className="p-0 pb-6" />
-      <Modal.Body className="mb-5 flex flex-col gap-6 p-0 md:mb-10">
+      <Modal.Body className="mb-5 flex flex-col gap-6 p-0 sm:mb-10">
         <CreateGroupModalForm form={form} setForm={setForm} submitErrors={submitErrors} />
       </Modal.Body>
       <Modal.Footer className="h-15 p-0">
