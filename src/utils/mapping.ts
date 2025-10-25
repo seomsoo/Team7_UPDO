@@ -33,6 +33,15 @@ export function LocationToTag(location: Location): Tag {
   return locationToTagMap[location];
 }
 
+// 1-1. tag 영어 <-> tag 한글
+export function tagEngToKr(value: string): string {
+  return TAG_OPTIONS.find(o => o.value === value)?.label ?? value;
+}
+
+export function tagKrToEng(label: string): string {
+  return TAG_OPTIONS.find(o => o.label === label)?.value ?? label;
+}
+
 // 2. Tab <-> Type
 export function TabToType(tab: Tab): Type {
   const tabToTypeMap = Object.fromEntries(TAB_OPTIONS.map(o => [o.value, o.type])) as Record<

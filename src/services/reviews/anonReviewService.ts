@@ -1,13 +1,30 @@
 import Service from '../service';
-import { GetReviewsResponse, GetReviewScoresResponse } from '@/types/reviews';
+import { GetReviewsResponse, GetReviewScoresResponse, IReviewWithRelations } from '@/types/reviews';
 
 class AnonReviewService extends Service {
-  getReviewList(searchParams?: Record<string, string | number | boolean>) {
-    const qs =
-      searchParams && Object.keys(searchParams).length
-        ? `?${new URLSearchParams(stringifyParams(searchParams)).toString()}`
-        : '';
-    return this.http.get<GetReviewsResponse>(`/reviews${qs}`);
+  getReviewInfiniteList(
+    pageParam = 1,
+    params?: Record<string, string | number | boolean>,
+    limit = 10,
+  ): Promise<{ data: IReviewWithRelations[]; nextPage?: number }> {
+    const offset = (pageParam - 1) * limit;
+    const baseQs = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+    const extraQs = new URLSearchParams(stringifyParams(params ?? {}));
+    const qs = [baseQs.toString(), extraQs.toString()].filter(Boolean).join('&'); // limit=10&offset=20&userId=2465
+
+    return this.http.get<GetReviewsResponse>(`/reviews?${qs}`).then(res => {
+      const items = res?.data as IReviewWithRelations[];
+      const curr = res?.currentPage;
+      const total = res?.totalPages;
+      let nextPage: number | undefined; // 다음 페이지가 있으면 number, 없으면 undefined -> 무한스크롤 종료
+
+      if (typeof curr === 'number' && typeof total === 'number') {
+        const hasMore = curr + 1 < total || curr < total;
+        nextPage = hasMore ? pageParam + 1 : undefined;
+      } else nextPage = Array.isArray(items) && items.length === limit ? pageParam + 1 : undefined;
+
+      return { data: items, nextPage };
+    });
   }
 
   getReviewScore() {
