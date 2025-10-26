@@ -28,6 +28,10 @@ import GroupDetailCardSkeleton from '@/components/ui/Skeleton/GroupDetailCardSke
 import GroupDetailParticipationSkeleton from '@/components/ui/Skeleton/GroupDetailParticipationSkeleton';
 import GroupDetailReviewListSkeleton from '@/components/ui/Skeleton/GroupDetailReviewListSkeleton';
 
+import GroupDetailCardSkeleton from '@/components/ui/Skeleton/GroupDetailCardSkeleton';
+import GroupDetailParticipationSkeleton from '@/components/ui/Skeleton/GroupDetailParticipationSkeleton';
+import GroupDetailReviewListSkeleton from '@/components/ui/Skeleton/GroupDetailReviewListSkeleton';
+
 export default function GroupDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
