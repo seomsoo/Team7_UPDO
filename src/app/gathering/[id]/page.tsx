@@ -34,7 +34,6 @@ export default function GroupDetailPage() {
 
   const userId = user?.id ?? null;
 
-  const [joined, setJoined] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
   const [isCanceling, setIsCanceling] = useState(false);
@@ -64,6 +63,14 @@ export default function GroupDetailPage() {
     enabled: !!id,
   });
 
+  // 내가 참여한 모임 목록 조회
+  const { data: joinedGatherings } = useQuery({
+    queryKey: ['joinedGatherings'],
+    queryFn: () => gatheringService.getJoinedGatherings(),
+    enabled: !!userId && isAuthenticated,
+    staleTime: 1000 * 60 * 3,
+  });
+
   // 내 리뷰 조회
   const { data: myReviews } = useQuery({
     queryKey: ['myReview', id, userId],
@@ -76,11 +83,7 @@ export default function GroupDetailPage() {
   });
 
   // 참가 여부 확인
-  useEffect(() => {
-    if (!participantsData || !userId) return;
-    const found = participantsData.some((p: IParticipant) => p.User.id === userId);
-    setJoined(found);
-  }, [participantsData, userId]);
+  const joined = joinedGatherings?.some(g => g.id === Number(id)) ?? false;
 
   // 버튼 상태 계산
   const currentParticipantCount = participantsData?.length ?? gathering?.participantCount ?? 0;
@@ -101,21 +104,11 @@ export default function GroupDetailPage() {
     setIsJoining(true);
     try {
       await gatheringService.joinGathering(Number(id));
-      setJoined(true);
       showToast('모임에 참여했습니다!', 'success');
       // 상세 및 참가자 캐시 최신화
       queryClient.invalidateQueries({ queryKey: ['gatheringDetail', id] });
       queryClient.invalidateQueries({ queryKey: ['gatheringParticipants', id] });
-      // 마이페이지 관련 목록 무효화
-      queryClient.invalidateQueries({
-        predicate: q =>
-          Array.isArray(q.queryKey) &&
-          (q.queryKey as (string | number | object)[]).some(key =>
-            ['myMeetings', 'joinedGatherings', 'myGroups'].includes(
-              typeof key === 'string' ? key : '',
-            ),
-          ),
-      });
+      queryClient.invalidateQueries({ queryKey: ['joinedGatherings'] });
     } catch {
       showToast('모임 참여 요청에 실패했습니다.', 'error');
     } finally {
@@ -128,21 +121,11 @@ export default function GroupDetailPage() {
     setIsLeaving(true);
     try {
       await gatheringService.leaveGathering(Number(id));
-      setJoined(false);
       showToast('모임 참여를 취소했습니다.', 'info');
       // 상세 및 참가자 캐시 최신화
       queryClient.invalidateQueries({ queryKey: ['gatheringDetail', id] });
       queryClient.invalidateQueries({ queryKey: ['gatheringParticipants', id] });
-      // 마이페이지 관련 목록 무효화
-      queryClient.invalidateQueries({
-        predicate: q =>
-          Array.isArray(q.queryKey) &&
-          (q.queryKey as (string | number | object)[]).some(key =>
-            ['myMeetings', 'joinedGatherings', 'myGroups'].includes(
-              typeof key === 'string' ? key : '',
-            ),
-          ),
-      });
+      queryClient.invalidateQueries({ queryKey: ['joinedGatherings'] });
     } catch {
       showToast('모임 참여 취소가 실패했습니다.', 'error');
     } finally {
