@@ -40,6 +40,7 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
   const isMyReviews = variant === 'myReviews'; // 나의 리뷰 탭
 
   const isRecruitmentClosed = registrationEnd ? isClosed(registrationEnd) : false;
+
   const isOpenConfirmed = (participantCnt ?? 0) >= 5;
   const failedToOpen = (isCompleted || isRecruitmentClosed) && !isOpenConfirmed; // 모집 마감 + 인원 부족
 
@@ -59,14 +60,6 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
     }
     return null;
   })();
-<<<<<<< HEAD
-=======
->>>>>>> 0a833d9 (♻️ [REFACTOR] #176 MyPage SSR&CSR 분리):src/components/feature/my/ui/MyGroupCard.tsx
->>>>>>> 29b738c (♻️ [REFACTOR] #176 MyPage SSR&CSR 분리)
-=======
-  const isOpenConfirmed = (participantCnt ?? 0) >= 5;
-  const failedToOpen = isRegistrationClosed && !isOpenConfirmed && !isCompleted; // 모집 마감 + 미확정 + 미이용
->>>>>>> 3787456 (♻️ [REFACTOR] #184 모임 상세 페이지 참여 버튼 분기 로직 개선):src/components/feature/my/MyGroupCard.tsx
 
   // 그 외 헬퍼 변수
   const [isSaved, setIsSaved] = useState<boolean>(false);
