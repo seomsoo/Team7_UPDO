@@ -97,6 +97,13 @@ export default function GroupDetailPage() {
   const isCompleted = isClosed(gathering?.dateTime);
   const isRegistrationClosed = isClosed(gathering?.registrationEnd);
 
+  // 버튼 상태 계산
+  const currentParticipantCount = participantsData?.length ?? gathering?.participantCount ?? 0;
+  const isOpenConfirmed = currentParticipantCount >= 5;
+  const isReviewed = (myReviews?.data?.length ?? 0) > 0;
+  const isCompleted = isClosed(gathering?.dateTime);
+  const isRegistrationClosed = isClosed(gathering?.registrationEnd);
+
   // 참여하기
   const handleJoin = async () => {
     if (!isAuthenticated) {
