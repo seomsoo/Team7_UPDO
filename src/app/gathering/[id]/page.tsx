@@ -85,7 +85,19 @@ export default function GroupDetailPage() {
       await gatheringService.joinGathering(Number(id));
       setJoined(true);
       showToast('모임에 참여했습니다!', 'success');
+      // 상세 및 참가자 캐시 최신화
+      queryClient.invalidateQueries({ queryKey: ['gatheringDetail', id] });
       queryClient.invalidateQueries({ queryKey: ['gatheringParticipants', id] });
+      // 마이페이지 관련 목록 무효화
+      queryClient.invalidateQueries({
+        predicate: q =>
+          Array.isArray(q.queryKey) &&
+          (q.queryKey as (string | number | object)[]).some(key =>
+            ['myMeetings', 'joinedGatherings', 'myGroups'].includes(
+              typeof key === 'string' ? key : '',
+            ),
+          ),
+      });
     } catch {
       showToast('모임 참여 요청에 실패했습니다.', 'error');
     } finally {
@@ -100,7 +112,19 @@ export default function GroupDetailPage() {
       await gatheringService.leaveGathering(Number(id));
       setJoined(false);
       showToast('모임 참여를 취소했습니다.', 'info');
+      // 상세 및 참가자 캐시 최신화
+      queryClient.invalidateQueries({ queryKey: ['gatheringDetail', id] });
       queryClient.invalidateQueries({ queryKey: ['gatheringParticipants', id] });
+      // 마이페이지 관련 목록 무효화
+      queryClient.invalidateQueries({
+        predicate: q =>
+          Array.isArray(q.queryKey) &&
+          (q.queryKey as (string | number | object)[]).some(key =>
+            ['myMeetings', 'joinedGatherings', 'myGroups'].includes(
+              typeof key === 'string' ? key : '',
+            ),
+          ),
+      });
     } catch {
       showToast('모임 참여 취소가 실패했습니다.', 'error');
     } finally {
