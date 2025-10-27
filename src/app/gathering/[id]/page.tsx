@@ -117,8 +117,6 @@ export default function GroupDetailPage() {
     try {
       await gatheringService.joinGathering(Number(id));
       showToast('모임에 참여했습니다!', 'success');
-      // 상세 및 참가자 캐시 최신화
-      queryClient.invalidateQueries({ queryKey: ['gatheringDetail', id] });
       queryClient.invalidateQueries({ queryKey: ['gatheringParticipants', id] });
       queryClient.invalidateQueries({ queryKey: ['joinedGatherings', userId] });
     } catch {
@@ -134,8 +132,6 @@ export default function GroupDetailPage() {
     try {
       await gatheringService.leaveGathering(Number(id));
       showToast('모임 참여를 취소했습니다.', 'info');
-      // 상세 및 참가자 캐시 최신화
-      queryClient.invalidateQueries({ queryKey: ['gatheringDetail', id] });
       queryClient.invalidateQueries({ queryKey: ['gatheringParticipants', id] });
       queryClient.invalidateQueries({ queryKey: ['joinedGatherings', userId] });
     } catch {
