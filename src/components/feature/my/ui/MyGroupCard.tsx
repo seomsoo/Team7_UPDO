@@ -39,28 +39,8 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
   const isMyMeetings = variant === 'myMeetings'; // 나의 모임 탭
   const isMyReviews = variant === 'myReviews'; // 나의 리뷰 탭
 
-<<<<<<< HEAD
   const isRecruitmentClosed = registrationEnd ? isClosed(registrationEnd) : false;
   const isOpenConfirmed = (participantCnt ?? 0) >= 5;
-=======
-<<<<<<< HEAD:src/components/feature/my/MyGroupCard.tsx
-  const inMyContext = isMyMeetings || isMyReviews; // '나의 모임', '나의 리뷰' 탭
-
-  const isCompleted = (item as IJoinedGathering).isCompleted;
-  const isReviewed = (item as IJoinedGathering).isReviewed;
-
-  const canCancelJoin = (isMyMeetings || isMyReviews) && !isCompleted;
-  const showReviewCTA = inMyContext && isCompleted;
-  const canWriteReview = showReviewCTA && !isReviewed;
-  const hasWrittenReview = showReviewCTA && isReviewed;
-
-  const isRegistrationClosed = registrationEnd ? isClosed(registrationEnd) : false;
-  const isOpenConfirmed = (participantCnt ?? 0) >= 5;
-  const failedToOpen = isRegistrationClosed && !isOpenConfirmed && !isCompleted; // 모집 마감 + 미확정 + 미이용
-=======
-  const isRecruitmentClosed = registrationEnd ? isClosed(registrationEnd) : false;
-  const isOpenConfirmed = (participantCnt ?? 0) >= 5;
->>>>>>> 29b738c (♻️ [REFACTOR] #176 MyPage SSR&CSR 분리)
   const failedToOpen = (isCompleted || isRecruitmentClosed) && !isOpenConfirmed; // 모집 마감 + 인원 부족
 
   // ── BtnState 결정 규칙 (단 하나만 노출)
@@ -83,6 +63,10 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
 =======
 >>>>>>> 0a833d9 (♻️ [REFACTOR] #176 MyPage SSR&CSR 분리):src/components/feature/my/ui/MyGroupCard.tsx
 >>>>>>> 29b738c (♻️ [REFACTOR] #176 MyPage SSR&CSR 분리)
+=======
+  const isOpenConfirmed = (participantCnt ?? 0) >= 5;
+  const failedToOpen = isRegistrationClosed && !isOpenConfirmed && !isCompleted; // 모집 마감 + 미확정 + 미이용
+>>>>>>> 3787456 (♻️ [REFACTOR] #184 모임 상세 페이지 참여 버튼 분기 로직 개선):src/components/feature/my/MyGroupCard.tsx
 
   // 그 외 헬퍼 변수
   const [isSaved, setIsSaved] = useState<boolean>(false);
