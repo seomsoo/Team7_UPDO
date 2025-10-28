@@ -4,6 +4,7 @@ import UserProfileCard from '@/components/feature/my/UserProfileCard';
 import MyPageContentPane from '@/components/feature/my/MyPageContentPane';
 
 export default function MyPageLayout() {
+  console.log('hi');
   return (
     <AuthGuard>
       <div className="mt-10 flex h-full w-full flex-col gap-6 md:flex-row md:gap-15">
