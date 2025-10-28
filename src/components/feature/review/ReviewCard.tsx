@@ -93,7 +93,6 @@ export default function ReviewCard({ variant, item }: ReviewCardProps) {
 
               {/* 리뷰 내용 */}
               <p className="line-clamp-3 text-gray-700 sm:mt-2 sm:line-clamp-4">{comment}</p>
-              {/* Desktop/Tablet only divider under content column */}
               <div className="col-start-2 mt-4 hidden border-b border-gray-100 sm:block" />
             </section>
           </div>

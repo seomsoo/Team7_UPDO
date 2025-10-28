@@ -43,17 +43,10 @@ export interface TabProps<T extends string> extends VariantProps<typeof tabItem>
   items: readonly TabItem<T>[];
   value: T;
   onChange: (value: T) => void;
-  fullWidth?: boolean;
   className?: string;
 }
 
-const Tab = <T extends string>({
-  items,
-  value,
-  onChange,
-  fullWidth = true,
-  className,
-}: TabProps<T>) => {
+const Tab = <T extends string>({ items, value, onChange, className }: TabProps<T>) => {
   const [indicatorStyle, setIndicatorStyle] = React.useState({ width: 0, left: 0 });
   const tabRefs = React.useRef<Map<number, HTMLButtonElement>>(new Map());
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -107,8 +100,6 @@ const Tab = <T extends string>({
   const handleClick = (val: T, disabled?: boolean) => {
     if (!disabled) onChange(val);
   };
-
-  const activeItem = items.find(i => i.value === value);
 
   return (
     <div className={twMerge('w-full', className)}>

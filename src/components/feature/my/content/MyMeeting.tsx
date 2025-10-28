@@ -1,13 +1,13 @@
 'use client';
 
-import { useMyMeetingsList } from '@/hooks/useMyMeetingsQuery';
+import { useMyMeetingsQuery } from '@/hooks/useMyMeetingsQuery';
 import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
 
 import MyGroupCardList from '@/components/feature/my/ui/MyGroupCardList';
 
 export default function MyMeeting() {
   const { items, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
-    useMyMeetingsList();
+    useMyMeetingsQuery();
 
   // 무한 스크롤용 sentinel
   const sentinelRef = useInfiniteScrollObserver({

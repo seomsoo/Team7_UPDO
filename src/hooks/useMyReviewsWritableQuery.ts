@@ -1,14 +1,13 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
-import type { UseInfiniteQueryResult, InfiniteData } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 import { useInfiniteListQuery } from '@/hooks/useInfiniteListQuery';
 
 import type { IJoinedGathering } from '@/types/gatherings';
 import { getJoinedGatherings } from '@/services/gatherings/anonGatheringService';
 
-import { qk } from '@/constants/queryKeys';
+import { queryKey } from '@/constants/queryKeys';
 
 export type ReviewablePage = {
   data: IJoinedGathering[];
@@ -16,12 +15,9 @@ export type ReviewablePage = {
   nextPage?: number | null;
 };
 
-export function useMyReviewsWritableQuery(): UseInfiniteQueryResult<
-  InfiniteData<ReviewablePage>,
-  Error
-> {
+export function useMyReviewsWritableQuery() {
   const query = useInfiniteListQuery({
-    queryKey: qk.myReviewsWritable(),
+    queryKey: queryKey.myReviewsWritable(),
     queryFn: page =>
       getJoinedGatherings(page, {
         reviewed: false,
@@ -29,17 +25,6 @@ export function useMyReviewsWritableQuery(): UseInfiniteQueryResult<
         sortOrder: 'asc',
       }),
   });
-
-  // 진입 시 cache refetch
-  useEffect(() => {
-    query.refetch();
-  }, [query]);
-
-  return query;
-}
-
-export function useMyReviewsWritableList() {
-  const query = useMyReviewsWritableQuery();
 
   // 참여자가 5명 이상인 작성할 수 있는 모임 골라오기
   const items = useMemo(() => {

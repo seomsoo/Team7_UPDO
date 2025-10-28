@@ -18,10 +18,6 @@ const meta: Meta<typeof Tab> = {
       control: 'text',
       description: '현재 선택된 탭 값',
     },
-    fullWidth: {
-      control: 'boolean',
-      description: '전체 너비 사용 여부',
-    },
     className: {
       control: 'text',
       description: '추가 CSS 클래스',
@@ -34,7 +30,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Preview: Story = {
   parameters: { controls: { disable: true } },
-  args: { fullWidth: true },
+  args: {},
   render: (args: React.ComponentProps<typeof Tab>) => {
     const [value1, setValue1] = useState(args.value ?? 'growth');
     const [value2, setValue2] = useState('myMeetings');

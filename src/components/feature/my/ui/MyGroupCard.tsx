@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import Icon from '@/components/ui/Icon';
@@ -19,10 +19,26 @@ import { LocationToTag, tagEngToKr } from '@/utils/mapping';
 import { formatDate, formatTime, isClosed } from '@/utils/date';
 
 type Item = IJoinedGathering | IGathering;
+type BtnState = 'leave' | 'reviewWrite' | 'reviewDone' | null;
 
 interface MyGroupCardProps {
   variant: 'myMeetings' | 'created' | 'myReviews';
   item: Item;
+}
+
+// 헬퍼 함수 : '리뷰 작성하기' | '리뷰 작성 완료'
+function getReviewState(isReviewed?: boolean): BtnState {
+  return isReviewed ? 'reviewDone' : 'reviewWrite';
+}
+
+// 헬퍼 함수 : '참여하기' | '참여 취소하기' | getReviewState()
+function getMyMeetingsState(
+  failedToOpen: boolean,
+  isCompleted?: boolean,
+  isReviewed?: boolean,
+): BtnState {
+  if (failedToOpen || !isCompleted) return 'leave'; // 모집 중
+  return getReviewState(isReviewed); // 모집 완료 + 참여 중 + 5명 이상
 }
 
 export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
@@ -48,18 +64,16 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
   // leave : 참여 취소하기
   // reviewWrite : 리뷰 작성하기
   // reviewDone : 리뷰 작성완료
-  type BtnState = 'leave' | 'reviewWrite' | 'reviewDone' | null;
-  const BtnState: BtnState = (() => {
+
+  const BtnState = useMemo<BtnState>(() => {
     if (isMyMeetings) {
-      if (failedToOpen) return 'leave';
-      if (!isCompleted) return 'leave';
-      return isReviewed ? 'reviewDone' : 'reviewWrite';
+      return getMyMeetingsState(failedToOpen, isCompleted, isReviewed);
     }
     if (isMyReviews) {
-      return isReviewed ? 'reviewDone' : 'reviewWrite';
+      return getReviewState(isReviewed);
     }
     return null;
-  })();
+  }, [isMyMeetings, isMyReviews, isCompleted, isReviewed, failedToOpen]);
 
   // 그 외 헬퍼 변수
   const [isSaved, setIsSaved] = useState<boolean>(false);
@@ -232,7 +246,7 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
               />
             )}
             {BtnState === 'reviewWrite' && (
-              <WriteReviewControl className={buttonClassname} gatheringId={id} />
+              <WriteReviewControl btnClassname={buttonClassname} gatheringId={id} />
             )}
             {BtnState === 'reviewDone' && (
               <Button className={buttonClassname} disabled aria-disabled="true">

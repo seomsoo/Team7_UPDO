@@ -6,13 +6,15 @@ import Icon from '@/components/ui/Icon';
 import EditProfileModal from '@/components/feature/my/EditProfileModal';
 
 import { IUser } from '@/types/auths';
+import { useUserStore } from '@/stores/useUserStore';
 
 interface Props {
   user: IUser;
-  setUser: (u: IUser | null) => void;
 }
 
-export default function EditProfileControl({ user, setUser }: Props) {
+export default function EditProfileControl({ user }: Props) {
+  const setUser = useUserStore(s => s.setUser);
+
   const [open, setOpen] = useState(false);
 
   const handleSaved = (next: Partial<IUser>) => {

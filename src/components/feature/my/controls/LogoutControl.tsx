@@ -17,14 +17,14 @@ export default function LogoutControl() {
   const { logout } = useAuthStore();
 
   const router = useRouter();
-  const qc = useQueryClient();
+  const queryClient = useQueryClient();
 
   const { showToast } = useToast();
 
   const handleConfirm = () => {
     try {
       logout();
-      qc.clear();
+      queryClient.clear();
       showToast('로그아웃에 성공하였습니다.', 'success');
       setOpen(false);
       router.push('/');
