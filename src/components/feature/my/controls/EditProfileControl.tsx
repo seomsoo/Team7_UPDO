@@ -7,14 +7,13 @@ import EditProfileModal from '@/components/feature/my/EditProfileModal';
 
 import { IUser } from '@/types/auths';
 import { useUserStore } from '@/stores/useUserStore';
-import { useShallow } from 'zustand/shallow';
 
 interface Props {
   user: IUser;
 }
 
 export default function EditProfileControl({ user }: Props) {
-  const { setUser } = useUserStore(useShallow(s => ({ setUser: s.setUser })));
+  const { setUser } = useUserStore(s => ({ setUser: s.setUser }));
 
   const [open, setOpen] = useState(false);
 

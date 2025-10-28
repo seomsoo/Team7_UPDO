@@ -5,12 +5,11 @@ import Image from 'next/image';
 import EditProfileControl from '@/components/feature/my/controls/EditProfileControl';
 
 import { useUserStore } from '@/stores/useUserStore';
-import { useShallow } from 'zustand/react/shallow';
 
 const DEFAULT_AVATAR_SRC = '/images/avatar-default.png';
 
 export default function UserProfileCard() {
-  const { user } = useUserStore(useShallow(s => ({ user: s.user })));
+  const { user } = useUserStore(s => ({ user: s.user }));
   const guaranteedUser = user!; // AuthGuard로 null이 아님을 단언 가능
   const { name, companyName, email } = guaranteedUser;
 
