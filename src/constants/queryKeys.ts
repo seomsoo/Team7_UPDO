@@ -10,12 +10,15 @@ export type AllReviewFilters = {
   userId?: number;
 };
 
-export function normalizeReviewFilters(f?: AllReviewFilters) {
-  if (!f) return {};
-  const { sort, order, ratingGte, tagIds, period, query, userId } = f;
+export function normalizeReviewFilters(filter?: AllReviewFilters) {
+  if (!filter) return {};
+  const { sort, order, ratingGte, tagIds, period, query, userId } = filter;
 
   const normTags = Array.isArray(tagIds)
-    ? [...tagIds].map(String).sort((a, b) => (a > b ? 1 : a < b ? -1 : 0))
+    ? [...tagIds]
+        .map(v => Number(v))
+        .sort((a, b) => a - b)
+        .map(String)
     : undefined;
 
   const normPeriod =
@@ -34,7 +37,7 @@ export function normalizeReviewFilters(f?: AllReviewFilters) {
   };
 }
 
-export const qk = {
+export const queryKey = {
   // 내가 참여한 모임 (MyMeeting)
   myMeetings: () => ['gatherings', 'myMeetings'] as const,
 

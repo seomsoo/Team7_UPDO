@@ -1,7 +1,7 @@
 'use client';
 
 import ReviewCardList from '@/components/feature/review/ReviewCardList';
-import { useAllReviewQuery } from '@/components/feature/review/hooks/useAllReviewQuery';
+import { useAllReviewQuery } from '@/hooks/useAllReviewQuery';
 
 import type { AllReviewFilters } from '@/constants/queryKeys';
 import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';

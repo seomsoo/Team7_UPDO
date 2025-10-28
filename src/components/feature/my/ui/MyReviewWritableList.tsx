@@ -3,11 +3,11 @@
 import MyGroupCardList from '@/components/feature/my/ui/MyGroupCardList';
 
 import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
-import { useMyReviewsWritableList } from '@/hooks/useMyReviewsWritableQuery';
+import { useMyReviewsWritableQuery } from '@/hooks/useMyReviewsWritableQuery';
 
 export default function MyReviewWritableList() {
   const { items, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
-    useMyReviewsWritableList();
+    useMyReviewsWritableQuery();
 
   const sentinelRef = useInfiniteScrollObserver({
     hasNextPage,

@@ -8,15 +8,15 @@ import WriteReviewModal from '@/components/feature/review/WriteReviewModal';
 
 type WriteReviewControlProps = {
   gatheringId: number;
-  className?: string;
+  btnClassname?: string;
 };
 
-export function WriteReviewControl({ gatheringId, className }: WriteReviewControlProps) {
+export function WriteReviewControl({ gatheringId, btnClassname }: WriteReviewControlProps) {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <Button className={className} onClick={() => setOpen(true)}>
+      <Button className={btnClassname} onClick={() => setOpen(true)}>
         리뷰 작성하기
       </Button>
       {open && (

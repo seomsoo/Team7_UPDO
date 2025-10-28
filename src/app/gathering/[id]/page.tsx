@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -23,6 +23,7 @@ import { isClosed } from '@/utils/date';
 import GroupDetailCardSkeleton from '@/components/ui/Skeleton/GroupDetailCardSkeleton';
 import GroupDetailParticipationSkeleton from '@/components/ui/Skeleton/GroupDetailParticipationSkeleton';
 import GroupDetailReviewListSkeleton from '@/components/ui/Skeleton/GroupDetailReviewListSkeleton';
+import { queryKey } from '@/constants/queryKeys';
 
 export default function GroupDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -97,10 +98,10 @@ export default function GroupDetailPage() {
   const handleJoin = async () => {
     if (!isAuthenticated) {
       showToast('로그인 후 이용 가능합니다.', 'error');
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         router.push('/login');
       }, 1000);
-      return;
+      return () => clearTimeout(timer);
     }
     setIsJoining(true);
     try {
@@ -108,6 +109,7 @@ export default function GroupDetailPage() {
       showToast('모임에 참여했습니다!', 'success');
       queryClient.invalidateQueries({ queryKey: ['gatheringParticipants', id] });
       queryClient.invalidateQueries({ queryKey: ['joinedGatherings', userId] });
+      queryClient.invalidateQueries({ queryKey: [queryKey.myMeetings] });
     } catch {
       showToast('모임 참여 요청에 실패했습니다.', 'error');
     } finally {
@@ -123,6 +125,7 @@ export default function GroupDetailPage() {
       showToast('모임 참여를 취소했습니다.', 'info');
       queryClient.invalidateQueries({ queryKey: ['gatheringParticipants', id] });
       queryClient.invalidateQueries({ queryKey: ['joinedGatherings', userId] });
+      queryClient.invalidateQueries({ queryKey: [queryKey.myMeetings] });
     } catch {
       showToast('모임 참여 취소가 실패했습니다.', 'error');
     } finally {
@@ -139,6 +142,7 @@ export default function GroupDetailPage() {
 
       // 삭제 후: 관련 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ['gatherings'] });
+      queryClient.invalidateQueries({ queryKey: [queryKey.myCreatedGroups] });
       setTimeout(() => router.replace('/gathering'), 1000);
     } catch {
       showToast('모임이 삭제되지 않았습니다.', 'error');
@@ -165,6 +169,7 @@ export default function GroupDetailPage() {
   const handleReviewSuccess = () => {
     queryClient.invalidateQueries({ queryKey: ['myReview', id, userId] });
     queryClient.invalidateQueries({ queryKey: ['reviews', Number(id)] });
+    queryClient.invalidateQueries({ queryKey: [queryKey.myReviewsWritten] });
     setIsReviewModalOpen(false);
   };
 

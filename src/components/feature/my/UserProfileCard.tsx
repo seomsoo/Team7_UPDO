@@ -7,21 +7,22 @@ import EditProfileControl from '@/components/feature/my/controls/EditProfileCont
 import { useUserStore } from '@/stores/useUserStore';
 import { useShallow } from 'zustand/react/shallow';
 
+const DEFAULT_AVATAR_SRC = '/images/avatar-default.png';
+
 export default function UserProfileCard() {
-  const { user, setUser } = useUserStore(useShallow(s => ({ user: s.user, setUser: s.setUser })));
-  const guaranteedUser = user!; // AuthGuard로 null이 아님을 단언
+  const { user } = useUserStore(useShallow(s => ({ user: s.user })));
+  const guaranteedUser = user!; // AuthGuard로 null이 아님을 단언 가능
   const { name, companyName, email } = guaranteedUser;
 
-  const DEFAULT_AVATAR_SRC = '/images/avatar-default.png';
   const [avatarSrc, setAvatarSrc] = useState<string>(user?.image ?? DEFAULT_AVATAR_SRC);
   useEffect(() => {
-    setAvatarSrc(user?.image ?? DEFAULT_AVATAR_SRC);
+    if (user?.image) setAvatarSrc(user.image);
   }, [user?.image]);
 
   return (
     <div className="bg-grad-100-v relative flex w-full overflow-hidden rounded-2xl border border-purple-100 px-4 py-6 shadow-xl sm:rounded-3xl sm:px-6 sm:py-8 md:flex-col md:px-6 md:pt-5 md:pb-10">
       {/* 프로필 수정 버튼 (상단 우측 고정) */}
-      <EditProfileControl user={guaranteedUser} setUser={setUser} />
+      <EditProfileControl user={guaranteedUser} />
 
       {/* 이미지 및 이름 */}
       <div className="mr-7 mb-0 flex flex-row items-center gap-3 md:mt-12 md:mr-0 md:mb-7 md:flex-col md:gap-5">

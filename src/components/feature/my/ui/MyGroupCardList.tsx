@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import Image from 'next/image';
 
 import MyGroupCard from '@/components/feature/my/ui/MyGroupCard';
@@ -39,16 +39,18 @@ export default function MyGroupCardList({
   reviewFilter,
 }: MyGroupCardListProps) {
   // 리뷰 탭일 경우 화면단 필터링 (완료 + 리뷰 작성 여부 기준)
-  const filtered =
-    variant === 'myReviews' && reviewFilter
-      ? items.filter(item => {
-          const completed = (item.isCompleted ?? false) || isClosed(item.dateTime);
-          const reviewed = !!item.isReviewed;
-          if (reviewFilter === 'writable') return completed && !reviewed;
-          if (reviewFilter === 'written') return completed && reviewed;
-          return true;
-        })
-      : items;
+  const filtered = useMemo(() => {
+    if (!reviewFilter) return items; // <나의 리뷰> 탭이 아니라면, 원본 데이터 반환
+
+    const isCompleted = (item: IJoinedGathering) => !!item.isCompleted || isClosed(item.dateTime);
+
+    switch (reviewFilter) {
+      case 'writable':
+        return items.filter(item => isCompleted(item) && !item.isReviewed); // 완료된 모임 + 리뷰 미작성
+      case 'written':
+        return items.filter(item => isCompleted(item) && !!item.isReviewed); // 완료된 모임 + 리뷰 작성
+    }
+  }, [items, variant, reviewFilter]);
 
   if (isLoading) {
     return (

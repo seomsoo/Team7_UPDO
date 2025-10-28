@@ -1,11 +1,11 @@
 'use client';
 
 import ReviewCardList from '@/components/feature/review/ReviewCardList';
-import { useMyReviewsWrittenList } from '@/components/feature/review/hooks/useMyReviewsWrittenQuery';
+import { useMyReviewsWrittenQuery } from '@/hooks/useMyReviewsWrittenQuery';
 
 export default function MyReviewWrittenList() {
   const { items, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
-    useMyReviewsWrittenList();
+    useMyReviewsWrittenQuery();
 
   return (
     <ReviewCardList

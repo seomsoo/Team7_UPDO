@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import MyGroupCardList from '@/components/feature/my/ui/MyGroupCardList';
 
 import { useMyCreatedGroupsQuery } from '@/hooks/useMyCreatedGroupsQuery';
-import { useInfiniteScrollObserver } from '../../../../hooks/useInfiniteScrollObserver';
+import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
 
 export default function MyCreatedGroup() {
   const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
