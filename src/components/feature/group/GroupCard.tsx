@@ -1,82 +1,37 @@
 'use client';
 
+import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
-import { ProgressBar } from '@/components/ui/ProgressBar';
-import Icon from '@/components/ui/Icon';
-import { IGathering } from '@/types/gatherings/models';
+import FavoriteButton from '../favorites/FavoriteButton';
 import Tag from '@/components/ui/Tag';
+import Icon from '@/components/ui/Icon';
 import IconText from '@/components/ui/IconText';
-import { formatTime, formatDate, formatDeadline, isClosed as checkClosed } from '@/utils/date';
-import { LocationToTag } from '@/utils/mapping';
-import { TAG_OPTIONS } from '@/constants';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { ProgressBar } from '@/components/ui/ProgressBar';
+import { IGathering } from '@/types/gatherings/models';
+import { formatTime, formatDate, formatDeadline } from '@/utils/date';
 import { ConfirmModal } from '@/components/ui/Modal';
 import { useAuthStore } from '@/stores/useAuthStore';
-import {
-  getJoinedGatherings,
-  joinGathering,
-  leaveGathering,
-} from '@/services/gatherings/gatheringService';
 import { useRouter } from 'next/navigation';
-import FavoriteButton from '../favorites/FavoriteButton';
+import { useGatheringQuery } from '@/hooks/useGatheringQuery';
+import { useGatheringStatus } from '@/hooks/useGatheringStatus';
 
 interface GroupCardProps {
   data: IGathering;
 }
 
 export default function GroupCard({ data }: GroupCardProps) {
-  const { name, location, dateTime, registrationEnd, participantCount, capacity, image } = data;
+  const { name, location, dateTime, registrationEnd, capacity, image } = data;
+  const { participantCount, isJoined, handleJoinClick, modalOpen, setModalOpen, loading } =
+    useGatheringQuery(data.id);
+  const { isFull, isClosed, topic, safeCapacity, category } = useGatheringStatus(
+    location,
+    capacity,
+    participantCount,
+    registrationEnd,
+  );
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
-  const [modalOpen, setModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [isJoined, setIsJoined] = useState(false);
-  const [currentCount, setCurrentCount] = useState(participantCount);
-
-  const isFull = currentCount >= capacity;
-  const isClosed = checkClosed(registrationEnd) || isFull;
-  const topic = LocationToTag(location) as 'growth' | 'learn' | 'challenge' | 'connect' | 'default';
-  const safeCapacity = Math.max(1, capacity);
-  const category = TAG_OPTIONS.find(option => option.value === topic)?.label ?? '';
-
-  useEffect(() => {
-    const checkJoinedStatus = async () => {
-      if (!isAuthenticated) return;
-      try {
-        const res = await getJoinedGatherings();
-        const joined = res.some(g => g.id === data.id);
-        setIsJoined(joined);
-      } catch (error) {}
-    };
-    checkJoinedStatus();
-  }, [isAuthenticated, data.id]);
-
-  const handleJoinClick = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-
-    if (!isAuthenticated) {
-      setModalOpen(true);
-      return;
-    }
-    setLoading(true);
-    try {
-      if (isJoined) {
-        await leaveGathering(data.id);
-        setIsJoined(false);
-        setCurrentCount(prev => Math.max(0, prev - 1));
-      } else {
-        await joinGathering(data.id);
-        setIsJoined(true);
-        setCurrentCount(prev => prev + 1);
-      }
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <>
@@ -85,7 +40,7 @@ export default function GroupCard({ data }: GroupCardProps) {
         className="contents"
         role="link"
         aria-label={`${name} 상세 페이지로 이동`}>
-        <article className="relative flex h-[346px] w-full max-w-[650px] flex-col overflow-hidden rounded-xl bg-white transition-transform duration-300 hover:scale-105 hover:shadow-md sm:h-[219px] sm:max-w-[1280px] sm:flex-row sm:rounded-2xl sm:p-6 md:max-w-[640px]">
+        <article className="relative flex h-[346px] w-full max-w-[650px] flex-col overflow-hidden rounded-xl bg-white transition-transform duration-300 will-change-transform hover:scale-105 hover:shadow-md sm:h-[219px] sm:max-w-[1280px] sm:flex-row sm:rounded-2xl sm:p-6 md:max-w-[640px]">
           <div className="relative h-[160px] w-full sm:h-[170px] sm:w-[170px] md:h-auto">
             {!image ? (
               <div className="flex h-full w-full items-center justify-center bg-gray-100 text-gray-400 sm:rounded-xl"></div>
@@ -95,6 +50,7 @@ export default function GroupCard({ data }: GroupCardProps) {
                   src={image}
                   alt={name}
                   fill
+                  priority
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="object-cover sm:rounded-xl"
                 />
@@ -122,7 +78,7 @@ export default function GroupCard({ data }: GroupCardProps) {
               <div className="flex flex-col items-start gap-1.5">
                 <div className="flex items-center">
                   <h3 className="h5Semibold max-w-[200px] truncate">{name}</h3>
-                  {currentCount >= 5 && (
+                  {participantCount >= 5 && (
                     <IconText
                       tone="none"
                       icon="check"
@@ -183,11 +139,11 @@ export default function GroupCard({ data }: GroupCardProps) {
               <footer className="flex w-full items-center gap-3 sm:justify-between">
                 <div className="flex w-full items-center gap-1 sm:max-w-[800px] md:max-w-[230px]">
                   <Icon name="person" size={18} />
-                  <ProgressBar current={currentCount} max={safeCapacity} min={5} />
+                  <ProgressBar current={participantCount} max={safeCapacity} min={5} />
                   <span
                     className="label ml-2 text-[var(--color-purple-500)]"
-                    aria-label={`현재 ${currentCount}명 참여, 정원 ${capacity}명`}>
-                    {currentCount}/{capacity}
+                    aria-label={`현재 ${participantCount}명 참여, 정원 ${capacity}명`}>
+                    {participantCount}/{capacity}
                   </span>
                 </div>
                 <Button
