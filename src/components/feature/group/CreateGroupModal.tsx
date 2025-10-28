@@ -15,6 +15,7 @@ import { toUTCFromKST } from '@/utils/date';
 
 import { CreateGatheringFormSchema } from '@/schemas/gatheringsSchema';
 import { createGathering } from '@/services/gatherings/gatheringService';
+import { useQueryClient } from '@tanstack/react-query';
 
 export type CreateGroupForm = {
   name: string;
@@ -25,39 +26,42 @@ export type CreateGroupForm = {
   date?: string | null;
   registrationEnd?: string | null;
   capacity?: number | null;
-  image?: File | null;
+  image?: File | null | undefined;
+};
+
+const InitialForm = {
+  name: '',
+  tag: null,
+  tab: '스킬업',
+  type: null,
+  location: null,
+  date: null,
+  registrationEnd: null,
+  capacity: 5,
 };
 
 export type SubmitErrors = Record<string, string[]>; // key: field name, value: messages
 
 export default function CreateGroupModal({ open, onOpenChange }: ModalProps) {
   const toast = useToast();
+  const queryClient = useQueryClient();
   const [submitErrors, setSubmitErrors] = useState<SubmitErrors | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState<CreateGroupForm>({
-    name: '',
-    tag: null,
-    tab: '스킬업',
-    type: null,
-    location: null,
-    date: null,
-    registrationEnd: null,
-    capacity: 5,
-    image: null,
-  });
+  const [form, setForm] = useState<CreateGroupForm>(InitialForm);
 
   const handleSubmit = async () => {
     const payload = {
       name: form.name.trim(),
       type: form.tab && TabToType(form.tab),
       location: form.tag && TagToLocation(form.tag),
-      dateTime: form.date && toUTCFromKST(form.date),
-      registrationEnd: form.registrationEnd && toUTCFromKST(form.registrationEnd),
+      dateTime: form.date && toUTCFromKST(new Date(form.date)),
+      registrationEnd: form.registrationEnd && toUTCFromKST(new Date(form.registrationEnd)),
       capacity: form.capacity ? Number(form.capacity) : 0,
-      image: form.image,
+      image: form.image instanceof File ? form.image : undefined,
     };
 
     const validation = CreateGatheringFormSchema.safeParse(payload);
+
     if (!validation.success) {
       const grouped: SubmitErrors = {};
       for (const issue of validation.error.issues) {
@@ -70,6 +74,7 @@ export default function CreateGroupModal({ open, onOpenChange }: ModalProps) {
     }
     // 성공 시 이전 에러 초기화
     setSubmitErrors(null);
+
     const validData = validation.data;
 
     try {
@@ -77,6 +82,8 @@ export default function CreateGroupModal({ open, onOpenChange }: ModalProps) {
       await createGathering(validData);
       toast.showToast('모임이 생성되었습니다.', 'success');
       onOpenChange(false); // 모달 닫기
+      queryClient.invalidateQueries({ queryKey: ['gatherings'] });
+      setForm(InitialForm);
     } catch (e: unknown) {
       const msg =
         e &&
@@ -101,7 +108,14 @@ export default function CreateGroupModal({ open, onOpenChange }: ModalProps) {
       onOpenChange={onOpenChange}
       className="p-4 pb-12 sm:rounded-xl md:rounded-2xl md:p-12"
       ResponsiveClassName="w-full h-[876px] sm:w-[570px]">
-      <Modal.Header title="모임 만들기" onClose={() => onOpenChange(false)} className="p-0 pb-6" />
+      <Modal.Header
+        title="모임 만들기"
+        onClose={() => {
+          onOpenChange(false);
+          setForm(InitialForm);
+        }}
+        className="p-0 pb-6"
+      />
       <Modal.Body className="mb-5 flex flex-col gap-6 p-0 sm:mb-10">
         <CreateGroupModalForm form={form} setForm={setForm} submitErrors={submitErrors} />
       </Modal.Body>

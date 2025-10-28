@@ -33,12 +33,10 @@ export default function DatetimeInput({ value, onChange, blockPast = false }: Da
     const maxLeft = Math.max(PANEL_MARGIN, window.innerWidth - assumedW - PANEL_MARGIN);
     const left = Math.round(Math.max(PANEL_MARGIN, Math.min(rect.left, maxLeft)));
 
-    // Clamp bottom edge to viewport when panel height is known
     const viewportH = window.innerHeight;
     const panelH = panelRef.current?.offsetHeight ?? 0;
     let top = desiredTop;
     if (panelH > 0) {
-      // ensure we keep an 8px margin from bottom/top
       top = Math.min(desiredTop, Math.max(8, viewportH - panelH - 8));
     }
 
@@ -82,7 +80,6 @@ export default function DatetimeInput({ value, onChange, blockPast = false }: Da
   useEffect(() => {
     if (!open) return;
     updatePanelPosition();
-    // re-measure on next frame to use actual panel height
     requestAnimationFrame(updatePanelPosition);
     const handleClick = (e: MouseEvent) => {
       const t = e.target as Node;
@@ -95,7 +92,6 @@ export default function DatetimeInput({ value, onChange, blockPast = false }: Da
     };
     document.addEventListener('mousedown', handleClick);
     document.addEventListener('keydown', handleKey);
-    // capture 단계에서 리스닝하여 내부 스크롤 컨테이너에서도 위치 갱신
     window.addEventListener('resize', updatePanelPosition, { passive: true });
     window.addEventListener('scroll', updatePanelPosition, { passive: true, capture: true });
     document.addEventListener('scroll', updatePanelPosition, { passive: true, capture: true });
@@ -127,7 +123,9 @@ export default function DatetimeInput({ value, onChange, blockPast = false }: Da
               position: 'fixed',
               top: panelPos.top,
               left: panelPos.left,
-              width: 'min(344px, calc(100vw - 16px))',
+              width: 'auto',
+              maxWidth: 'min(344px, calc(100% - 16px))',
+              boxSizing: 'border-box',
             }}
             role="dialog"
             aria-modal="true">

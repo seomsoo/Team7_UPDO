@@ -1,6 +1,30 @@
 import '../src/app/globals.css';
 import type { Preview } from '@storybook/nextjs-vite';
-import { Pretendard } from '../src/lib/font';
+import type { Decorator } from '@storybook/react';
+
+import React from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import * as NextNavigation from 'next/navigation';
+
+try {
+  if (!('useRouter' in NextNavigation)) {
+    Object.defineProperty(NextNavigation, 'useRouter', {
+      value: () => ({
+        push: () => {},
+        replace: () => {},
+        prefetch: async () => {},
+        back: () => {},
+      }),
+      configurable: true,
+    });
+  }
+  if (!('usePathname' in NextNavigation)) {
+    Object.defineProperty(NextNavigation, 'usePathname', {
+      value: () => '/',
+      configurable: true,
+    });
+  }
+} catch {}
 
 function ensureFont() {
   if (typeof document === 'undefined') return;
@@ -30,7 +54,25 @@ html, body { font-family: var(--font-sans); }
   }
 }
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+      staleTime: 0,
+    },
+    mutations: { retry: false },
+  },
+});
+
+const withQueryClient: Decorator = Story => (
+  <QueryClientProvider client={queryClient}>
+    <Story />
+  </QueryClientProvider>
+);
+
 export const decorators: Preview['decorators'] = [
+  withQueryClient,
   Story => {
     ensureFont();
     return <Story />;
