@@ -1,8 +1,5 @@
-'use client';
-
-import React, { useState } from 'react';
 import { cn } from '@/utils/cn';
-import IconText, { type Topic } from '@/components/ui/IconText';
+import IconText from '@/components/ui/IconText';
 import Tag from '@/components/ui/Tag';
 import Icon from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';

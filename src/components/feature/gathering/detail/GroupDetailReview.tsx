@@ -1,5 +1,3 @@
-'use client';
-
 import ReviewScore from '@/components/ui/ReviewScore';
 import { IReviewWithRelations } from '@/types/reviews';
 import { formatReviewDate } from '@/utils/date';
