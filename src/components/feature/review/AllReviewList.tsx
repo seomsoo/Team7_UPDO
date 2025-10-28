@@ -1,7 +1,7 @@
 'use client';
 
 import ReviewCardList from '@/components/feature/review/ReviewCardList';
-import { useAllReviewList } from '@/components/feature/review/hooks/useAllReviewQuery';
+import { useAllReviewQuery } from '@/components/feature/review/hooks/useAllReviewQuery';
 
 import type { AllReviewFilters } from '@/constants/queryKeys';
 import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
@@ -12,7 +12,7 @@ type AllReviewListProps = {
 
 export default function AllReviewList({ filters }: AllReviewListProps) {
   const { items, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
-    useAllReviewList(filters);
+    useAllReviewQuery(filters);
 
   const sentinelRef = useInfiniteScrollObserver({
     hasNextPage,

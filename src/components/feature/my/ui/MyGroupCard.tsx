@@ -39,10 +39,10 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
   const isMyMeetings = variant === 'myMeetings'; // 나의 모임 탭
   const isMyReviews = variant === 'myReviews'; // 나의 리뷰 탭
 
-  const isRecruitmentClosed = registrationEnd ? isClosed(registrationEnd) : false;
+  const isRegistrationClosed = registrationEnd ? isClosed(registrationEnd) : false;
 
   const isOpenConfirmed = (participantCnt ?? 0) >= 5;
-  const failedToOpen = (isCompleted || isRecruitmentClosed) && !isOpenConfirmed; // 모집 마감 + 인원 부족
+  const failedToOpen = (isCompleted || isRegistrationClosed) && !isOpenConfirmed; // 모집 마감 + 인원 부족
 
   // ── BtnState 결정 규칙 (단 하나만 노출)
   // leave : 참여 취소하기

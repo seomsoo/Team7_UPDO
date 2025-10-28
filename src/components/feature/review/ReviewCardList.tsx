@@ -14,6 +14,7 @@ import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
 interface ReviewCardListProps {
   variants: 'my' | 'all';
   items: IReviewWithRelations[];
+  filters?: Record<string, string>; // 모든 리뷰 페이지
 
   isLoading?: boolean;
   isError?: boolean;
@@ -45,6 +46,7 @@ export default function ReviewCardList({
   onRetry,
   emptyMsg = '아직 등록된 리뷰가 없어요.',
   infinite,
+
   sentinelRef: externalSentinelRef,
   constrainedScroll,
   scrollMaxHeightClassName,

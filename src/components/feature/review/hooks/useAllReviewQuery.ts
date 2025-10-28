@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
-import type { UseInfiniteQueryResult, InfiniteData } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 import { useInfiniteListQuery } from '@/hooks/useInfiniteListQuery';
 import { qk, type AllReviewFilters, normalizeReviewFilters } from '@/constants/queryKeys';
@@ -13,9 +12,7 @@ export type AllReviewPage = {
   nextPage?: number | null;
 };
 
-export function useAllReviewQuery(
-  filters?: AllReviewFilters,
-): UseInfiniteQueryResult<InfiniteData<AllReviewPage>, Error> {
+export function useAllReviewQuery(filters?: AllReviewFilters) {
   // 얕은 비교이기에 같은 객체로 인식되기 위한 '정규화' 진행
   const normalized = useMemo(() => normalizeReviewFilters(filters), [filters]);
   const params = useMemo(() => {
@@ -39,15 +36,7 @@ export function useAllReviewQuery(
     queryFn: page => anonReviewService.getReviewInfiniteList(page, params),
   });
 
-  useEffect(() => {
-    query.refetch();
-  }, [query, normalized]);
-
-  return query;
-}
-
-export function useAllReviewList(filters?: AllReviewFilters) {
-  const query = useAllReviewQuery(filters);
   const items = useMemo(() => query.data?.pages?.flatMap(p => p.data) ?? [], [query.data]);
+
   return { ...query, items };
 }
