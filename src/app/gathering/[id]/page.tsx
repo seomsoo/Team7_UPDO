@@ -20,10 +20,11 @@ import { IParticipant } from '@/types/gatherings';
 import { mapGatheringToUI } from '@/utils/mapping';
 import { isClosed } from '@/utils/date';
 
+import { queryKey } from '@/constants/queryKeys';
+
 import GroupDetailCardSkeleton from '@/components/ui/Skeleton/GroupDetailCardSkeleton';
 import GroupDetailParticipationSkeleton from '@/components/ui/Skeleton/GroupDetailParticipationSkeleton';
 import GroupDetailReviewListSkeleton from '@/components/ui/Skeleton/GroupDetailReviewListSkeleton';
-import { queryKey } from '@/constants/queryKeys';
 
 export default function GroupDetailPage() {
   const { id } = useParams<{ id: string }>();
