@@ -13,7 +13,7 @@ interface Props {
 }
 
 export default function EditProfileControl({ user }: Props) {
-  const { setUser } = useUserStore(s => ({ setUser: s.setUser }));
+  const setUser = useUserStore(s => s.setUser);
 
   const [open, setOpen] = useState(false);
 

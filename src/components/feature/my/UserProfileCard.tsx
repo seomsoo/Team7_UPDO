@@ -9,7 +9,7 @@ import { useUserStore } from '@/stores/useUserStore';
 const DEFAULT_AVATAR_SRC = '/images/avatar-default.png';
 
 export default function UserProfileCard() {
-  const { user } = useUserStore(s => ({ user: s.user }));
+  const user = useUserStore(s => s.user);
   const guaranteedUser = user!; // AuthGuard로 null이 아님을 단언 가능
   const { name, companyName, email } = guaranteedUser;
 
