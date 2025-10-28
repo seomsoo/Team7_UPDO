@@ -15,10 +15,10 @@ jest.mock('next/navigation', () => ({
   useRouter: jest.fn(() => ({ replace: mockReplace })),
 }));
 jest.mock('@/components/ui/Toast', () => ({
-  useToast: () => ({ showToast: mockShowToast }),
+  useToast: jest.fn(selector => selector({ showToast: mockShowToast })),
 }));
 jest.mock('@/stores/useAuthStore', () => ({
-  useAuthStore: jest.fn(() => ({ setToken: mockSetToken })),
+  useAuthStore: jest.fn(selector => selector({ setToken: mockSetToken })),
 }));
 jest.mock('@/services/auths/authService', () => ({
   authService: {
@@ -142,41 +142,5 @@ describe('🧩 SignupForm — 서버/라우팅 시나리오', () => {
         screen.getByText(/회원가입에 실패했습니다|서버 오류가 발생했습니다/i),
       ).toBeInTheDocument(),
     );
-  });
-
-  test.skip('회원가입 3회 실패 시 서버의 잠금 에러 메시지가 전역으로 표시된다', async () => {
-    (authService.signup as jest.Mock)
-      .mockRejectedValueOnce({ parameter: 'email', message: '이메일이 잘못되었습니다.' })
-      .mockRejectedValueOnce({ parameter: 'email', message: '이메일이 잘못되었습니다.' })
-      .mockRejectedValueOnce({
-        message: '회원가입 시도 횟수가 초과되었습니다. 잠시 후 다시 시도해주세요.',
-      });
-
-    render(<SignupForm />);
-    const submit = async () => {
-      fireEvent.change(screen.getByLabelText('이름'), { target: { value: '홍길동' } });
-      fireEvent.change(screen.getByLabelText('직업'), { target: { value: '달램' } });
-      fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'dup@test.com' } });
-      fireEvent.change(screen.getByLabelText('비밀번호'), { target: { value: 'abcd1234' } });
-      fireEvent.change(screen.getByLabelText('비밀번호 확인'), { target: { value: 'abcd1234' } });
-      fireEvent.click(screen.getByRole('button', { name: '회원가입' }));
-    };
-
-    // 세 번 시도
-    await submit();
-    await waitFor(() => screen.getByText('이메일이 잘못되었습니다.'));
-    await submit();
-    await waitFor(() => screen.getByText('이메일이 잘못되었습니다.'));
-    await submit();
-
-    await waitFor(() =>
-      expect(
-        screen.getByText(/회원가입 시도 횟수가 초과되었습니다\. 잠시 후 다시 시도해주세요\./),
-      ).toBeInTheDocument(),
-    );
-
-    expect(mockSetToken).not.toHaveBeenCalled();
-    expect(mockShowToast).not.toHaveBeenCalled();
-    expect(mockReplace).not.toHaveBeenCalled();
   });
 });
