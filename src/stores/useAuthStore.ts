@@ -97,40 +97,35 @@ export const useAuthStore = create<AuthState>((set, get) => {
     // 🧩 로그인 실패 횟수 증가
     // -------------------------------------------------------------------------
     increaseFailedAttempts: () => {
-      const { failedAttempts } = get();
-      const nextAttempts = failedAttempts + 1;
-
-      // 5회 이상이면 잠금
-      if (nextAttempts >= 5) {
-        const lockUntil = Date.now() + 0.5 * 60 * 1000; // 30초 잠금
-
+      let scheduledUnlockAt: number | null = null;
+      // functional set을 사용해 원자적으로 계산/저장
+      set(state => {
+        const nextAttempts = state.failedAttempts + 1;
+        const shouldLock = nextAttempts >= 5;
+        const lockUntil = shouldLock ? Date.now() + 30_000 : null;
         if (typeof window !== 'undefined') {
-          localStorage.setItem('lock_expiry', String(lockUntil));
+          // 잠금 분기에서 failed_attempts를 localStorage에 저장
+          localStorage.setItem('failed_attempts', String(nextAttempts));
+          if (shouldLock && lockUntil) {
+            localStorage.setItem('lock_expiry', String(lockUntil));
+          }
         }
-
-        set({
-          failedAttempts: nextAttempts,
-          isLocked: true,
-          lockExpiry: lockUntil,
-        });
-
-        // ✅ 30초 후 자동 해제
-        setTimeout(
-          () => {
-            const { lockExpiry } = get();
-            if (lockExpiry && Date.now() >= lockExpiry) {
-              set({ isLocked: false, failedAttempts: 0, lockExpiry: null });
+        scheduledUnlockAt = lockUntil;
+        return { failedAttempts: nextAttempts, isLocked: shouldLock, lockExpiry: lockUntil };
+      });
+      // 남은 시간 기준 자동 해제
+      if (scheduledUnlockAt) {
+        const delay = Math.max(scheduledUnlockAt - Date.now(), 0);
+        setTimeout(() => {
+          const { lockExpiry } = get();
+          if (lockExpiry && Date.now() >= lockExpiry) {
+            if (typeof window !== 'undefined') {
               localStorage.removeItem('lock_expiry');
               localStorage.removeItem('failed_attempts');
             }
-          },
-          0.5 * 60 * 1000,
-        ); // 30초
-      } else {
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('failed_attempts', String(nextAttempts));
-        }
-        set({ failedAttempts: nextAttempts });
+            set({ isLocked: false, failedAttempts: 0, lockExpiry: null });
+          }
+        }, delay);
       }
     },
 

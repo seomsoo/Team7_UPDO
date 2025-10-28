@@ -119,10 +119,10 @@ export default function LoginForm() {
         return; // ✅ 이 지점에서 종료! (토스트나 실패 카운트 실행 금지)
       }
 
-      increaseFailedAttempts(); // ❌ 실패 시 실패횟수 +1 - 실제 상태 먼저 반영
-
-      // ✅ 상태 반영 후 최신 값 참조
+      // 4️⃣ 로그인 오류 처리
+      // 실패 횟수 스냅샷 기반 계산 → 사용자 메시지 일관성 확보
       const nextAttempts = failedAttempts + 1;
+      increaseFailedAttempts(); // ❌ 실패 시 실패횟수 +1 - 실제 상태 먼저 반영
       const remaining = Math.max(5 - nextAttempts, 0);
 
       if (nextAttempts >= 5) {

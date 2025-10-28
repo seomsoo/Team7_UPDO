@@ -15,10 +15,10 @@ jest.mock('next/navigation', () => ({
   useRouter: jest.fn(() => ({ replace: mockReplace })),
 }));
 jest.mock('@/components/ui/Toast', () => ({
-  useToast: jest.fn(selector => selector({ showToast: mockShowToast })),
+  useToast: () => ({ showToast: mockShowToast }),
 }));
 jest.mock('@/stores/useAuthStore', () => ({
-  useAuthStore: jest.fn(selector => selector({ setToken: mockSetToken })),
+  useAuthStore: jest.fn(() => ({ setToken: mockSetToken })),
 }));
 jest.mock('@/services/auths/authService', () => ({
   authService: {
