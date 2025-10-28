@@ -15,7 +15,7 @@ export default function CreateGatheringButton() {
   const router = useRouter();
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 120);
+    const onScroll = () => setIsScrolled(window.scrollY > 110);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
