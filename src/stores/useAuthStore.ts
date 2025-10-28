@@ -35,19 +35,31 @@ const readFromStorage = () => {
     };
   }
 
+  // 안전 숫자 파서
+  const parseNum = (v: string | null): number | null => {
+    const n = v != null ? Number(v) : NaN;
+    return Number.isFinite(n) ? n : null;
+  };
+
   const token = localStorage.getItem('access_token');
   const expiryStr = localStorage.getItem('token_expiry');
   const lockExpiryStr = localStorage.getItem('lock_expiry');
   const failedAttemptsStr = localStorage.getItem('failed_attempts');
 
-  const tokenExpiry = expiryStr ? Number(expiryStr) : null;
-  const lockExpiry = lockExpiryStr ? Number(lockExpiryStr) : null;
-  const failedAttempts = failedAttemptsStr ? Number(failedAttemptsStr) : 0;
+  const tokenExpiry = parseNum(expiryStr);
+  const lockExpiry = parseNum(lockExpiryStr);
+  const faNum = failedAttemptsStr != null ? Number(failedAttemptsStr) : NaN;
+  const failedAttempts = Number.isFinite(faNum) ? faNum : 0;
 
   const isLocked = !!lockExpiry && Date.now() < lockExpiry;
 
   return { token, tokenExpiry, failedAttempts, isLocked, lockExpiry };
 };
+
+// 파일 상단(전역)
+export const LOCK_THRESHOLD = 5;
+export const LOCK_MS = 30_000;
+let unlockTimer: ReturnType<typeof setTimeout> | null = null;
 
 // -----------------------------------------------------------------------------
 // ✅ Zustand 스토어 정의
@@ -81,8 +93,11 @@ export const useAuthStore = create<AuthState>((set, get) => {
             tokenExpiry: expiry,
             isAuthenticated: true,
             failedAttempts: 0, // 로그인 성공 시 실패횟수 초기화
+            isLocked: false,
+            lockExpiry: null,
           });
           localStorage.removeItem('failed_attempts');
+          localStorage.removeItem('lock_expiry');
         } else {
           localStorage.removeItem('access_token');
           localStorage.removeItem('token_expiry');
@@ -101,22 +116,27 @@ export const useAuthStore = create<AuthState>((set, get) => {
       // functional set을 사용해 원자적으로 계산/저장
       set(state => {
         const nextAttempts = state.failedAttempts + 1;
-        const shouldLock = nextAttempts >= 5;
-        const lockUntil = shouldLock ? Date.now() + 30_000 : null;
+        const crossing = !state.isLocked && nextAttempts >= LOCK_THRESHOLD; // 임계점 '진입' 여부
+        const lockUntil = crossing ? Date.now() + LOCK_MS : state.lockExpiry;
         if (typeof window !== 'undefined') {
           // 잠금 분기에서 failed_attempts를 localStorage에 저장
           localStorage.setItem('failed_attempts', String(nextAttempts));
-          if (shouldLock && lockUntil) {
+          if (crossing && lockUntil) {
             localStorage.setItem('lock_expiry', String(lockUntil));
           }
         }
-        scheduledUnlockAt = lockUntil;
-        return { failedAttempts: nextAttempts, isLocked: shouldLock, lockExpiry: lockUntil };
+        scheduledUnlockAt = crossing ? lockUntil : null;
+        return {
+          failedAttempts: nextAttempts,
+          isLocked: crossing ? true : state.isLocked,
+          lockExpiry: lockUntil ?? null,
+        };
       });
       // 남은 시간 기준 자동 해제
       if (scheduledUnlockAt) {
+        if (unlockTimer) clearTimeout(unlockTimer);
         const delay = Math.max(scheduledUnlockAt - Date.now(), 0);
-        setTimeout(() => {
+        unlockTimer = setTimeout(() => {
           const { lockExpiry } = get();
           if (lockExpiry && Date.now() >= lockExpiry) {
             if (typeof window !== 'undefined') {
@@ -125,6 +145,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
             }
             set({ isLocked: false, failedAttempts: 0, lockExpiry: null });
           }
+          unlockTimer = null;
         }, delay);
       }
     },
