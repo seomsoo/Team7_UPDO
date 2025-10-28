@@ -149,6 +149,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
         // 잠금 만료됨 → 초기화
         if (typeof window !== 'undefined') {
           localStorage.removeItem('lock_expiry');
+          localStorage.removeItem('failed_attempts');
         }
         set({ isLocked: false, failedAttempts: 0, lockExpiry: null });
         return false;
