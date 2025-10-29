@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import ReviewScore from '@/components/ui/ReviewScore';
 import { IReviewWithRelations } from '@/types/reviews';
 import { formatReviewDate } from '@/utils/date';
@@ -6,11 +7,16 @@ export default function ReviewCard({ User, score, comment, createdAt }: IReviewW
   return (
     <li className="pt-6 md:pt-8">
       <div className="flex items-center gap-2">
-        <img
-          src={User.image ?? '/images/profile.png'}
-          alt={User.name}
-          className="h-8 w-8 flex-shrink-0 rounded-full object-cover md:h-10 md:w-10"
-        />
+        <div className="relative h-8 w-8 flex-shrink-0 md:h-10 md:w-10">
+          <Image
+            src={User.image ?? '/images/profile.png'}
+            alt={User.name}
+            fill
+            quality={80}
+            className="rounded-full object-cover"
+            sizes="(max-width: 768px) 64px, 80px"
+          />
+        </div>
         <div className="min-w-0 flex-1">
           <span className="text-sm text-[var(--color-gray-500)]">{User.name}</span>
           <div className="flex items-center justify-start">

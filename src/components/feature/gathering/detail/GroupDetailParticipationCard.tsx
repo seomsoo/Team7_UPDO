@@ -7,6 +7,7 @@ interface Participant {
   id: number;
   image: string;
 }
+
 interface Props {
   current: number;
   min: number;
@@ -44,13 +45,16 @@ const GroupDetailParticipation = ({
                 key={p.id}
                 className={cn('relative shrink-0', i !== 0 && '-ml-[10px]')}
                 style={{ zIndex: i }}>
-                <Image
-                  src={p.image}
-                  alt=""
-                  width={29}
-                  height={29}
-                  className="aspect-square rounded-full border border-[var(--surface-card)] object-cover"
-                />
+                <div className="relative h-[29px] w-[29px]">
+                  <Image
+                    src={p.image}
+                    alt={`참여자 ${i + 1}`}
+                    fill
+                    quality={80}
+                    sizes="58px"
+                    className="rounded-full border border-[var(--surface-card)] object-cover"
+                  />
+                </div>
               </div>
             ))}
 
