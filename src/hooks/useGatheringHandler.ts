@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/Toast';
 import { gatheringService } from '@/services/gatherings/gatheringService';
 import { copyToClipboard } from '@/utils/clipboard';
+import { useFavoriteStore } from '@/stores/useFavoriteStore';
 
 interface useGatheringHandlersParams {
   gatheringId: string | number;
@@ -19,6 +20,7 @@ export function useGatheringHandlers({
   const router = useRouter();
   const queryClient = useQueryClient();
   const { showToast } = useToast();
+  const { removeFavorite } = useFavoriteStore();
 
   const [isJoining, setIsJoining] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
@@ -66,6 +68,10 @@ export function useGatheringHandlers({
     setIsCanceling(true);
     try {
       await gatheringService.cancelGathering(Number(gatheringId));
+
+      // 찜하기 해제 (찜한 상태라면 자동 해제)
+      removeFavorite(Number(gatheringId));
+
       showToast('모임이 삭제되었습니다.', 'success');
 
       // 삭제 후: 관련 캐시 무효화
