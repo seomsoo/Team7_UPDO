@@ -18,6 +18,7 @@ import { useGatheringStatus } from '@/hooks/useGatheringStatus';
 import { useIsJoinedGathering } from '@/hooks/useIsJoinedGathering';
 import { useParticipants } from '@/hooks/useParticipants';
 import { useState } from 'react';
+import { useToast } from '@/components/ui/Toast';
 
 interface GroupCardProps {
   data: IGathering;
@@ -37,6 +38,7 @@ export default function GroupCard({ data }: GroupCardProps) {
   );
   const { isAuthenticated } = useAuthStore();
   const router = useRouter();
+  const { showToast } = useToast();
 
   const handleJoinClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -52,11 +54,13 @@ export default function GroupCard({ data }: GroupCardProps) {
     try {
       if (isJoined) {
         await leaveMutation.mutateAsync(data.id);
+        showToast('모임 참여를 취소했습니다.', 'info');
       } else {
         await joinMutation.mutateAsync(data.id);
+        showToast('모임에 참여했습니다.', 'success');
       }
     } catch (error) {
-      console.error('참여 상태 변경 실패:', error);
+      showToast('모임에 참여했습니다.', 'success');
     }
   };
 

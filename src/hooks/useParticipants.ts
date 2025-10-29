@@ -10,7 +10,7 @@ export function useParticipants(gatheringId?: number) {
     queryKey: queryKey.participants(numGatheringId),
     queryFn: () => getParticipants(numGatheringId!),
     enabled: typeof numGatheringId === 'number',
-    staleTime: 1000 * 30,
+    staleTime: 1000 * 60 * 3,
   });
 
   const participantCount = useMemo(() => data?.length ?? 0, [data]);
