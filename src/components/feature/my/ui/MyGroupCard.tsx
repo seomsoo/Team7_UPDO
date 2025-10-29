@@ -1,14 +1,14 @@
 'use client';
 
 import Image from 'next/image';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
 import Icon from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
-import SaveButton from '@/components/ui/SaveButton';
 import IconText from '@/components/ui/IconText';
 
+import FavoriteButton from '@/components/feature/favorites/FavoriteButton';
 import { WriteReviewControl } from '@/components/feature/my/controls/WriteReviewControl';
 import { LeaveControl } from '@/components/feature/my/controls/LeaveControl';
 
@@ -54,6 +54,7 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
   // 상태데이터
   const isMyMeetings = variant === 'myMeetings'; // 나의 모임 탭
   const isMyReviews = variant === 'myReviews'; // 나의 리뷰 탭
+  const isCanEditFavorite = isMyMeetings || isMyReviews; // 찜하기 가능한 탭 (나의 모임/나의 리뷰)
 
   const isRegistrationClosed = registrationEnd ? isClosed(registrationEnd) : false;
 
@@ -76,7 +77,6 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
   }, [isMyMeetings, isMyReviews, isCompleted, isReviewed, failedToOpen]);
 
   // 그 외 헬퍼 변수
-  const [isSaved, setIsSaved] = useState<boolean>(false);
   const buttonClassname =
     'w-full h-[44px] sm:h-[48px] sm:w-[130px] md:h-[48px] md:w-[156px] rounded-lg';
 
@@ -118,9 +118,14 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
         }}
         className="relative flex h-[390px] w-full cursor-pointer flex-col gap-4 rounded-lg bg-white hover:shadow-md sm:h-[236px] sm:flex-row sm:p-6 md:gap-6">
         {/* 찜하기 버튼 */}
-        {(isMyMeetings || isMyReviews) && (
+        {isCanEditFavorite && (
           <div className="absolute top-5 right-5">
-            <SaveButton isSaved={isSaved} onToggle={() => setIsSaved(prev => !prev)} size={48} />
+            {!isRegistrationClosed && <FavoriteButton itemId={id} size={48} />}
+            {isRegistrationClosed && (
+              <div role="img" aria-label="모집 마감됨" className="cursor-not-allowed">
+                <Icon name="save" size={48} />
+              </div>
+            )}
           </div>
         )}
 
