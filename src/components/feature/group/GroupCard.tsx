@@ -149,8 +149,8 @@ export default function GroupCard({ data }: GroupCardProps) {
                   <ProgressBar current={participantCount} max={safeCapacity} min={5} />
                   <span
                     className="label ml-2 text-[var(--color-purple-500)]"
-                    aria-label={`현재 ${participantCount}명 참여, 정원 ${capacity}명`}>
-                    {participantCount}/{capacity}
+                    aria-label={`현재 ${participantCount}명 참여, 정원 ${safeCapacity}명`}>
+                    {participantCount}/{safeCapacity}
                   </span>
                 </div>
                 <Button
