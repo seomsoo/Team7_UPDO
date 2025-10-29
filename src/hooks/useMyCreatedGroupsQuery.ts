@@ -14,7 +14,7 @@ export function useMyCreatedGroupsQuery() {
   const userId = useUserStore(state => state.user?.id);
 
   const query = useInfiniteListQuery<CreatedGroupPage>({
-    queryKey: [queryKey.myCreatedGroups(userId), userId ?? 'anon'],
+    queryKey: [queryKey.myCreatedGroups(userId)],
     queryFn: page =>
       getGatheringInfiniteList(page, {
         createdBy: userId as number,

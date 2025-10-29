@@ -79,7 +79,7 @@ export function useGatheringHandlers({
 
       // 삭제 후: 관련 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ['gatherings'] });
-      queryClient.invalidateQueries({ queryKey: queryKey.myCreatedGroups() });
+      if (userId) queryClient.invalidateQueries({ queryKey: queryKey.myCreatedGroups(userId) });
       setTimeout(() => router.replace('/gathering'), 1000);
     } catch {
       showToast('모임이 삭제되지 않았습니다.', 'error');
