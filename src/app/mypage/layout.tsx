@@ -1,6 +1,8 @@
 import AuthGuard from '@/components/feature/my/AuthGuard';
-import LogoutControl from '@/components/feature/my/controls/LogoutControl';
+import MyPageContentPane from '@/components/feature/my/MyPageContentPane';
 import UserProfileCard from '@/components/feature/my/UserProfileCard';
+
+import LogoutControl from '@/components/feature/my/controls/LogoutControl';
 
 export default function MyPageLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,7 +18,9 @@ export default function MyPageLayout({ children }: { children: React.ReactNode }
         </div>
 
         {/* 우측(PC)/하단(모바일) */}
-        <div className="flex min-h-0 w-full flex-1 flex-col">{children}</div>
+        <div className="flex min-h-0 w-full flex-1 flex-col">
+          <MyPageContentPane>{children}</MyPageContentPane>
+        </div>
       </div>
     </AuthGuard>
   );

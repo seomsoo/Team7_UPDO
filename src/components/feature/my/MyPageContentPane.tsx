@@ -1,10 +1,8 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 import Tab from '@/components/ui/Tab';
-import MyPageContentControl from '@/components/feature/my/MyPageContentControl';
-import { TabValue } from '@/app/mypage/[tab]/page';
 
 const TAB_ITEMS = [
   { label: '나의 모임', value: 'myMeeting' },
@@ -12,8 +10,9 @@ const TAB_ITEMS = [
   { label: '내가 만든 모임', value: 'myCreated' },
 ];
 
-export default function MyPageContentPane({ tab }: { tab: TabValue }) {
+export default function MyPageContentPane({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const { tab } = useParams() as { tab?: string };
 
   return (
     <div className="flex flex-col gap-6">
@@ -22,9 +21,7 @@ export default function MyPageContentPane({ tab }: { tab: TabValue }) {
         value={tab ?? 'myMeeting'}
         onChange={val => router.push(`/mypage/${val}`)}
       />
-      <div>
-        <MyPageContentControl tab={tab} />
-      </div>
+      <div>{children}</div>
     </div>
   );
 }
