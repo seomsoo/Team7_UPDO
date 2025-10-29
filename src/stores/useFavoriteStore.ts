@@ -5,6 +5,7 @@ import { useUserStore } from '@/stores/useUserStore';
 interface FavoriteState {
   favorites: Record<string, number[]>;
   toggleFavorite: (id: number) => void;
+  removeFavorite: (id: number) => void;
   isFavorite: (id: number) => boolean;
   getFavoriteCount: () => number;
   getFavorites: () => number[];
@@ -33,6 +34,27 @@ export const useFavoriteStore = create<FavoriteState>()(
             favorites: {
               ...state.favorites,
               [key]: updatedFavorites,
+            },
+          };
+        });
+      },
+
+      // 찜하기 강제 해제
+      removeFavorite: (id: number) => {
+        const key = getCurrentUserKey();
+
+        set(state => {
+          const currentFavorites = state.favorites[key] || [];
+
+          // 이미 찜한 상태가 아니면 아무것도 안 함
+          if (!currentFavorites.includes(id)) {
+            return state;
+          }
+
+          return {
+            favorites: {
+              ...state.favorites,
+              [key]: currentFavorites.filter(favId => favId !== id),
             },
           };
         });
