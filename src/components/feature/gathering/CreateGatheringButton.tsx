@@ -6,19 +6,17 @@ import { useAuthStore } from '@/stores/useAuthStore';
 import { IconButton } from '@/components/ui/IconButton';
 import CreateGroupModal from '@/components/feature/group/CreateGroupModal';
 import { ConfirmModal } from '@/components/ui/Modal';
+import { useInView } from 'react-intersection-observer';
 
 export default function CreateGatheringButton() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const { ref, inView } = useInView({
+    threshold: 0,
+  });
+
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const { isAuthenticated } = useAuthStore();
   const router = useRouter();
-
-  useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 110);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   const handleClick = () => {
     if (isAuthenticated) {
@@ -30,10 +28,11 @@ export default function CreateGatheringButton() {
 
   return (
     <>
+      <div ref={ref} aria-hidden className="pointer-events-none absolute top-[110px] h-px w-px"/>
       <IconButton
         label="모임 만들기"
         className={`fixed right-8 bottom-16 shadow-lg transition-opacity duration-300 md:right-24 lg:right-32 ${
-          isScrolled ? 'opacity-55 hover:opacity-100' : 'opacity-100'
+          inView ? 'opacity-100' : 'opacity-55 hover:opacity-100'
         }`}
         onClick={handleClick}
       />
