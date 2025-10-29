@@ -8,19 +8,17 @@ import {
 } from '@/services/gatherings/gatheringService';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useUserStore } from '@/stores/useUserStore';
-import { IGathering } from '@/types/gatherings';
 
 export function useGatheringQuery(gatheringId?: number) {
   const { isAuthenticated } = useAuthStore();
   const { user } = useUserStore();
   const queryClient = useQueryClient();
-  const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
   const joinedQuery = useQuery({
     queryKey: ['joinedGatherings', user?.id],
     queryFn: () => getJoinedGatherings(),
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !!user?.id,
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 30,
   });
@@ -42,8 +40,9 @@ export function useGatheringQuery(gatheringId?: number) {
     mutationFn: (id: number) => joinGathering(id),
     onMutate: async id => {
       await queryClient.cancelQueries({ queryKey: ['joinedGatherings', user?.id] });
-      const prev = queryClient.getQueryData<IGathering[]>(['joinedGatherings', user?.id]) || [];
-      queryClient.setQueryData(['joinedGatherings', user?.id], [...prev, { id }]);
+      const prev = queryClient.getQueryData<number[]>(['joinedGatherings', user?.id]) ?? [];
+      const next = prev.includes(id) ? prev : [...prev, id];
+      queryClient.setQueryData(['joinedGatherings', user?.id], next);
       return { prev };
     },
     onError: (_, __, context) => {
@@ -60,10 +59,10 @@ export function useGatheringQuery(gatheringId?: number) {
     mutationFn: (id: number) => leaveGathering(id),
     onMutate: async id => {
       await queryClient.cancelQueries({ queryKey: ['joinedGatherings', user?.id] });
-      const prev = queryClient.getQueryData<IGathering[]>(['joinedGatherings', user?.id]) || [];
+      const prev = queryClient.getQueryData<number[]>(['joinedGatherings', user?.id]) || [];
       queryClient.setQueryData(
         ['joinedGatherings', user?.id],
-        prev.filter(g => g.id !== id),
+        prev.filter(joinedId => joinedId !== id),
       );
       return { prev };
     },
@@ -84,8 +83,9 @@ export function useGatheringQuery(gatheringId?: number) {
       setModalOpen(true);
       return;
     }
+    if (gatheringId == null) return;
+    if (joinMutation.isPending || leaveMutation.isPending) return;
 
-    setLoading(true);
     try {
       if (isJoined) {
         await leaveMutation.mutateAsync(gatheringId!);
@@ -94,13 +94,10 @@ export function useGatheringQuery(gatheringId?: number) {
       }
     } catch (error) {
       console.error('참여 상태 변경 실패:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
   return {
-    loading,
     modalOpen,
     setModalOpen,
 
