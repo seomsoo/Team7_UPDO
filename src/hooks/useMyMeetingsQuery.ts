@@ -12,7 +12,7 @@ export type JoinedPage = { data: IJoinedGathering[]; page?: number; nextPage?: n
 
 export function useMyMeetingsQuery() {
   const query = useInfiniteListQuery({
-    queryKey: [queryKey.myMeetings],
+    queryKey: queryKey.myMeetings(),
     queryFn: page => getJoinedGatherings(page, { sortBy: 'dateTime', sortOrder: 'asc' }),
   });
 
