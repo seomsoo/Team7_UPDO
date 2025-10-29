@@ -21,14 +21,18 @@ export default function HeaderProfile() {
   return (
     <Link
       href={isAuthenticated ? '/mypage' : '/login'}
-      className="flex-shrink-0 overflow-hidden rounded-full transition-opacity hover:opacity-80">
-      <Image
-        src={user?.image || '/images/profile.png'}
-        alt={user?.name || '프로필'}
-        width={43}
-        height={43}
-        className="h-8 w-8 rounded-full object-cover sm:h-11 sm:w-11 md:mx-[5px]"
-      />
+      className="flex-shrink-0 overflow-hidden rounded-full transition-opacity hover:opacity-80 md:mx-[5px]">
+      <div className="relative h-8 w-8 sm:h-11 sm:w-11">
+        <Image
+          src={user?.image || '/images/profile.png'}
+          alt={user?.name || '프로필'}
+          fill
+          quality={80}
+          sizes="(max-width: 640px) 64px, 88px"
+          className="rounded-full object-cover"
+          priority
+        />
+      </div>
     </Link>
   );
 }
