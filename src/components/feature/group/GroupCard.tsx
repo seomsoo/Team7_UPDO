@@ -50,7 +50,14 @@ export default function GroupCard({ data }: GroupCardProps) {
         <article className="relative flex h-[346px] w-full max-w-[650px] flex-col overflow-hidden rounded-xl bg-white transition-transform duration-300 will-change-transform hover:scale-105 hover:shadow-md sm:h-[219px] sm:max-w-[1280px] sm:flex-row sm:rounded-2xl sm:p-6 md:max-w-[640px]">
           <div className="relative h-[160px] w-full sm:h-[170px] sm:w-[170px] md:h-auto">
             {!image ? (
-              <div className="flex h-full w-full items-center justify-center bg-gray-100 text-gray-400 sm:rounded-xl"></div>
+              <Image
+                src="/images/header_logo.png"
+                alt="not_image"
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover sm:rounded-xl"
+              />
             ) : (
               <>
                 <Image

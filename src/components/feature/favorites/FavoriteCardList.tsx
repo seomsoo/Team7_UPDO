@@ -71,7 +71,7 @@ export default function FavoriteCardList({ filters }: GroupCardListProps) {
 
   if (loading)
     return (
-      <div className="mx-auto flex flex-col items-center gap-6 md:grid md:grid-cols-2">
+      <div className="mx-auto mb-8 flex flex-col items-center gap-6 md:grid md:grid-cols-2">
         {Array.from({ length: 6 }).map((_, i) => (
           <GroupCardSkeleton key={i} />
         ))}
@@ -104,7 +104,7 @@ export default function FavoriteCardList({ filters }: GroupCardListProps) {
           현재 찜한 모임이 없습니다.
         </span>
       ) : (
-        <div className="mx-auto flex flex-col gap-6 md:grid md:grid-cols-2">
+        <div className="mx-auto mb-8 flex flex-col gap-6 md:grid md:grid-cols-2">
           {filteredGatherings.map(item => (
             <motion.div
               key={item.id}

@@ -144,13 +144,8 @@ export default function GroupDetailPage() {
   return (
     <main className="px-0 py-10">
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2">
-        <div className="relative h-60 w-full overflow-hidden rounded-md bg-amber-50 shadow-sm sm:h-auto sm:rounded-md md:rounded-2xl">
-          <Image
-            src={uiData?.image ?? '/images/find_banner.png'}
-            alt={'모임 대표이미지'}
-            fill
-            className="object-cover"
-          />
+        <div className="relative h-60 w-full overflow-hidden rounded-md bg-white shadow-sm sm:h-auto sm:rounded-md md:rounded-2xl">
+          <Image src={uiData?.image} alt={'모임 대표이미지'} fill className="object-cover" />
         </div>
 
         {/* 상세 헤더 */}

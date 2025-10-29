@@ -40,9 +40,15 @@ export default function HeaderNav() {
                 ? 'font-semibold text-[var(--color-purple-600)] md:font-bold'
                 : 'font-medium text-[var(--color-gray-500)] hover:text-[var(--color-purple-450)]',
             )}>
-            <span className="inline-flex flex-shrink-0 items-center gap-1 whitespace-nowrap md:gap-2 lg:gap-2">
+            <span className="relative inline-flex flex-shrink-0 items-center gap-1 whitespace-nowrap md:gap-2 lg:gap-2">
               {item.label}
-              {showBadge && <Badge value={favoriteCount} size="responsive" />}
+              {showBadge && (
+                <Badge
+                  value={favoriteCount}
+                  size="responsive"
+                  className="absolute -right-3.5 sm:-right-4.5 md:-right-6.5"
+                />
+              )}
             </span>
           </Link>
         );
