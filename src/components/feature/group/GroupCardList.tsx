@@ -69,7 +69,7 @@ export default function GroupCardList({ filters }: GroupCardListProps) {
           현재 등록된 모임이 없습니다.
         </span>
       ) : (
-        <div className="mx-auto flex flex-col gap-6 md:grid md:grid-cols-2">
+        <div className="mx-auto mb-8 flex flex-col gap-6 md:grid md:grid-cols-2">
           {gatherings.map(item => (
             <motion.div
               key={item.id}
