@@ -13,9 +13,14 @@ export const TAG_OPTIONS: Readonly<Option[]> = [
 
 export type SortOption = {
   label: string;
-  value: 'dateTime' | 'registrationEnd' | 'participantCount';
+  value: 'dateTime' | 'registrationEnd' | 'participantCount' | 'createdAt';
 };
 export const SORT_OPTIONS: Readonly<SortOption[]> = [
   { label: '참여 인원순', value: 'participantCount' },
   { label: '마감 임박', value: 'registrationEnd' },
+] as const;
+
+export const REVIEW_SORT_OPTIONS: Readonly<SortOption[]> = [
+  { label: '참여 인원순', value: 'participantCount' },
+  { label: '최신 등록순', value: 'createdAt' },
 ] as const;

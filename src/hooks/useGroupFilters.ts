@@ -2,10 +2,38 @@
 
 import { useState, useRef } from 'react';
 import { useOutsideClick } from '@/hooks/useOutsideClick';
-import { SORT_OPTIONS, TAG_OPTIONS } from '@/constants';
-import { buildFilters } from '@/utils/mapping';
+import { REVIEW_SORT_OPTIONS, SORT_OPTIONS, TAG_OPTIONS } from '@/constants';
+import { buildFilters, buildReviewFilters, type FilterState } from '@/utils/mapping';
 
-export function useGroupFilters() {
+type FilterMode = 'gathering' | 'review';
+
+type BaseReturn = {
+  activeMain: '성장' | '네트워킹';
+  activeSubId: string | undefined;
+  activeSubType: string | undefined;
+  isTagOpen: boolean;
+  isFilterOpen: boolean;
+  isCalendarOpen: boolean;
+  selectedTag: string;
+  selectedFilter: string;
+  selectedDate: Date | undefined;
+  tagRef: React.RefObject<HTMLDivElement>;
+  filterRef: React.RefObject<HTMLDivElement>;
+  calendarRef: React.RefObject<HTMLDivElement>;
+  setIsTagOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsFilterOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsCalendarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  handleTagSelect: (value: string) => void;
+  handleFilterSelect: (value: string) => void;
+  handleDateConfirm: (date?: Date) => void;
+  handleCategoryChange: (id: string, apiType: string) => void;
+  handleMainChange: (value: '성장' | '네트워킹') => void;
+};
+
+export function useGroupFilters(mode: 'review'): BaseReturn & { params: Record<string, string> };
+export function useGroupFilters(mode?: 'gathering'): BaseReturn & { filters: FilterState };
+export function useGroupFilters(mode: FilterMode = 'gathering') {
   const [activeMain, setActiveMain] = useState<'성장' | '네트워킹'>('성장');
   const [activeSubId, setActiveSubId] = useState<string | undefined>(undefined);
   const [activeSubType, setActiveSubType] = useState<string | undefined>(undefined);
@@ -32,7 +60,9 @@ export function useGroupFilters() {
   };
 
   const handleFilterSelect = (value: string) => {
-    const selected = SORT_OPTIONS.find(opt => opt.value === value);
+    const selected =
+      SORT_OPTIONS.find(opt => opt.value === value) ||
+      REVIEW_SORT_OPTIONS.find(opt => opt.value === value);
     setSelectedFilter(selected?.label ?? value);
     setIsFilterOpen(false);
   };
@@ -53,13 +83,22 @@ export function useGroupFilters() {
     setActiveSubType(undefined);
   };
 
-  const filters = buildFilters({
-    activeMain,
-    activeSubType,
-    selectedTag,
-    selectedDate,
-    selectedFilter,
-  });
+  const result =
+    mode === 'review'
+      ? buildReviewFilters({
+          activeMain,
+          activeSubType,
+          selectedTag,
+          selectedDate,
+          selectedFilter,
+        })
+      : buildFilters({
+          activeMain,
+          activeSubType,
+          selectedTag,
+          selectedDate,
+          selectedFilter,
+        });
 
   return {
     activeMain,
@@ -86,6 +125,6 @@ export function useGroupFilters() {
     handleCategoryChange,
     handleMainChange,
 
-    filters,
+    ...(mode === 'review' ? { params: result } : { filters: result }),
   };
 }

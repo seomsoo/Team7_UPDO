@@ -1,6 +1,6 @@
 'use client';
 
-import { useReviewFilters } from '@/hooks/useReviewFilters';
+import { useGroupFilters } from '@/hooks/useGroupFilters';
 import { useReviewScoresQuery } from '@/hooks/useReviewScoreQuery';
 import type { GetReviewScoresParams } from '@/types/reviews';
 import Tab from '@/components/ui/Tab';
@@ -8,25 +8,21 @@ import Category from '@/components/ui/Category';
 import Dropdown from '@/components/ui/Dropdown';
 import { Calendar } from '@/components/ui/Calendar';
 import IconText from '@/components/ui/IconText';
-import { SORT_OPTIONS, TAG_OPTIONS } from '@/constants';
+import { REVIEW_SORT_OPTIONS, TAG_OPTIONS } from '@/constants';
 import ReviewStatsCard from '@/components/feature/review/ReviewStatsCard';
 import AllReviewList from '@/components/feature/review/AllReviewList';
 
 export default function ReviewsPage() {
-  const filter = useReviewFilters();
+  const filter = useGroupFilters('review');
 
   const statsParams: GetReviewScoresParams = {};
-  if ('type' in filter.queryParams && filter.queryParams.type) {
-    statsParams.type = filter.queryParams.type;
-  }
-
   const { data, isLoading } = useReviewScoresQuery(statsParams);
+
   const mainTabs = [
     { value: '성장', label: '성장' },
     { value: '네트워킹', label: '네트워킹' },
   ] as const;
 
-  // 여러 타입의 데이터를 합산
   const aggregatedStats = data?.reduce(
     (acc, curr) => ({
       totalReviews:
@@ -152,7 +148,7 @@ export default function ReviewsPage() {
             {filter.isFilterOpen && (
               <div className="absolute top-full right-0 z-10 mt-2">
                 <Dropdown
-                  items={SORT_OPTIONS}
+                  items={REVIEW_SORT_OPTIONS}
                   onChange={filter.handleFilterSelect}
                   onOpenChange={filter.setIsFilterOpen}
                   size="small"
@@ -168,7 +164,7 @@ export default function ReviewsPage() {
       ) : (
         <>
           <ReviewStatsCard average={average} total={total} distribution={distribution} />
-          <AllReviewList filters={filter.queryParams} />
+          <AllReviewList params={filter.params} />
         </>
       )}
     </div>
