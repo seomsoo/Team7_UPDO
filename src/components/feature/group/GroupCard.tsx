@@ -22,8 +22,15 @@ interface GroupCardProps {
 
 export default function GroupCard({ data }: GroupCardProps) {
   const { name, location, dateTime, registrationEnd, capacity, image } = data;
-  const { participantCount, isJoined, handleJoinClick, modalOpen, setModalOpen, loading } =
-    useGatheringQuery(data.id);
+  const {
+    participantCount,
+    isJoined,
+    handleJoinClick,
+    modalOpen,
+    setModalOpen,
+    joinMutation,
+    leaveMutation,
+  } = useGatheringQuery(data.id);
   const { isFull, isClosed, topic, safeCapacity, category } = useGatheringStatus(
     location,
     capacity,
@@ -150,7 +157,9 @@ export default function GroupCard({ data }: GroupCardProps) {
                   size="small"
                   variant="primary"
                   className="h-[44px] sm:ml-4"
-                  disabled={loading || (isClosed && !isJoined)}
+                  disabled={
+                    joinMutation.isPending || leaveMutation.isPending || (isClosed && !isJoined)
+                  }
                   onClick={handleJoinClick}>
                   {!isAuthenticated ? '참여하기' : isJoined ? '참여취소' : '참여하기'}
                 </Button>
