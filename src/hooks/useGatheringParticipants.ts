@@ -8,10 +8,12 @@ interface ParticipantUI {
 }
 
 export function useGatheringParticipants(gatheringId: string | number) {
+  const numericId = Number(gatheringId);
+
   const { data: participantsData, ...rest } = useQuery({
-    queryKey: ['gatheringParticipants', gatheringId],
-    queryFn: () => gatheringService.getParticipants(Number(gatheringId)),
-    enabled: !!gatheringId,
+    queryKey: ['gatheringParticipants', numericId],
+    queryFn: () => gatheringService.getParticipants(numericId),
+    enabled: Number.isFinite(numericId),
   });
 
   // UI용 데이터 변환

@@ -7,6 +7,7 @@ import { queryKey } from '@/constants/queryKeys';
 import { leaveGathering } from '@/services/gatherings/gatheringService';
 import { Button } from '@/components/ui/Button';
 import ConfirmModal from '@/components/ui/Modal/ConfirmModal';
+import { useUserStore } from '@/stores/useUserStore';
 
 type LeaveControlProps = {
   gatheringId: number;
@@ -17,6 +18,7 @@ type LeaveControlProps = {
 
 export function LeaveControl({ gatheringId, className, disabled, onAfter }: LeaveControlProps) {
   const [open, setOpen] = useState(false);
+  const { user } = useUserStore();
   const queryClient = useQueryClient();
   const { showToast } = useToast();
 
@@ -25,6 +27,9 @@ export function LeaveControl({ gatheringId, className, disabled, onAfter }: Leav
     onSuccess: () => {
       showToast('참여 취소가 완료되었습니다.', 'success');
       queryClient.invalidateQueries({ queryKey: queryKey.myMeetings() });
+      queryClient.invalidateQueries({ queryKey: queryKey.joinedGatherings(user?.id ?? null) });
+      queryClient.invalidateQueries({ queryKey: queryKey.participants(gatheringId) });
+      queryClient.invalidateQueries({ queryKey: queryKey.gatherings() });
       onAfter?.();
     },
     onError: () => {

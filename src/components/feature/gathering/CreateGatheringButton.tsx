@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { IconButton } from '@/components/ui/IconButton';
@@ -28,7 +28,7 @@ export default function CreateGatheringButton() {
 
   return (
     <>
-      <div ref={ref} aria-hidden className="pointer-events-none absolute top-[110px] h-px w-px"/>
+      <div ref={ref} aria-hidden className="pointer-events-none absolute top-[110px] h-px w-px" />
       <IconButton
         label="모임 만들기"
         className={`fixed right-8 bottom-16 shadow-lg transition-opacity duration-300 md:right-24 lg:right-32 ${
