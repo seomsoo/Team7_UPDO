@@ -8,7 +8,7 @@ export type FilterState = {
   subType?: string;
   location?: string;
   date?: string;
-  sortBy?: 'dateTime' | 'registrationEnd' | 'participantCount';
+  sortBy?: 'dateTime' | 'registrationEnd' | 'participantCount' | 'createdAt';
   sortOrder?: 'asc' | 'desc';
   limit?: number;
 };
@@ -67,7 +67,10 @@ export const tagLabelToLocation = (label: string) =>
 
 export const sortLabelToParams = (
   label: string,
-): { sortBy?: 'dateTime' | 'registrationEnd' | 'participantCount'; sortOrder?: 'asc' | 'desc' } => {
+): {
+  sortBy?: 'dateTime' | 'registrationEnd' | 'participantCount' | 'createdAt';
+  sortOrder?: 'asc' | 'desc';
+} => {
   const found = SORT_OPTIONS.find(o => o.label === label);
   if (!found) return {};
   switch (found.value) {
@@ -75,6 +78,8 @@ export const sortLabelToParams = (
       return { sortBy: 'participantCount', sortOrder: 'desc' };
     case 'registrationEnd':
       return { sortBy: 'registrationEnd', sortOrder: 'asc' };
+    case 'createdAt':
+      return { sortBy: 'createdAt', sortOrder: 'desc' };
     default:
       return {};
   }
@@ -127,10 +132,14 @@ export function buildReviewFilters({
 }): Record<string, string> {
   const filters: Record<string, string> = {};
 
-  if (activeSubType) {
-    filters.type = activeSubType;
-  } else if (activeMain === '네트워킹') {
+  if (activeMain === '네트워킹') {
     filters.type = 'WORKATION';
+  } else if (activeMain === '성장') {
+    if (activeSubType) {
+      filters.type = activeSubType;
+    } else {
+      filters.type = 'DALLAEMFIT';
+    }
   }
 
   const location = selectedTag === '태그 전체' ? undefined : tagLabelToLocation(selectedTag);

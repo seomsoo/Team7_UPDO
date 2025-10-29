@@ -1,42 +1,5 @@
 export type ReviewSortOrder = 'asc' | 'desc';
 
-export type AllReviewFilters = {
-  sort?: string;
-  order?: ReviewSortOrder;
-  ratingGte?: number;
-  tagIds?: (number | string)[];
-  period?: { from?: string; to?: string };
-  query?: string;
-  userId?: number;
-};
-
-export function normalizeReviewFilters(filter?: AllReviewFilters) {
-  if (!filter) return {};
-  const { sort, order, ratingGte, tagIds, period, query, userId } = filter;
-
-  const normTags = Array.isArray(tagIds)
-    ? [...tagIds]
-        .map(v => Number(v))
-        .sort((a, b) => a - b)
-        .map(String)
-    : undefined;
-
-  const normPeriod =
-    period && (period.from || period.to)
-      ? { from: period.from ?? '', to: period.to ?? '' }
-      : undefined;
-
-  return {
-    sort: sort ?? undefined,
-    order: order ?? undefined,
-    ratingGte: typeof ratingGte === 'number' ? ratingGte : undefined,
-    tagIds: normTags,
-    period: normPeriod,
-    query: query ?? undefined,
-    userId: typeof userId === 'number' ? userId : undefined,
-  };
-}
-
 export const queryKey = {
   // 내가 참여한 모임 (MyMeeting)
   myMeetings: () => ['gatherings', 'myMeetings'] as const,
@@ -52,6 +15,5 @@ export const queryKey = {
     ['reviews', 'my', 'written', userId ?? null] as const,
 
   // 모든 리뷰
-  allReviews: (filters?: AllReviewFilters) =>
-    ['reviews', 'all', normalizeReviewFilters(filters)] as const,
+  allReviews: (params?: Record<string, string>) => ['reviews', 'all', params || {}] as const,
 };

@@ -2,17 +2,15 @@
 
 import ReviewCardList from '@/components/feature/review/ReviewCardList';
 import { useAllReviewQuery } from '@/hooks/useAllReviewQuery';
-
-import type { AllReviewFilters } from '@/constants/queryKeys';
 import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
 
 type AllReviewListProps = {
-  filters?: AllReviewFilters;
+  params?: Record<string, string>;
 };
 
-export default function AllReviewList({ filters }: AllReviewListProps) {
+export default function AllReviewList({ params }: AllReviewListProps) {
   const { items, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
-    useAllReviewQuery(filters);
+    useAllReviewQuery(params);
 
   const sentinelRef = useInfiniteScrollObserver({
     hasNextPage,
