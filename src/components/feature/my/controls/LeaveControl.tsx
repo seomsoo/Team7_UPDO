@@ -1,5 +1,10 @@
+'use client';
+
 import { useState } from 'react';
-import { useLeaveControl } from '@/hooks/useLeaveControl';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToast } from '@/components/ui/Toast';
+import { queryKey } from '@/constants/queryKeys';
+import { leaveGathering } from '@/services/gatherings/gatheringService';
 import { Button } from '@/components/ui/Button';
 import ConfirmModal from '@/components/ui/Modal/ConfirmModal';
 
@@ -12,12 +17,24 @@ type LeaveControlProps = {
 
 export function LeaveControl({ gatheringId, className, disabled, onAfter }: LeaveControlProps) {
   const [open, setOpen] = useState(false);
-  const { leave, isLeaving } = useLeaveControl();
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+
+  const deleteMutation = useMutation({
+    mutationFn: () => leaveGathering(gatheringId),
+    onSuccess: () => {
+      showToast('참여 취소가 완료되었습니다.', 'success');
+      queryClient.invalidateQueries({ queryKey: queryKey.myMeetings() });
+      onAfter?.();
+    },
+    onError: () => {
+      showToast('삭제하기 실패하였습니다.', 'error');
+    },
+  });
 
   const confirm = () => {
-    leave(gatheringId);
+    deleteMutation.mutate();
     setOpen(false);
-    onAfter?.();
   };
 
   return (
@@ -25,9 +42,9 @@ export function LeaveControl({ gatheringId, className, disabled, onAfter }: Leav
       <Button
         className={className}
         onClick={() => setOpen(true)}
-        disabled={disabled || isLeaving(gatheringId)}
-        aria-disabled={disabled || isLeaving(gatheringId)}>
-        {isLeaving(gatheringId) ? '취소 중…' : '참여 취소하기'}
+        disabled={disabled || deleteMutation.isPending}
+        aria-disabled={disabled || deleteMutation.isPending}>
+        {deleteMutation.isPending ? '취소 중…' : '참여 취소하기'}
       </Button>
       {open && (
         <ConfirmModal
