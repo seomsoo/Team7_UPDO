@@ -1,3 +1,5 @@
+'use client'
+
 import { cn } from '@/utils/cn';
 import IconText from '@/components/ui/IconText';
 import Tag from '@/components/ui/Tag';
