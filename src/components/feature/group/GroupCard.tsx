@@ -60,7 +60,7 @@ export default function GroupCard({ data }: GroupCardProps) {
         showToast('모임에 참여했습니다.', 'success');
       }
     } catch (error) {
-      showToast('모임에 참여했습니다.', 'success');
+      showToast('참여 상태 변경에 실패했습니다.', 'error');
     }
   };
 
