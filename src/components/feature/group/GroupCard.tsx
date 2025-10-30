@@ -19,7 +19,7 @@ import { useIsJoinedGathering } from '@/hooks/useIsJoinedGathering';
 import { useParticipants } from '@/hooks/useParticipants';
 import { useState } from 'react';
 import { useToast } from '@/components/ui/Toast';
-
+import { isClosed } from '@/utils/date';
 interface GroupCardProps {
   data: IGathering;
 }
@@ -30,7 +30,7 @@ export default function GroupCard({ data }: GroupCardProps) {
   const { participantCount } = useParticipants(data.id);
   const [modalOpen, setModalOpen] = useState(false);
   const { joinMutation, leaveMutation } = useJoinLeaveGathering(data.id);
-  const { isFull, isClosed, topic, safeCapacity, category } = useGatheringStatus(
+  const { isFull, isAllClosed, topic, safeCapacity, category } = useGatheringStatus(
     location,
     capacity,
     participantCount,
@@ -92,10 +92,10 @@ export default function GroupCard({ data }: GroupCardProps) {
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="object-cover sm:rounded-xl"
                 />
-                {isClosed && (
+                {isClosed(registrationEnd) && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/70 sm:rounded-xl">
                     <span className="bg-grad-500 bg-clip-text text-3xl leading-[1.1] font-bold text-transparent">
-                      {isFull ? '정원 마감' : '모집 마감'}
+                      모집 마감
                     </span>
                   </div>
                 )}
@@ -103,7 +103,7 @@ export default function GroupCard({ data }: GroupCardProps) {
             )}
           </div>
           <div className="absolute top-5 right-5">
-            {isClosed ? (
+            {isAllClosed ? (
               <div role="img" aria-label="모집 마감됨" className="cursor-not-allowed">
                 <Icon name="save" size={48} />
               </div>
@@ -189,7 +189,7 @@ export default function GroupCard({ data }: GroupCardProps) {
                   variant="primary"
                   className="h-[44px] sm:ml-4"
                   disabled={
-                    joinMutation.isPending || leaveMutation.isPending || (isClosed && !isJoined)
+                    joinMutation.isPending || leaveMutation.isPending || (isAllClosed && !isJoined)
                   }
                   onClick={handleJoinClick}>
                   {!isAuthenticated ? '참여하기' : isJoined ? '참여취소' : '참여하기'}
