@@ -16,6 +16,7 @@ import { toUTCFromKST } from '@/utils/date';
 import { CreateGatheringFormSchema } from '@/schemas/gatheringsSchema';
 import { createGathering } from '@/services/gatherings/gatheringService';
 import { useQueryClient } from '@tanstack/react-query';
+import { queryKey } from '@/constants/queryKeys';
 
 export type CreateGroupForm = {
   name: string;
@@ -82,7 +83,7 @@ export default function CreateGroupModal({ open, onOpenChange }: ModalProps) {
       await createGathering(validData);
       toast.showToast('모임이 생성되었습니다.', 'success');
       onOpenChange(false); // 모달 닫기
-      queryClient.invalidateQueries({ queryKey: ['gatherings'] });
+      queryClient.invalidateQueries({ queryKey: queryKey.gatherings() });
       setForm(InitialForm);
     } catch (e: unknown) {
       const msg =

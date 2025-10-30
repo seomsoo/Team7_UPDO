@@ -1,6 +1,7 @@
 export type ReviewSortOrder = 'asc' | 'desc';
 
 export const queryKey = {
+  gatherings: () => ['gatherings'] as const,
   // 내가 참여한 모임 (MyMeeting)
   myMeetings: () => ['gatherings', 'myMeetings'] as const,
 
@@ -16,4 +17,9 @@ export const queryKey = {
 
   // 모든 리뷰
   allReviews: (params?: Record<string, string>) => ['reviews', 'all', params || {}] as const,
+
+  participants: (id?: number | string | null) =>
+    ['gatheringParticipants', id == null ? null : Number(id)] as const,
+
+  joinedGatherings: (userId?: number | null) => ['joinedGatherings', userId ?? null] as const,
 };

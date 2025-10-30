@@ -13,8 +13,12 @@ import { formatTime, formatDate, formatDeadline } from '@/utils/date';
 import { ConfirmModal } from '@/components/ui/Modal';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useRouter } from 'next/navigation';
-import { useGatheringQuery } from '@/hooks/useGatheringQuery';
+import { useJoinLeaveGathering } from '@/hooks/useJoinLeaveGathering';
 import { useGatheringStatus } from '@/hooks/useGatheringStatus';
+import { useIsJoinedGathering } from '@/hooks/useIsJoinedGathering';
+import { useParticipants } from '@/hooks/useParticipants';
+import { useState } from 'react';
+import { useToast } from '@/components/ui/Toast';
 
 interface GroupCardProps {
   data: IGathering;
@@ -22,23 +26,43 @@ interface GroupCardProps {
 
 export default function GroupCard({ data }: GroupCardProps) {
   const { name, location, dateTime, registrationEnd, capacity, image } = data;
-  const {
-    participantCount,
-    isJoined,
-    handleJoinClick,
-    modalOpen,
-    setModalOpen,
-    joinMutation,
-    leaveMutation,
-  } = useGatheringQuery(data.id);
+  const { isJoined } = useIsJoinedGathering(data.id);
+  const { participantCount } = useParticipants(data.id);
+  const [modalOpen, setModalOpen] = useState(false);
+  const { joinMutation, leaveMutation } = useJoinLeaveGathering(data.id);
   const { isFull, isClosed, topic, safeCapacity, category } = useGatheringStatus(
     location,
     capacity,
     participantCount,
     registrationEnd,
   );
-  const router = useRouter();
   const { isAuthenticated } = useAuthStore();
+  const router = useRouter();
+  const { showToast } = useToast();
+
+  const handleJoinClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (!isAuthenticated) {
+      setModalOpen(true);
+      return;
+    }
+    if (data.id == null) return;
+    if (joinMutation.isPending || leaveMutation.isPending) return;
+
+    try {
+      if (isJoined) {
+        await leaveMutation.mutateAsync(data.id);
+        showToast('모임 참여를 취소했습니다.', 'info');
+      } else {
+        await joinMutation.mutateAsync(data.id);
+        showToast('모임에 참여했습니다.', 'success');
+      }
+    } catch (error) {
+      showToast('참여 상태 변경에 실패했습니다.', 'error');
+    }
+  };
 
   return (
     <>
