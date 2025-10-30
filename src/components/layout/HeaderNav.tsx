@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import Badge from '@/components/ui/Badge';
 import { cn } from '@/utils/cn';
 import { useFavoriteStore } from '@/stores/useFavoriteStore';
+import { useUserStore } from '@/stores/useUserStore';
 import { useMounted } from '@/hooks/useMounted';
 
 const NAV_ITEMS = [
@@ -14,10 +15,12 @@ const NAV_ITEMS = [
 ];
 
 export default function HeaderNav() {
-  const { getFavoriteCount } = useFavoriteStore();
+  const userId = useUserStore(state => state.user?.id ?? null);
+  const favoriteCount = useFavoriteStore(
+    state => state.favorites[userId ? String(userId) : 'guest']?.length ?? 0,
+  );
   const pathname = usePathname();
   const mounted = useMounted();
-  const favoriteCount = getFavoriteCount();
   const isActive = (href: string) => {
     if (href === '/gathering') return pathname === '/' || pathname?.startsWith('/gathering');
     return pathname?.startsWith(href);

@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import Image from 'next/image';
-import { FilterState } from '@/utils/mapping';
+import { useQuery } from '@tanstack/react-query';
+import { FilterState, toGetGatheringsParams } from '@/utils/mapping';
 import GroupCard from '../group/GroupCard';
 import { motion } from 'framer-motion';
 import GroupCardSkeleton from '@/components/ui/Skeleton/GroupCardSkeleton';
 import { useFavoriteStore } from '@/stores/useFavoriteStore';
+import { useUserStore } from '@/stores/useUserStore';
 import { getFavoriteList } from '@/services/gatherings/anonGatheringService';
 import { IGathering } from '@/types/gatherings';
 
@@ -14,62 +16,45 @@ interface GroupCardListProps {
   filters: FilterState;
 }
 
-const EMPTY_FAVORITE_IDS: number[] = [];
-
 export default function FavoriteCardList({ filters }: GroupCardListProps) {
-  const [gatherings, setGatherings] = useState<IGathering[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const favoriteIds = useFavoriteStore(state => {
-    const ids = state.getFavorites();
-    return ids.length ? ids : EMPTY_FAVORITE_IDS;
+  const userId = useUserStore(state => state.user?.id ?? null);
+  const favoriteIds = useFavoriteStore(state => state.getFavorites());
+  const hasFavorites = favoriteIds.length > 0;
+
+  const queryParams = useMemo(() => {
+    if (!hasFavorites) return null;
+    const baseParams = toGetGatheringsParams(filters);
+    const { limit, ...rest } = baseParams;
+
+    return {
+      ...rest,
+      id: favoriteIds,
+      limit: filters.limit ?? limit ?? favoriteIds.length,
+    } as Parameters<typeof getFavoriteList>[0];
+  }, [favoriteIds, filters, hasFavorites]);
+
+  const {
+    data = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery<IGathering[]>({
+    queryKey: ['favoriteGatherings', userId, queryParams],
+    queryFn: () => getFavoriteList(queryParams!),
+    enabled: !!queryParams,
   });
 
-  useEffect(() => {
-    const loadFavorites = async () => {
-      if (favoriteIds.length === 0) {
-        setGatherings([]);
-        setLoading(false);
-        return;
-      }
+  const filteredGatherings = useMemo(() => {
+    if (data.length === 0) return [];
 
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await getFavoriteList({ id: favoriteIds });
-        setGatherings(res);
-      } catch (err) {
-        setGatherings([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadFavorites();
-  }, [favoriteIds]);
-
-  const isGrowthAll =
-    filters.main === '성장' && (!filters.subType || filters.subType === 'DALLAEMFIT');
-  const subTypeFilter =
-    filters.subType && filters.subType !== 'DALLAEMFIT' ? filters.subType : undefined;
-
-  const filteredGatherings = gatherings.filter(item => {
-    if (subTypeFilter && item.type !== subTypeFilter) {
-      return false;
+    if (filters.main === '성장' && (!filters.subType || filters.subType === 'DALLAEMFIT')) {
+      return data.filter(item => item.type !== 'WORKATION');
     }
 
-    if (isGrowthAll && item.type === 'WORKATION') {
-      return false;
-    }
+    return data;
+  }, [data, filters]);
 
-    if (filters.location && item.location !== filters.location) {
-      return false;
-    }
-
-    return true;
-  });
-
-  if (loading)
+  if (isLoading && data.length === 0)
     return (
       <div className="mx-auto mb-8 flex flex-col items-center gap-6 md:grid md:grid-cols-2">
         {Array.from({ length: 6 }).map((_, i) => (
@@ -78,12 +63,12 @@ export default function FavoriteCardList({ filters }: GroupCardListProps) {
       </div>
     );
 
-  if (error)
+  if (isError)
     return (
       <div className="flex h-[300px] flex-col items-center justify-center text-gray-500">
         데이터를 불러오는 중 오류가 발생했습니다.
         <button
-          onClick={() => window.location.reload()}
+          onClick={() => refetch()}
           className="mt-2 rounded-md bg-purple-500 px-4 py-2 text-white hover:bg-purple-600">
           다시 시도
         </button>
