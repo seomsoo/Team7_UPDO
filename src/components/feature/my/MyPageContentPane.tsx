@@ -12,7 +12,7 @@ const TAB_ITEMS = [
 
 export default function MyPageContentPane({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { tab } = useParams() as { tab?: string };
+  const { tab } = useParams<{ tab?: string }>();
 
   return (
     <div className="flex flex-col gap-6">
