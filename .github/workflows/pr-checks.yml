@@ -137,4 +137,5 @@ jobs:
             --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }} \
             --storybook-build-dir=storybook-static \
             --exit-zero-on-changes \
-            --only-changed
+            --only-changed \
+            --skip=turbosnap
