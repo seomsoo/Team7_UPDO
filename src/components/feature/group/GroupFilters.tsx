@@ -123,7 +123,7 @@ export default function GroupFilters({
                 items={SORT_OPTIONS}
                 onChange={handleFilterSelect}
                 onOpenChange={setIsFilterOpen}
-                size="small"
+                size="medium"
               />
             </div>
           )}

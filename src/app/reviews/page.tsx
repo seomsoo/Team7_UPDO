@@ -142,16 +142,16 @@ export default function ReviewsPage() {
               iconColor="var(--color-gray-800)"
               className="cursor-pointer px-2 hover:text-gray-800"
               onClick={() => filter.setIsFilterOpen(prev => !prev)}>
-              {filter.selectedFilter}
+              {filter.selectedReviewFilter}
             </IconText>
 
             {filter.isFilterOpen && (
               <div className="absolute top-full right-0 z-10 mt-2">
                 <Dropdown
                   items={REVIEW_SORT_OPTIONS}
-                  onChange={filter.handleFilterSelect}
+                  onChange={filter.handleReviewFilterSelect}
                   onOpenChange={filter.setIsFilterOpen}
-                  size="small"
+                  size="medium"
                 />
               </div>
             )}
