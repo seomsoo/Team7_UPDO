@@ -104,7 +104,7 @@ export function useGroupFilters(mode: FilterMode = 'gathering') {
           selectedDate,
           selectedFilter,
         });
-  console.log(result);
+
   return {
     activeMain,
     activeSubId,
