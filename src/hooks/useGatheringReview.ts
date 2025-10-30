@@ -36,7 +36,7 @@ export function useGatheringReview({
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ['myReview', gatheringId, userId],
+    queryKey: ['myReview', Number(gatheringId), userId],
     queryFn: () =>
       reviewService.getReviews({
         gatheringId: Number(gatheringId),
@@ -54,7 +54,7 @@ export function useGatheringReview({
   // 리뷰 성공 시 캐시 무효화
   const handleReviewSuccess = async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ['myReview', gatheringId, userId] }),
+      queryClient.invalidateQueries({ queryKey: ['myReview', Number(gatheringId)] }),
       queryClient.invalidateQueries({ queryKey: ['reviews', Number(gatheringId)] }),
       queryClient.invalidateQueries({ queryKey: queryKey.myReviewsWritten(userId) }),
     ]);
