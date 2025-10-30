@@ -7,7 +7,6 @@ interface FavoriteState {
   toggleFavorite: (id: number) => void;
   removeFavorite: (id: number) => void;
   isFavorite: (id: number) => boolean;
-  getFavoriteCount: () => number;
   getFavorites: () => number[];
 }
 
@@ -64,11 +63,6 @@ export const useFavoriteStore = create<FavoriteState>()(
         const key = getCurrentUserKey();
         const currentFavorites = get().favorites[key] || [];
         return currentFavorites.includes(id);
-      },
-
-      getFavoriteCount: () => {
-        const key = getCurrentUserKey();
-        return get().favorites[key]?.length || 0;
       },
 
       getFavorites: () => {
