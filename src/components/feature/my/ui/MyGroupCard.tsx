@@ -54,7 +54,7 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
   // 상태데이터
   const isMyMeetings = variant === 'myMeetings'; // 나의 모임 탭
   const isMyReviews = variant === 'myReviews'; // 나의 리뷰 탭
-  const isCanEditFavorite = isMyMeetings || isMyReviews; // 찜하기 가능한 탭 (나의 모임/나의 리뷰)
+  const isEditableFavorite = isMyMeetings || isMyReviews; // 찜하기 가능한 탭 (나의 모임/나의 리뷰)
 
   const isRegistrationClosed = registrationEnd ? isClosed(registrationEnd) : false;
 
@@ -118,7 +118,7 @@ export default function MyGroupCard({ variant, item }: MyGroupCardProps) {
         }}
         className="relative flex h-[390px] w-full cursor-pointer flex-col gap-4 rounded-lg bg-white hover:shadow-md sm:h-[236px] sm:flex-row sm:p-6 md:gap-6">
         {/* 찜하기 버튼 */}
-        {isCanEditFavorite && (
+        {isEditableFavorite && (
           <div className="absolute top-5 right-5">
             {!isRegistrationClosed && <FavoriteButton itemId={id} size={48} />}
             {isRegistrationClosed && (
