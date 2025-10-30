@@ -44,7 +44,7 @@ export const Pagination = ({ totalPages, currentPage, onPageChange }: Pagination
     <div className="flex w-full items-center justify-center gap-0.5 sm:gap-1">
       <button
         className={cn(
-          'mr-2 rounded-sm sm:h-12 sm:w-12',
+          'mr-2 cursor-pointer rounded-sm sm:h-12 sm:w-12',
           currentPage === 1
             ? 'cursor-not-allowed opacity-50'
             : 'sm:hover:bg-[var(--gray-100)] sm:active:bg-[var(--gray-200)]',
@@ -69,7 +69,7 @@ export const Pagination = ({ totalPages, currentPage, onPageChange }: Pagination
             onClick={() => handlePageClick(page)}
             onKeyDown={e => handleKeyDown(e, page)}
             className={cn(
-              'typo-base h-8 w-8 rounded-sm font-bold transition-colors sm:h-12 sm:w-12',
+              'typo-base h-8 w-8 cursor-pointer rounded-sm font-bold transition-colors sm:h-12 sm:w-12',
               page === currentPage
                 ? 'bg-[var(--purple-50)] text-[var(--purple-550)]'
                 : 'font-normal text-[var(--gray-500)] hover:bg-[var(--gray-100)]',
@@ -82,7 +82,7 @@ export const Pagination = ({ totalPages, currentPage, onPageChange }: Pagination
 
       <button
         className={cn(
-          'ml-2 rounded-sm text-xs sm:h-12 sm:w-12 sm:text-base',
+          'ml-2 cursor-pointer rounded-sm text-xs sm:h-12 sm:w-12 sm:text-base',
           currentPage === totalPages
             ? 'cursor-not-allowed opacity-50'
             : 'sm:hover:bg-[var(--gray-100)] sm:active:bg-[var(--gray-200)]',

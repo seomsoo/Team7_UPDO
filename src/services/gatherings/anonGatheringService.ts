@@ -1,5 +1,5 @@
 import Service from '../service';
-import { IGathering, IParticipant } from '@/types/gatherings';
+import { IGathering, IParticipant, IJoinedGathering } from '@/types/gatherings';
 
 class AnonGatheringService extends Service {
   getGatheringList(params?: Record<string, string | number | boolean>) {
@@ -21,10 +21,40 @@ class AnonGatheringService extends Service {
       nextPage: res.length === ITEMS_PER_PAGE ? pageParam + 1 : undefined,
     }));
   }
-  getFavoriteList(params: { id?: number[] }) {
-    const ids = params?.id?.length ? params.id.join(',') : '';
+
+  getJoinedGatherings(pageParam = 1, params?: Record<string, string | number | boolean>) {
+    const ITEMS_PER_PAGE = 10;
+    const offset = (pageParam - 1) * ITEMS_PER_PAGE;
+    const limitParams = `limit=${ITEMS_PER_PAGE}&offset=${offset}`;
+    const qs =
+      params && Object.keys(params).length
+        ? `${new URLSearchParams(stringifyParams(params)).toString()}&${limitParams}`
+        : limitParams;
+
+    return this.http.get<IJoinedGathering[]>(`/gatherings/joined?${qs}`).then(res => ({
+      data: res,
+      nextPage: res.length === ITEMS_PER_PAGE ? pageParam + 1 : undefined,
+    }));
+  }
+
+  getFavoriteList(
+    params: { id?: number[]; limit?: number } & Record<string, string | number | boolean> = {},
+  ) {
+    const { id, limit = 50, ...rest } = params;
+    const ids = id?.length ? id.join(',') : '';
     if (!ids) return Promise.resolve([] as IGathering[]);
-    return this.http.get<IGathering[]>(`/gatherings?limit=50&id=${ids}`);
+
+    const searchParams = new URLSearchParams();
+    searchParams.set('id', ids);
+    searchParams.set('limit', String(limit));
+
+    Object.entries(rest).forEach(([key, value]) => {
+      if (value === undefined || value === null) return;
+      searchParams.set(key, String(value));
+    });
+
+    const qs = searchParams.toString();
+    return this.http.get<IGathering[]>(`/gatherings?${qs}`);
   }
 
   getGatheringDetail(id: string) {
@@ -57,3 +87,5 @@ export const getGatheringDetail =
   anonGatheringService.getGatheringDetail.bind(anonGatheringService);
 export const getGatheringParticipants =
   anonGatheringService.getGatheringParticipants.bind(anonGatheringService);
+export const getJoinedGatherings =
+  anonGatheringService.getJoinedGatherings.bind(anonGatheringService);

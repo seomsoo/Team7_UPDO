@@ -3,36 +3,36 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+
 import { useAuthStore } from '@/stores/useAuthStore';
+import { useUserStore } from '@/stores/useUserStore';
 
-interface HeaderProfileProps {
-  user?: {
-    id: number;
-    name: string;
-    image?: string;
-  };
-}
-
-export default function HeaderProfile({ user }: HeaderProfileProps) {
+export default function HeaderProfile() {
+  const { user } = useUserStore();
   const { isAuthenticated, checkTokenValidity } = useAuthStore();
+
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     checkTokenValidity();
     setMounted(true);
   }, [checkTokenValidity]);
   if (!mounted) return null;
+
   return (
     <Link
       href={isAuthenticated ? '/mypage' : '/login'}
-      className="flex-shrink-0 overflow-hidden rounded-full transition-opacity hover:opacity-80">
-      <Image
-        src={user?.image || '/images/profile.png'}
-        alt={user?.name || '프로필'}
-        width={54}
-        height={54}
-        sizes="54px"
-        className="mx-[1px] h-[34px] w-[34px] object-cover md:mx-[5px] md:h-[54px] md:w-[54px]"
-      />
+      className="flex-shrink-0 overflow-hidden rounded-full transition-opacity hover:opacity-80 md:mx-[5px]">
+      <div className="relative h-8 w-8 sm:h-11 sm:w-11">
+        <Image
+          src={user?.image || '/images/profile.png'}
+          alt={user?.name || '프로필'}
+          fill
+          quality={80}
+          sizes="(max-width: 640px) 64px, 88px"
+          className="rounded-full object-cover"
+          priority
+        />
+      </div>
     </Link>
   );
 }

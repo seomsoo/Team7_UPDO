@@ -2,7 +2,8 @@ import React, { useRef, useState } from 'react';
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Modal, ConfirmModal } from '../Modal';
 import CreateGroupModal from '@/components/feature/group/CreateGroupModal';
-import EditReviewModal from '@/components/feature/review/EditReviewModal';
+import EditReviewModal from '@/components/feature/review/WriteReviewModal';
+import EditProfileModal from '@/components/feature/my/EditProfileModal';
 
 const meta: Meta<typeof Modal> = {
   title: 'components/ui/Modal',
@@ -126,6 +127,36 @@ export const EditReviewModalPlayground: EditReviewModalStory = {
         </button>
 
         <EditReviewModal {...args} open={open} onOpenChange={setOpen} />
+      </>
+    );
+  },
+  argTypes: {},
+  args: {},
+};
+
+type EditProfileModalStory = StoryObj<typeof EditProfileModal>;
+export const EditProfileModalPlayground: EditProfileModalStory = {
+  render: args => {
+    const [open, setOpen] = useState(false);
+    const user = {
+      name: 'test',
+      image: '',
+      companyName: '개인',
+      email: 'test@test.com',
+      id: 1,
+      createdAt: '',
+      updatedAt: '',
+    };
+
+    return (
+      <>
+        <button
+          className="cursor-pointer rounded-md border px-3 py-2 text-sm"
+          onClick={() => setOpen(true)}>
+          모달
+        </button>
+
+        <EditProfileModal {...args} user={user} open={open} onOpenChange={setOpen} />
       </>
     );
   },

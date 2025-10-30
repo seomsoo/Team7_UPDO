@@ -5,6 +5,8 @@ import { Toast } from '@/components/ui/Toast';
 import Header from '@/components/layout/Header';
 import ScrollWrapper from '@/components/ui/ScrollVisibility';
 import QueryProvider from '@/components/providers/QueryProvider';
+import AuthSessionWatcher from '@/components/feature/auth/AuthSessionWatcher';
+import AuthProvider from './AuthProvider';
 
 export const metadata: Metadata = {
   title: {
@@ -47,10 +49,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ko" className={Pretendard.variable}>
       <body>
         <QueryProvider>
-          <ScrollWrapper />
-          <Header />
-          <Toast />
-          <main className="layout-container font-sans">{children}</main>
+          {/* 전역 토큰 만료 감시 (항상 활성화됨) */}
+          <AuthProvider>
+            <AuthSessionWatcher />
+            <ScrollWrapper />
+            <Header />
+            <Toast />
+            <main className="layout-container font-sans">{children}</main>
+          </AuthProvider>
         </QueryProvider>
       </body>
     </html>

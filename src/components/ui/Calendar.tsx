@@ -5,10 +5,10 @@ import { Button } from './Button';
 
 export interface CalendarProps {
   value?: Date; // 선택된 날짜 or 날짜/시간
+  cancelLabel?: string; // 취소 대신 사용할 문자열
   onConfirm: (date?: Date) => void; // "확인" 버튼 클릭 시 최종 값 전달
   onNext?: (date?: Date) => void; // "다음" 클릭 시 날짜만 전달
   onCancel: () => void; // "취소" 버튼 클릭 핸들러
-  // onChange?: (date: Date | undefined) => void; // (선택) 즉시 변경 핸들러 (staged UI에서는 사용 안 함)
   startMonth?: Date; // 달력이 시작되는 월 (기본값: 2025-01-01)
   className?: string; // 추가 CSS 클래스
   variant?: 'date' | 'datetime'; // 달력 모드, 또는 날짜+시간 선택모드
@@ -38,7 +38,7 @@ function CustomNav({ onPreviousClick, onNextClick, previousMonth, nextMonth }: N
         onClick={onPreviousClick}
         disabled={!previousMonth}
         aria-label="Go to previous month"
-        className="inline-flex h-10 w-10 items-center justify-center rounded-md text-purple-500 transition-colors">
+        className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md text-purple-500 transition-colors">
         <svg className="h-4 w-4 fill-current" viewBox="0 0 16 16" aria-hidden="true">
           <path
             d="M11 14 5 8l6-6"
@@ -57,7 +57,7 @@ function CustomNav({ onPreviousClick, onNextClick, previousMonth, nextMonth }: N
         onClick={onNextClick}
         disabled={!nextMonth}
         aria-label="Go to next month"
-        className="inline-flex h-10 w-10 items-center justify-center rounded-md text-purple-500 transition-colors">
+        className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md text-purple-500 transition-colors">
         <svg className="h-4 w-4 fill-current" viewBox="0 0 16 16" aria-hidden="true">
           <path
             d="M5 14l6-6-6-6"
@@ -74,6 +74,7 @@ function CustomNav({ onPreviousClick, onNextClick, previousMonth, nextMonth }: N
 
 export const Calendar = ({
   value,
+  cancelLabel,
   onCancel,
   onConfirm,
   onNext,
@@ -193,13 +194,13 @@ export const Calendar = ({
             week: 'flex w-full h-8',
             day: 'flex-1 flex justify-center items-center',
             day_button:
-              'w-full h-full p-0 typo-body-sm rounded-md transition-colors hover:bg-purple-500 hover:text-white aria-selected:hover:bg-purple-500 flex items-center justify-center ',
+              'w-full h-full p-0 typo-body-sm cursor-pointer rounded-md transition-colors hover:bg-purple-500 hover:text-white aria-selected:hover:bg-purple-500 flex items-center justify-center ',
             today: 'text-purple-500',
             disabled: 'text-gray-300 opacity-50 cursor-not-allowed',
             button_previous:
-              'h-10 w-10 inline-flex items-center justify-center rounded-md text-purple-500 transition-colors',
+              'h-10 w-10 cursor-pointer inline-flex items-center justify-center rounded-md text-purple-500 transition-colors',
             button_next:
-              'h-10 w-10 inline-flex items-center justify-center rounded-md text-purple-500 transition-colors',
+              'h-10 w-10 inline-flex cursor-pointer items-center justify-center rounded-md text-purple-500 transition-colors',
             chevron: 'fill-current w-4 h-4',
             footer: 'pt-1 mt-3',
           }}
@@ -210,6 +211,7 @@ export const Calendar = ({
           footer={
             variant === 'date' ? (
               <FooterBar
+                cancelLabel={cancelLabel}
                 primaryLabel="확인"
                 onPrimary={() => onConfirm(tempDate ?? value)}
                 onCancel={onCancel}
@@ -217,6 +219,7 @@ export const Calendar = ({
               />
             ) : (
               <FooterBar
+                cancelLabel={cancelLabel}
                 primaryLabel="다음"
                 onPrimary={() => {
                   if (tempDate) onNext?.(tempDate);
@@ -297,7 +300,7 @@ export const Calendar = ({
             </div>
           </div>
           <FooterBar
-            cancelLabel="이전"
+            cancelLabel={cancelLabel}
             primaryLabel="확인"
             onPrimary={() => {
               const baseDate = tempDate ?? value;

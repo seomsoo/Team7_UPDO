@@ -1,10 +1,12 @@
-// src/components/layout/HeaderNav.tsx
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Badge from '@/components/ui/Badge';
 import { cn } from '@/utils/cn';
+import { useFavoriteStore } from '@/stores/useFavoriteStore';
+import { useUserStore } from '@/stores/useUserStore';
+import { useMounted } from '@/hooks/useMounted';
 
 const NAV_ITEMS = [
   { label: '모임 찾기', href: '/gathering' },
@@ -12,9 +14,13 @@ const NAV_ITEMS = [
   { label: '모든 리뷰', href: '/reviews' },
 ];
 
-export default function HeaderNav({ favoriteCount = 0 }: { favoriteCount?: number }) {
+export default function HeaderNav() {
+  const userId = useUserStore(state => state.user?.id ?? null);
+  const favoriteCount = useFavoriteStore(
+    state => state.favorites[userId ? String(userId) : 'guest']?.length ?? 0,
+  );
   const pathname = usePathname();
-
+  const mounted = useMounted();
   const isActive = (href: string) => {
     if (href === '/gathering') return pathname === '/' || pathname?.startsWith('/gathering');
     return pathname?.startsWith(href);
@@ -24,6 +30,7 @@ export default function HeaderNav({ favoriteCount = 0 }: { favoriteCount?: numbe
     <nav className="flex items-center sm:gap-2 md:gap-4 lg:gap-6" role="navigation">
       {NAV_ITEMS.map(item => {
         const active = isActive(item.href);
+        const showBadge = mounted && item.hasBadge;
         return (
           <Link
             key={item.href}
@@ -36,10 +43,14 @@ export default function HeaderNav({ favoriteCount = 0 }: { favoriteCount?: numbe
                 ? 'font-semibold text-[var(--color-purple-600)] md:font-bold'
                 : 'font-medium text-[var(--color-gray-500)] hover:text-[var(--color-purple-450)]',
             )}>
-            <span className="inline-flex flex-shrink-0 items-center gap-1 whitespace-nowrap md:gap-2 lg:gap-2">
+            <span className="relative inline-flex flex-shrink-0 items-center gap-1 whitespace-nowrap md:gap-2 lg:gap-2">
               {item.label}
-              {item.hasBadge && favoriteCount > 0 && (
-                <Badge value={favoriteCount} size="responsive" />
+              {showBadge && (
+                <Badge
+                  value={favoriteCount}
+                  size="responsive"
+                  className="absolute -right-3.5 sm:-right-4.5 md:-right-6.5"
+                />
               )}
             </span>
           </Link>

@@ -11,28 +11,7 @@ import {
 import HttpClient from '../httpClient';
 
 class AuthService {
-  private http;
-
-  constructor() {
-    // ✅ SSR(빌드 타임)에서는 HttpClient를 생성하지 않음
-    if (typeof window === 'undefined') {
-      // 빌드 중이면, 더미 http 객체로 대체 (절대 호출되지 않음)
-      this.http = {
-        post: () => {
-          throw new Error('API_BASE_URL is not configured (SSR build-time)');
-        },
-        get: () => {
-          throw new Error('API_BASE_URL is not configured (SSR build-time)');
-        },
-        put: () => {
-          throw new Error('API_BASE_URL is not configured (SSR build-time)');
-        },
-      };
-    } else {
-      // ✅ CSR 환경에서만 실제 HttpClient 생성
-      this.http = HttpClient.getInstance();
-    }
-  }
+  private http = HttpClient.getInstance();
 
   signup(data: SignupRequest) {
     return this.http.post<SignupResponse>('/auths/signup', data);
@@ -51,6 +30,12 @@ class AuthService {
   }
 
   updateUser(data: UpdateUserRequest) {
+    // ✅ 브라우저 환경에서만 FormData 사용
+    if (typeof window === 'undefined' || typeof FormData === 'undefined') {
+      // SSR / 테스트 환경에서는 안전하게 빈 객체 반환
+      return Promise.resolve({} as UpdateUserResponse);
+    }
+
     const formData = new FormData();
     if (data.companyName) formData.append('companyName', data.companyName);
     if (data.image) formData.append('image', data.image);

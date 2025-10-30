@@ -18,10 +18,6 @@ const meta: Meta<typeof Tab> = {
       control: 'text',
       description: '현재 선택된 탭 값',
     },
-    fullWidth: {
-      control: 'boolean',
-      description: '전체 너비 사용 여부',
-    },
     className: {
       control: 'text',
       description: '추가 CSS 클래스',
@@ -34,13 +30,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Preview: Story = {
   parameters: { controls: { disable: true } },
-  args: { fullWidth: true },
-  render: args => {
+  args: {},
+  render: (args: React.ComponentProps<typeof Tab>) => {
     const [value1, setValue1] = useState(args.value ?? 'growth');
     const [value2, setValue2] = useState('myMeetings');
 
     // 홈: 아이콘 있는 탭
-    const tabItems: TabItem[] = [
+    const tabItems: TabItem<'growth' | 'networking'>[] = [
       {
         value: 'growth',
         label: '성장',
@@ -56,7 +52,7 @@ export const Preview: Story = {
     ];
 
     // 마이페이지: 아이콘 없는 탭
-    const myPageTabs: TabItem[] = [
+    const myPageTabs: TabItem<'myMeetings' | 'myReviews' | 'created'>[] = [
       { value: 'myMeetings', label: '나의 모임', content: <div>나의 모임</div> },
       { value: 'myReviews', label: '나의 리뷰', content: <div>나의 리뷰</div> },
       { value: 'created', label: '내가 만든 모임', content: <div>내가 만든 모임</div> },

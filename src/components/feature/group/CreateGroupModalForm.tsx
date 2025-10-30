@@ -34,8 +34,9 @@ export default function CreateGroupModalForm({
     const file = e.target.files?.[0] ?? null;
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      alert('이미지 파일만 업로드할 수 있어요.');
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('png, jpg, jpeg, webp 파일만 업로드할 수 있어요.');
       return;
     }
 
@@ -69,10 +70,12 @@ export default function CreateGroupModalForm({
       </div>
 
       <div>
-        <label className={labelClassName}>이미지</label>
+        <label className={labelClassName}>
+          이미지 <span className="typo-xs text-gray-400">(선택)</span>
+        </label>
         <input
           type="file"
-          accept="image/*"
+          accept=".png,.jpg,.jpeg,.webp"
           ref={fileRef}
           onChange={handleFileChange}
           className="hidden"
@@ -80,7 +83,7 @@ export default function CreateGroupModalForm({
 
         <div className="flex items-center gap-3">
           <Input
-            placeholder="이미지를 첨부해주세요"
+            placeholder="이미지를 첨부해주세요 ex)png, wepb, jpg, jpeg"
             value={form.image ? form.image.name : ''}
             readOnly
             disableFocusStyle
@@ -93,7 +96,7 @@ export default function CreateGroupModalForm({
             type="button"
             variant="calendarOutline"
             size={'calendar_small'}
-            className="cursor-pointer"
+            className="min-w-[76px] cursor-pointer"
             onClick={() => fileRef.current?.click()}>
             파일 찾기
           </Button>
@@ -102,7 +105,7 @@ export default function CreateGroupModalForm({
 
       <div className="grid gap-10 md:grid-cols-2">
         <div>
-          <label className="label mb-2 block text-gray-800">모임 날짜</label>
+          <label className="label mb-2 block pl-1 text-gray-800">모임 날짜</label>
 
           <DatetimeInput
             value={form.date ?? ''}
@@ -117,7 +120,7 @@ export default function CreateGroupModalForm({
         </div>
         <div>
           <div className="flex justify-between">
-            <label className="label mb-2 block text-gray-800">마감 날짜</label>
+            <label className="label mb-2 block pl-1 text-gray-800">모집 마감 날짜</label>
           </div>
           <DatetimeInput
             value={form.registrationEnd ?? ''}

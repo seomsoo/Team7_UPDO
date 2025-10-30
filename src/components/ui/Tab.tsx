@@ -31,23 +31,22 @@ const tabItem = cva(
   },
 );
 
-export interface TabItem {
-  value: string;
+export interface TabItem<T extends string> {
+  value: T;
   label: string;
   icon?: 'category_tab1' | 'category_tab2' | undefined; // 아이콘 없는 경우
   disabled?: boolean;
   content?: React.ReactNode;
 }
 
-export interface TabProps extends VariantProps<typeof tabItem> {
-  items: TabItem[];
-  value: string;
-  onChange: (value: string) => void;
-  fullWidth?: boolean;
+export interface TabProps<T extends string> extends VariantProps<typeof tabItem> {
+  items: readonly TabItem<T>[];
+  value: T;
+  onChange: (value: T) => void;
   className?: string;
 }
 
-const Tab: React.FC<TabProps> = ({ items, value, onChange, fullWidth = true, className }) => {
+const Tab = <T extends string>({ items, value, onChange, className }: TabProps<T>) => {
   const [indicatorStyle, setIndicatorStyle] = React.useState({ width: 0, left: 0 });
   const tabRefs = React.useRef<Map<number, HTMLButtonElement>>(new Map());
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -98,11 +97,9 @@ const Tab: React.FC<TabProps> = ({ items, value, onChange, fullWidth = true, cla
     };
   }, [value, items]);
 
-  const handleClick = (val: string, disabled?: boolean) => {
+  const handleClick = (val: T, disabled?: boolean) => {
     if (!disabled) onChange(val);
   };
-
-  const activeItem = items.find(i => i.value === value);
 
   return (
     <div className={twMerge('w-full', className)}>
@@ -111,10 +108,9 @@ const Tab: React.FC<TabProps> = ({ items, value, onChange, fullWidth = true, cla
         ref={containerRef}
         role="tablist"
         className={twMerge(
-          'relative flex items-center justify-start border-b border-[var(--color-gray-200)]',
-          'scrollbar-hide gap-2 overflow-x-auto px-2 whitespace-nowrap',
-          'md:gap-4 md:px-4 lg:gap-6 lg:px-6',
-          fullWidth && 'w-full',
+          'relative flex items-center border-b border-[var(--color-gray-200)]',
+          'justify-center md:justify-start',
+          'w-full overflow-x-hidden',
         )}>
         {items.map((item, i) => {
           const isActive = item.value === value;

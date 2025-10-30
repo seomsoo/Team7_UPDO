@@ -1,4 +1,5 @@
 'use client';
+import { createPortal } from 'react-dom';
 import { create } from 'zustand';
 
 type ToastType = 'success' | 'error' | 'info';
@@ -16,7 +17,7 @@ export const useToast = create<ToastState>(set => ({
   isOpen: false,
   showToast: (message, type = 'info') => {
     set({ message, type, isOpen: true });
-    setTimeout(() => set({ isOpen: false }), 2000);
+    setTimeout(() => set({ isOpen: false }), 3000);
   },
   hideToast: () => set({ isOpen: false }),
 }));
@@ -31,9 +32,14 @@ export function Toast() {
     info: 'bg-blue-600',
   }[type];
 
-  return (
-    <div className={`fixed right-6 bottom-6 rounded-md px-4 py-3 text-white shadow-lg ${bg}`}>
-      {message}
+  const node = (
+    <div aria-live="polite" className="pointer-events-none fixed inset-0 z-[99999]">
+      <div
+        className={`pointer-events-auto absolute right-6 bottom-6 rounded-md px-4 py-3 text-white shadow-lg ${bg}`}>
+        {message}
+      </div>
     </div>
   );
+
+  return typeof window !== 'undefined' ? createPortal(node, document.body) : node;
 }

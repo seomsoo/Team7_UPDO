@@ -11,10 +11,12 @@ import CreateGroupModalForm from './CreateGroupModalForm';
 import { Option } from '@/constants/tags';
 import { TabOption } from '@/constants/tabs';
 import { Type, Location, TabToType, TagToLocation } from '@/utils/mapping';
-import { formatDateToLocalISO } from '@/utils/date';
+import { toUTCFromKST } from '@/utils/date';
 
 import { CreateGatheringFormSchema } from '@/schemas/gatheringsSchema';
 import { createGathering } from '@/services/gatherings/gatheringService';
+import { useQueryClient } from '@tanstack/react-query';
+import { queryKey } from '@/constants/queryKeys';
 
 export type CreateGroupForm = {
   name: string;
@@ -25,39 +27,42 @@ export type CreateGroupForm = {
   date?: string | null;
   registrationEnd?: string | null;
   capacity?: number | null;
-  image?: File | null;
+  image?: File | null | undefined;
+};
+
+const InitialForm = {
+  name: '',
+  tag: null,
+  tab: '스킬업',
+  type: null,
+  location: null,
+  date: null,
+  registrationEnd: null,
+  capacity: 5,
 };
 
 export type SubmitErrors = Record<string, string[]>; // key: field name, value: messages
 
 export default function CreateGroupModal({ open, onOpenChange }: ModalProps) {
   const toast = useToast();
+  const queryClient = useQueryClient();
   const [submitErrors, setSubmitErrors] = useState<SubmitErrors | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState<CreateGroupForm>({
-    name: '',
-    tag: null,
-    tab: '스킬업',
-    type: null,
-    location: null,
-    date: null,
-    registrationEnd: null,
-    capacity: 5,
-    image: null,
-  });
+  const [form, setForm] = useState<CreateGroupForm>(InitialForm);
 
   const handleSubmit = async () => {
     const payload = {
       name: form.name.trim(),
       type: form.tab && TabToType(form.tab),
       location: form.tag && TagToLocation(form.tag),
-      dateTime: form.date && formatDateToLocalISO(new Date(form.date)),
-      registrationEnd: form.registrationEnd && formatDateToLocalISO(new Date(form.registrationEnd)),
+      dateTime: form.date && toUTCFromKST(new Date(form.date)),
+      registrationEnd: form.registrationEnd && toUTCFromKST(new Date(form.registrationEnd)),
       capacity: form.capacity ? Number(form.capacity) : 0,
-      image: form.image,
+      image: form.image instanceof File ? form.image : undefined,
     };
 
     const validation = CreateGatheringFormSchema.safeParse(payload);
+
     if (!validation.success) {
       const grouped: SubmitErrors = {};
       for (const issue of validation.error.issues) {
@@ -70,6 +75,7 @@ export default function CreateGroupModal({ open, onOpenChange }: ModalProps) {
     }
     // 성공 시 이전 에러 초기화
     setSubmitErrors(null);
+
     const validData = validation.data;
 
     try {
@@ -77,6 +83,8 @@ export default function CreateGroupModal({ open, onOpenChange }: ModalProps) {
       await createGathering(validData);
       toast.showToast('모임이 생성되었습니다.', 'success');
       onOpenChange(false); // 모달 닫기
+      queryClient.invalidateQueries({ queryKey: queryKey.gatherings() });
+      setForm(InitialForm);
     } catch (e: unknown) {
       const msg =
         e &&
@@ -92,22 +100,24 @@ export default function CreateGroupModal({ open, onOpenChange }: ModalProps) {
   };
 
   const isFormComplete =
-    !!form.name &&
-    !!form.tag &&
-    !!form.date &&
-    !!form.registrationEnd &&
-    !!form.capacity &&
-    !!form.image;
+    !!form.name && !!form.tag && !!form.date && !!form.registrationEnd && !!form.capacity;
 
   return (
     <Modal
       id="create-group-modal"
       open={open}
       onOpenChange={onOpenChange}
-      className="p-4 pb-12 md:rounded-2xl md:p-12"
-      ResponsiveClassName="w-full h-[876px] md:w-[570px]">
-      <Modal.Header title="모임 만들기" onClose={() => onOpenChange(false)} className="p-0 pb-6" />
-      <Modal.Body className="mb-5 flex flex-col gap-6 p-0 md:mb-10">
+      className="p-4 pb-12 sm:rounded-xl md:rounded-2xl md:p-12"
+      ResponsiveClassName="w-full h-[876px] sm:w-[570px]">
+      <Modal.Header
+        title="모임 만들기"
+        onClose={() => {
+          onOpenChange(false);
+          setForm(InitialForm);
+        }}
+        className="p-0 pb-6"
+      />
+      <Modal.Body className="mb-5 flex flex-col gap-6 p-0 sm:mb-10">
         <CreateGroupModalForm form={form} setForm={setForm} submitErrors={submitErrors} />
       </Modal.Body>
       <Modal.Footer className="h-15 p-0">

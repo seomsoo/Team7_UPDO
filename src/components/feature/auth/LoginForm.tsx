@@ -1,37 +1,40 @@
-// -----------------------------------------------------------------------------
-// NOTE: 로그인 전용 폼 컴포넌트
-//       - RHF + Zod 기반 폼 검증
-//       - 이메일 / 비밀번호 입력 검증 (SignupForm과 동일한 패스워드 규칙 적용)
-//       - 입력 시 Debounce 검증 (불필요한 유효성 검사 최소화)
-//       - 로그인 성공 시: JWT 토큰 저장 + 만료시간 기록 (1시간)
-//       - 로그인 상태는 전역 Zustand 스토어(useAuthStore)로 관리
-//       - 라우팅은 외부 콜백(onLoginSuccess) 주입 방식으로 제어 (Next Router 미의존)
-//       - 입력 중 1초 디바운스 검증
-// -----------------------------------------------------------------------------
-
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDebouncedCallback } from 'use-debounce';
 import { z } from 'zod';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
-import useDebounce from '@/hooks/useDebounce';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { authService } from '@/services/auths/authService';
-import { useAuthStore } from '@/stores/useAuthStore';
 import { LoginFormSchema } from '@/schemas/authsSchema';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/ui/Toast';
+import { useAuthStore } from '@/stores/useAuthStore';
 
-type LoginFormProps = {
-  onLoginSuccess?: () => void;
-};
-
-type LoginFormType = z.infer<typeof LoginFormSchema>;
+export type LoginFormType = z.infer<typeof LoginFormSchema>;
 
 const firstIssueMessage = (err: z.ZodError) =>
   err.issues[0]?.message ?? '입력값이 올바르지 않습니다.';
 
-export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
+export default function LoginForm() {
+  const router = useRouter();
+
+  // ---------------------------------------------------------------------------
+  // ✅ Zustand store에서 필요한 메서드 선택 (리렌더 최소화)
+  // ---------------------------------------------------------------------------
+  const setToken = useAuthStore(state => state.setToken);
+  const increaseFailedAttempts = useAuthStore(state => state.increaseFailedAttempts);
+  const resetFailedAttempts = useAuthStore(state => state.resetFailedAttempts);
+  const checkLockStatus = useAuthStore(state => state.checkLockStatus);
+  const failedAttempts = useAuthStore(state => state.failedAttempts);
+  const isLocked = useAuthStore(state => state.isLocked);
+  const showToast = useToast(state => state.showToast);
+
+  // ---------------------------------------------------------------------------
+  // ✅ RHF 설정
+  // ---------------------------------------------------------------------------
   const {
     register,
     handleSubmit,
@@ -44,10 +47,13 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   });
 
   const [globalError, setGlobalError] = useState<string | null>(null);
-  const debouncedValidate = useDebounce((field: keyof LoginFormType) => {
-    void trigger(field);
-  }, 1000);
 
+  // 입력 중 0.5초 후 검증 (과도한 트리거 방지)
+  const debouncedValidate = useDebouncedCallback((field: keyof LoginFormType) => {
+    void trigger(field);
+  }, 500);
+
+  // RHF register에 Debounce 검증 결합
   const registerWithValidation = (name: keyof LoginFormType) => {
     const shape = LoginFormSchema.shape[name];
     const base = register(name, {
@@ -71,8 +77,20 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
     };
   };
 
+  // ---------------------------------------------------------------------------
+  // ✅ 로그인 제출 핸들러
+  // ---------------------------------------------------------------------------
   const onSubmit = handleSubmit(async data => {
-    // ✅ 전체 Zod 검증
+    setGlobalError(null);
+
+    // 1️⃣ 먼저 잠금 상태인지 확인
+    const isLocked = checkLockStatus();
+    if (isLocked) {
+      setGlobalError('비밀번호 5회 이상 잘못 입력하셔서 30초간 로그인할 수 없습니다.');
+      return;
+    }
+
+    // 2️⃣ 전체 Zod 검증
     const parsed = LoginFormSchema.safeParse(data);
     if (!parsed.success) {
       parsed.error.issues.forEach(issue => {
@@ -84,11 +102,38 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
       return;
     }
 
+    // 3️⃣ 로그인 시도
     try {
       const response = await authService.signin(parsed.data);
-      useAuthStore.getState().setToken(response.token, 60 * 60 * 1000);
-      onLoginSuccess?.();
+      setToken(response.token);
+      resetFailedAttempts(); // ✅ 성공 시 실패횟수 초기화
+
+      showToast('로그인에 성공하였습니다. 환영합니다!', 'success');
+      router.replace('/'); // 성공 시 메인으로 이동
     } catch (err: unknown) {
+      const e = err as { message?: string; status?: number };
+
+      // ✅ 서버 오류(500대 or 명시적 메시지)는 전역 에러로만 처리
+      if (e.message?.includes('서버 오류') || e.status === 500) {
+        setGlobalError('서버 오류가 발생했습니다.');
+        return; // ✅ 이 지점에서 종료! (토스트나 실패 카운트 실행 금지)
+      }
+
+      // 4️⃣ 로그인 오류 처리
+      // 실패 횟수 스냅샷 기반 계산 → 사용자 메시지 일관성 확보
+      const nextAttempts = failedAttempts + 1;
+      increaseFailedAttempts(); // ❌ 실패 시 실패횟수 +1 - 실제 상태 먼저 반영
+      const remaining = Math.max(5 - nextAttempts, 0);
+
+      if (nextAttempts >= 5) {
+        showToast('비밀번호를 5회 이상 잘못 입력하셔서 30초간 로그인할 수 없습니다.', 'error');
+      } else {
+        showToast(
+          `비밀번호가 올바르지 않습니다. (${nextAttempts}/5회) - ${remaining}회 남았습니다.`,
+          'error',
+        );
+      }
+
       if (typeof err === 'object' && err !== null) {
         const e = err as { parameter?: keyof LoginFormType; message?: string };
 
@@ -101,7 +146,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
           return;
         }
 
-        // ✅ 전역 서버 오류
+        // 전역 오류 처리
         setGlobalError(e.message ?? '서버 오류가 발생했습니다.');
         return;
       }
@@ -112,10 +157,9 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   return (
     <form
       onSubmit={onSubmit}
-      className="flex w-full max-w-[400px] flex-col gap-5 rounded-xl bg-white p-6 shadow-md"
+      className="mx-auto flex w-full max-w-[568px] min-w-[280px] flex-col gap-2 p-2 sm:p-4"
       noValidate>
-      {/* 이메일 입력 */}
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-2">
         <label htmlFor="email" className="pl-1 text-sm font-medium text-gray-700">
           이메일
         </label>
@@ -123,15 +167,14 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
           id="email"
           inputSize="lg"
           type="email"
-          placeholder="이메일 주소를 입력하세요"
+          placeholder="이메일 주소를 입력해주세요"
           {...registerWithValidation('email')}
-          errorMessage={errors.email?.message}
           disabled={isSubmitting}
           autoComplete="email"
         />
+        <p className="h-5 pl-1 text-sm text-red-500">{errors.email?.message ?? ''}</p>
       </div>
 
-      {/* 비밀번호 입력 */}
       <div className="flex flex-col gap-1">
         <label htmlFor="password" className="pl-1 text-sm font-medium text-gray-700">
           비밀번호
@@ -140,25 +183,23 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
           id="password"
           inputSize="lg"
           type="password"
-          placeholder="비밀번호를 입력하세요"
+          placeholder="비밀번호를 입력해주세요"
           {...registerWithValidation('password')}
-          errorMessage={errors.password?.message}
           disabled={isSubmitting}
           autoComplete="current-password"
         />
+        <p className="h-5 pl-1 text-sm text-red-500">{errors.password?.message ?? ''}</p>
       </div>
 
-      {/* 버튼 */}
       <Button
         type="submit"
         variant="primary"
         disabled={isSubmitting}
-        className="mt-4 h-[48px] w-full text-base font-semibold"
+        className="mt-2 h-[48px] w-full text-base font-semibold"
         aria-label="로그인">
         {isSubmitting ? <LoadingSpinner size="xs" color="white" /> : '로그인'}
       </Button>
 
-      {/* 전역 오류 메시지 */}
       {globalError && (
         <p role="alert" className="typo-sm mt-3 text-center text-red-500">
           {globalError}

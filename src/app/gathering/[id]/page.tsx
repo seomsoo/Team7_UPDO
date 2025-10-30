@@ -1,65 +1,175 @@
 'use client';
 
-import GroupDetailHeader from '@/components/feature/group/GroupDetailCard';
-import GroupDetailParticipation from '@/components/feature/group/GroupDetailParticipationCard';
-import GroupDetailReviewList from '@/components/feature/group/GroupDetailReviewList';
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
+
+import GroupDetailCard from '@/components/feature/gathering/detail/GroupDetailCard';
+import GroupDetailParticipation from '@/components/feature/gathering/detail/GroupDetailParticipationCard';
+import GroupDetailReviewList from '@/components/feature/gathering/detail/GroupDetailReviewList';
+import WriteReviewModal from '@/components/feature/review/WriteReviewModal';
+
+import GroupDetailCardSkeleton from '@/components/ui/Skeleton/GroupDetailCardSkeleton';
+import GroupDetailParticipationSkeleton from '@/components/ui/Skeleton/GroupDetailParticipationSkeleton';
+import GroupDetailReviewListSkeleton from '@/components/ui/Skeleton/GroupDetailReviewListSkeleton';
+
+import { useGatheringDetail } from '@/hooks/useGatheringDetail';
+import { useGatheringParticipants } from '@/hooks/useGatheringParticipants';
+import { useJoinedGatherings } from '@/hooks/useJoinedGatherings';
+import { useGatheringButtonState } from '@/hooks/useGatheringButtonState';
+import { useGatheringHandlers } from '@/hooks/useGatheringHandler';
+import { useGatheringRedirect } from '@/hooks/useGatheringRedirect';
+import { useGatheringReview } from '@/hooks/useGatheringReview';
+
+import { useAuthStore } from '@/stores/useAuthStore';
+import { useUserStore } from '@/stores/useUserStore';
 
 export default function GroupDetailPage() {
-  const data = {
-    id: 1,
-    name: '성장 스킬업',
-    topic: 'growth' as const,
-    dateText: '1월 7일',
-    timeText: '17:30',
-    deadlineText: '오늘 21시 마감',
-    isHost: false,
-    participantCount: 16,
-    capacity: 20,
-    minParticipants: 5,
-    participants: [
-      { id: 1, image: '/images/profile.png' },
-      { id: 2, image: '/images/profile.png' },
-      { id: 3, image: '/images/profile.png' },
-      { id: 4, image: '/images/profile.png' },
-      { id: 5, image: '/images/profile.png' },
-    ],
-  };
+  const { id } = useParams<{ id: string }>();
+
+  const { isAuthenticated } = useAuthStore();
+  const { user } = useUserStore();
+  const userId = user?.id ?? null;
+
+  const { gathering, uiData, isLoading, isError } = useGatheringDetail(id, userId);
+  const { data: participantsData, participants } = useGatheringParticipants(id);
+  const { data: joinedGatherings } = useJoinedGatherings(userId, isAuthenticated);
+
+  const {
+    myReviews,
+    isReviewed,
+    isReviewModalOpen,
+    handleOpenReviewModal,
+    handleReviewSuccess,
+    setIsReviewModalOpen,
+  } = useGatheringReview({ gatheringId: id, userId });
+
+  const { handleJoin, handleLeave, handleCancel, handleShare, isJoining, isLeaving, isCanceling } =
+    useGatheringHandlers({
+      gatheringId: id,
+      userId,
+      isAuthenticated,
+    });
+
+  const {
+    joined,
+    currentParticipantCount,
+    isOpenConfirmed,
+    isCompleted,
+    isRegistrationClosed,
+    isFull,
+    isCanceled,
+  } = useGatheringButtonState({
+    gathering,
+    participantsData,
+    joinedGatherings,
+    myReviews,
+    gatheringId: id,
+    userId,
+    minParticipants: uiData?.minParticipants,
+  });
+
+  // 삭제된 모임 리다이렉트
+  useGatheringRedirect(isCanceled, isLoading);
+
+  // 로딩/에러 처리
+  if (isLoading)
+    return (
+      <main className="space-y-8 px-0 py-10">
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2">
+          <div className="relative h-60 w-full overflow-hidden rounded-md bg-gray-100 shadow-sm sm:h-auto sm:rounded-md md:rounded-2xl" />
+          <div className="flex flex-col justify-between gap-4">
+            <GroupDetailCardSkeleton />
+            <GroupDetailParticipationSkeleton />
+          </div>
+        </section>
+
+        <section className="mt-6 sm:mt-12 md:mt-16">
+          <GroupDetailReviewListSkeleton />
+        </section>
+      </main>
+    );
+
+  if (isError || !uiData)
+    return <div className="p-10 text-red-500">모임 정보를 불러올 수 없습니다.</div>;
+
+  // 삭제된 모임
+  if (isCanceled) {
+    return (
+      <main className="flex min-h-screen items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-3 py-12">
+          <Image
+            src="/images/empty.png"
+            alt="삭제된 모임"
+            width={171}
+            height={115}
+            className="opacity-70"
+          />
+          <span className="text-sm text-gray-400 md:text-base">
+            삭제된 모임입니다. 모임 찾기 페이지로 이동합니다.
+          </span>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="px-0 py-10">
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2">
-        <div className="relative h-60 w-full overflow-hidden rounded-md bg-amber-50 shadow-sm sm:h-auto sm:rounded-md md:rounded-2xl">
-          <Image src="/images/spot.jpg" alt={data.name} fill className="object-cover" />
+        <div className="relative h-60 w-full overflow-hidden rounded-md bg-white shadow-sm sm:h-auto sm:rounded-md md:rounded-2xl">
+          <Image
+            src={uiData?.image || '/images/detail_empty.png'}
+            alt={'모임 대표이미지'}
+            fill
+            className="object-cover"
+          />
         </div>
 
-        {/* 상세/참여자 카드 */}
+        {/* 상세 헤더 */}
         <div className="flex flex-col justify-between gap-4">
-          <GroupDetailHeader
-            data={{
-              id: data.id,
-              name: data.name,
-              topic: data.topic,
-              deadlineText: data.deadlineText,
-              dateText: data.dateText,
-              timeText: data.timeText,
-            }}
-            isHost={data.isHost}
+          <GroupDetailCard
+            data={uiData}
+            isHost={uiData.isHost}
+            joined={joined}
+            isCompleted={isCompleted}
+            isReviewed={isReviewed}
+            isRegistrationClosed={isRegistrationClosed}
+            isOpenConfirmed={isOpenConfirmed}
+            isFull={isFull}
+            isCanceled={isCanceled}
+            onJoin={handleJoin}
+            onLeave={handleLeave}
+            onCancel={handleCancel}
+            onShare={handleShare}
+            onWriteReview={handleOpenReviewModal}
+            isJoining={isJoining}
+            isLeaving={isLeaving}
+            isCanceling={isCanceling}
           />
 
           <GroupDetailParticipation
-            current={data.participantCount}
-            max={data.capacity}
-            min={data.minParticipants}
-            participants={data.participants}
-            showConfirm={true}
+            current={currentParticipantCount}
+            max={uiData.capacity}
+            min={uiData.minParticipants}
+            participants={participants}
+            showConfirm
           />
         </div>
       </section>
 
+      {/* 리뷰 섹션 */}
       <section className="mt-6 sm:mt-12 md:mt-16">
-        <GroupDetailReviewList />
+        {uiData && <GroupDetailReviewList gatheringId={uiData.id} />}
       </section>
+
+      {/* 리뷰 작성 모달 */}
+      {isReviewModalOpen && (
+        <WriteReviewModal
+          open={isReviewModalOpen}
+          onOpenChange={setIsReviewModalOpen}
+          ApiRequestProps={{ gatheringId: Number(id) }}
+          onSuccess={handleReviewSuccess}
+        />
+      )}
     </main>
   );
 }
