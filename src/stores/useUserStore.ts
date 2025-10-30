@@ -10,11 +10,8 @@ interface UserState {
   error: string | null;
 
   setUser: (u: IUser | null) => void;
-  updateUser: (patch: Partial<IUser>) => void;
-  patchUser: (patch: Partial<IUser>) => void;
   clear: () => void;
-
-  fetchMe: () => Promise<void>; // 초기 진입 시 1회 호출용
+  fetchMe: () => Promise<void>;
 }
 
 export const useUserStore = create<UserState>()((set, get) => ({
@@ -23,19 +20,6 @@ export const useUserStore = create<UserState>()((set, get) => ({
   error: null,
 
   setUser: u => set({ user: u }),
-
-  // 낙관적 업데이트: 부분 필드(patch) 병합
-  updateUser: patch => {
-    const cur = get().user;
-    if (!cur) return;
-    const next: IUser = { ...cur, ...patch } as IUser;
-    const isSame = JSON.stringify(cur) === JSON.stringify(next);
-    if (!isSame) set({ user: next });
-  },
-
-  // 과거 호환용
-  patchUser: patch => get().updateUser(patch),
-
   clear: () => set({ user: null, isLoading: false, error: null }),
 
   // 사용자 로딩 (1회만 호출)
