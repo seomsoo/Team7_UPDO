@@ -37,24 +37,10 @@ class AnonGatheringService extends Service {
     }));
   }
 
-  getFavoriteList(
-    params: { id?: number[]; limit?: number } & Record<string, string | number | boolean> = {},
-  ) {
-    const { id, limit = 50, ...rest } = params;
-    const ids = id?.length ? id.join(',') : '';
+  getFavoriteList(params: { id?: number[] }) {
+    const ids = params?.id?.length ? params.id.join(',') : '';
     if (!ids) return Promise.resolve([] as IGathering[]);
-
-    const searchParams = new URLSearchParams();
-    searchParams.set('id', ids);
-    searchParams.set('limit', String(limit));
-
-    Object.entries(rest).forEach(([key, value]) => {
-      if (value === undefined || value === null) return;
-      searchParams.set(key, String(value));
-    });
-
-    const qs = searchParams.toString();
-    return this.http.get<IGathering[]>(`/gatherings?${qs}`);
+    return this.http.get<IGathering[]>(`/gatherings?limit=50&id=${ids}`);
   }
 
   getGatheringDetail(id: string) {

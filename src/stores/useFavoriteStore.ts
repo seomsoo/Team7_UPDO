@@ -7,7 +7,10 @@ interface FavoriteState {
   toggleFavorite: (id: number) => void;
   removeFavorite: (id: number) => void;
   isFavorite: (id: number) => boolean;
+  _hasHydrated: boolean;
   getFavorites: () => number[];
+  getFavoriteCount: (userId?: string | number | null) => number;
+  setHasHydrated: (state: boolean) => void;
 }
 
 const getCurrentUserKey = () => {
@@ -19,7 +22,13 @@ export const useFavoriteStore = create<FavoriteState>()(
   persist(
     (set, get) => ({
       favorites: {},
+      _hasHydrated: false,
 
+      setHasHydrated: (state: boolean) => {
+        set({
+          _hasHydrated: state,
+        });
+      },
       toggleFavorite: (id: number) => {
         const key = getCurrentUserKey();
 
@@ -64,7 +73,10 @@ export const useFavoriteStore = create<FavoriteState>()(
         const currentFavorites = get().favorites[key] || [];
         return currentFavorites.includes(id);
       },
-
+      getFavoriteCount: (userId?: string | number | null) => {
+        const key = userId != null ? String(userId) : 'guest';
+        return get().favorites[key]?.length ?? 0;
+      },
       getFavorites: () => {
         const key = getCurrentUserKey();
         return get().favorites[key] || [];
@@ -73,6 +85,13 @@ export const useFavoriteStore = create<FavoriteState>()(
     {
       name: 'favorites',
       storage: createJSONStorage(() => localStorage),
+      skipHydration: true,
+      onRehydrateStorage: () => state => {
+        state?.setHasHydrated(true);
+      },
     },
   ),
 );
+if (typeof window !== 'undefined') {
+  useFavoriteStore.persist.rehydrate();
+}
