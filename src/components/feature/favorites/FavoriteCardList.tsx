@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
-import { FilterState, toGetGatheringsParams } from '@/utils/mapping';
+import { FilterState } from '@/utils/mapping';
 import GroupCard from '../group/GroupCard';
 import { motion } from 'framer-motion';
 import GroupCardSkeleton from '@/components/ui/Skeleton/GroupCardSkeleton';
@@ -10,24 +10,21 @@ import { useFavoriteStore } from '@/stores/useFavoriteStore';
 import { useUserStore } from '@/stores/useUserStore';
 import { getFavoriteList } from '@/services/gatherings/anonGatheringService';
 import { IGathering } from '@/types/gatherings';
+import { useMounted } from '@/hooks/useMounted';
 
 interface GroupCardListProps {
   filters: FilterState;
 }
 
 export default function FavoriteCardList({ filters }: GroupCardListProps) {
+  const mounted = useMounted();
+  const hasHydrated = useFavoriteStore(state => state._hasHydrated);
   const userId = useUserStore(state => state.user?.id ?? null);
   const favoriteIds = useFavoriteStore(state => state.getFavorites());
+
   const hasFavorites = favoriteIds.length > 0;
 
-  const queryParams = hasFavorites
-    ? {
-        ...toGetGatheringsParams(filters),
-        id: favoriteIds,
-        limit: filters.limit ?? favoriteIds.length,
-      }
-    : null;
-
+  const queryParams = hasFavorites ? { id: favoriteIds } : null;
   const {
     data: favoriteGatherings = [],
     isLoading,
@@ -36,8 +33,18 @@ export default function FavoriteCardList({ filters }: GroupCardListProps) {
   } = useQuery<IGathering[]>({
     queryKey: ['favoriteGatherings', userId, queryParams],
     queryFn: () => getFavoriteList(queryParams!),
-    enabled: !!queryParams,
+    enabled: mounted && hasHydrated && hasFavorites,
   });
+
+  if (!mounted || !hasHydrated) {
+    return (
+      <div className="mx-auto mb-8 flex flex-col items-center gap-6 md:grid md:grid-cols-2">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <GroupCardSkeleton key={i} />
+        ))}
+      </div>
+    );
+  }
 
   if (isLoading)
     return (

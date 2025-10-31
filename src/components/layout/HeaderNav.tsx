@@ -16,21 +16,20 @@ const NAV_ITEMS = [
 
 export default function HeaderNav() {
   const userId = useUserStore(state => state.user?.id ?? null);
-  const favoriteCount = useFavoriteStore(
-    state => state.favorites[userId ? String(userId) : 'guest']?.length ?? 0,
-  );
+  const favoriteStore = useFavoriteStore();
+  const hasHydrated = useFavoriteStore(state => state._hasHydrated);
   const pathname = usePathname();
   const mounted = useMounted();
   const isActive = (href: string) => {
     if (href === '/gathering') return pathname === '/' || pathname?.startsWith('/gathering');
     return pathname?.startsWith(href);
   };
-
+  const favoriteCount = mounted && hasHydrated ? favoriteStore.getFavoriteCount(userId) : 0;
   return (
     <nav className="flex items-center sm:gap-2 md:gap-4 lg:gap-6" role="navigation">
       {NAV_ITEMS.map(item => {
         const active = isActive(item.href);
-        const showBadge = mounted && item.hasBadge;
+        const showBadge = mounted && hasHydrated && item.hasBadge && favoriteCount > 0;
         return (
           <Link
             key={item.href}
