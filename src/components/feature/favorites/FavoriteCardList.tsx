@@ -11,6 +11,7 @@ import { useUserStore } from '@/stores/useUserStore';
 import { getFavoriteList } from '@/services/gatherings/anonGatheringService';
 import { IGathering } from '@/types/gatherings';
 import { useMounted } from '@/hooks/useMounted';
+import { useEffect, useState } from 'react';
 
 interface GroupCardListProps {
   filters: FilterState;
@@ -20,7 +21,12 @@ export default function FavoriteCardList({ filters }: GroupCardListProps) {
   const mounted = useMounted();
   const hasHydrated = useFavoriteStore(state => state._hasHydrated);
   const userId = useUserStore(state => state.user?.id ?? null);
-  const favoriteIds = useFavoriteStore(state => state.getFavorites());
+  const [favoriteIds, setFavoriteIds] = useState<number[]>([]);
+  useEffect(() => {
+    if (mounted && hasHydrated) {
+      setFavoriteIds(useFavoriteStore.getState().getFavorites());
+    }
+  }, [mounted, hasHydrated]);
 
   const hasFavorites = favoriteIds.length > 0;
 
@@ -33,18 +39,9 @@ export default function FavoriteCardList({ filters }: GroupCardListProps) {
   } = useQuery<IGathering[]>({
     queryKey: ['favoriteGatherings', userId, queryParams],
     queryFn: () => getFavoriteList(queryParams!),
-    enabled: mounted && hasHydrated && hasFavorites,
+    enabled: hasFavorites,
   });
-
-  if (!mounted || !hasHydrated) {
-    return (
-      <div className="mx-auto mb-8 flex flex-col items-center gap-6 md:grid md:grid-cols-2">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <GroupCardSkeleton key={i} />
-        ))}
-      </div>
-    );
-  }
+  if (!mounted) return null;
 
   if (isLoading)
     return (
